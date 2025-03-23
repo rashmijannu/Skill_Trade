@@ -24,6 +24,10 @@ import { useAuth } from "../_context/UserAuthContent";
 import { Button } from "../../components/ui/button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { FaHome } from "react-icons/fa";
+import { FaHandshake } from "react-icons/fa";
+import { IoIosCreate } from "react-icons/io";
+import { TbHandClick } from "react-icons/tb";
 
 // Dynamically import components with ssr: false to prevent document not found errors
 const LogoutModal = dynamic(() => import("./NavBarComponenets/LogoutModal"), {
@@ -39,6 +43,7 @@ const AdminMenu = dynamic(() => import("./NavBarComponenets/AdminMenu"), {
   ssr: false,
 });
 const drawerWidth = 240;
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme }) => ({
@@ -115,6 +120,7 @@ const Navbar = () => {
               >
                 Home
               </Link>{" "}
+              <hr></hr>
               <Link
                 href="/user/create_request"
                 className={`${
@@ -183,18 +189,21 @@ const Navbar = () => {
               >
                 Home
               </Link>{" "}
+              <hr></hr>
               <Link
                 href="/register"
                 className={`${pathname === "/register" ? "border-b-2 " : ""}`}
               >
                 Register
               </Link>
+              <hr></hr>
               <Link
                 href="/login"
                 className={`${pathname === "/login" ? "border-b-2 " : ""}`}
               >
                 Login
               </Link>
+              <hr></hr>
             </>
           )}
         </div>
@@ -266,37 +275,46 @@ const Navbar = () => {
                   {/* home  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link href="/" className="m-auto flex items-center gap-2">
+                        <ListItemIcon>
+                          <FaHome />
+                        </ListItemIcon>
                         <ListItemText primary="Home" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
+                  <hr></hr>
                   {/* create request  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/user/create_request" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link
+                        href="/user/create_request"
+                        className="m-auto flex items-center gap-2"
+                      >
+                        <ListItemIcon>
+                          <IoIosCreate />
+                        </ListItemIcon>
                         <ListItemText primary="Create Request" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
+                  <hr></hr>
 
                   {/* hire  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
                       <Link
                         href="/user/hire"
-                        className={`${
-                          pathname === "/user/hire" ? "border-b-2 " : ""
-                        }`}
+                        className="m-auto flex items-center gap-2"
                       >
-                        <ListItemIcon></ListItemIcon>
-                        <ListItemText primary="Create Request" />
+                        <ListItemIcon>
+                          <FaHandshake />
+                        </ListItemIcon>
+                        <ListItemText primary="Hire" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
-
+                  <hr></hr>
                   {/* dashboard  */}
                   <div className="flex justify-center ">
                     <Button
@@ -356,10 +374,12 @@ const Navbar = () => {
                     <ListItemButton>
                       <Link
                         href="/"
-                        className="m-auto flex"
+                        className="m-auto flex items-center gap-2"
                         onClick={handleDrawerClose}
                       >
-                        <ListItemIcon></ListItemIcon>
+                        <ListItemIcon>
+                          <FaHome />
+                        </ListItemIcon>
                         <ListItemText primary="Home" />
                       </Link>
                     </ListItemButton>
@@ -367,9 +387,20 @@ const Navbar = () => {
                   {/* all request  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/worker/all_request" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link href="/worker/all_request"  className="m-auto flex items-center gap-2">
+                        <ListItemIcon>
+                          <TbHandClick />
+                        </ListItemIcon>
                         <ListItemText primary="All Requests" />
+                      </Link>
+                    </ListItemButton>
+                  </ListItem>
+                  {/* hiring request  */}
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={handleDrawerClose}>
+                      <Link href="/worker/hire"  className="m-auto flex items-center gap-2">
+                        <ListItemIcon> <FaHandshake /></ListItemIcon>
+                        <ListItemText primary="Hiring Requests" />
                       </Link>
                     </ListItemButton>
                   </ListItem>

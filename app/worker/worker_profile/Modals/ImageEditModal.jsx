@@ -134,7 +134,7 @@ const ImageEditModal = ({ handleClose, GetWorkerData, data }) => {
   return (
     <Box
       sx={style}
-      className="w-[300px] sm:w-[550px] flex flex-col gap-3 rounded-md"
+      className="w-[350px] sm:w-[550px] flex flex-col gap-3 rounded-md"
     >
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

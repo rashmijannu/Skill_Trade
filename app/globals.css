@@ -87,6 +87,9 @@ body::-webkit-scrollbar {
     width: 280px !important;
   }
 }
+.css-cokf1l-MuiListItemIcon-root{
+  min-width: 0px !important;
+}
 
 @layer base {}
 
