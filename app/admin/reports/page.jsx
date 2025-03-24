@@ -21,7 +21,6 @@ import { Button } from "../../../components/ui/button";
 import { MdDelete } from "react-icons/md";
 import { IoIosInformationCircle } from "react-icons/io";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import dynamic from "next/dynamic";
 import Tooltip from "@mui/material/Tooltip";
 import {
   AlertDialog,
@@ -32,22 +31,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
-const StyledTableCell = dynamic(
-  () => import("../../_Arrays/Arrays").then((mod) => mod.StyledTableCell),
-  { ssr: false }
-);
-const isAdmin = dynamic(
-  () => import("@/app/_components/privateroutes/isAdmin"),
-  { ssr: false }
-);
+import toast, { Toaster } from "react-hot-toast";
+import { StyledTableCell } from "../../_Arrays/Arrays";
+import isAdmin from "@/app/_components/privateroutes/isAdmin";
+import { Textarea } from "@mui/joy";
 
-const Textarea = dynamic(() => import("@mui/joy").then((mod) => mod.Textarea), {
-  ssr: false,
-});
 
 const Page = ({ role }) => {
   const [reports, setReports] = useState([]);
@@ -61,12 +49,7 @@ const Page = ({ role }) => {
   const [rejectReviewModal, SetRejectReviewModal] = useState(false);
   const [requestId, SetRequestId] = useState("");
   const [info, SetInfo] = useState("");
-  const toast = dynamic(
-    () => import("react-hot-toast").then((mod) => mod.toast),
-    {
-      ssr: false,
-    }
-  );
+  
   useEffect(() => {
     fetchPageData(currentPage);
   }, [currentPage]);

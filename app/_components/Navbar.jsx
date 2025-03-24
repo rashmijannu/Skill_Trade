@@ -24,10 +24,12 @@ import { useAuth } from "../_context/UserAuthContent";
 import { Button } from "../../components/ui/button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { FaHome } from "react-icons/fa";
-import { FaHandshake } from "react-icons/fa";
+import { FaHome, FaHandshake } from "react-icons/fa";
 import { IoIosCreate } from "react-icons/io";
 import { TbHandClick } from "react-icons/tb";
+import { GiArchiveRegister } from "react-icons/gi";
+import { FiLogIn } from "react-icons/fi";
+import { IoCall } from "react-icons/io5";
 
 // Dynamically import components with ssr: false to prevent document not found errors
 const LogoutModal = dynamic(() => import("./NavBarComponenets/LogoutModal"), {
@@ -161,6 +163,12 @@ const Navbar = () => {
               >
                 Hiring Requests
               </Link>
+              <Link
+                href="/Contact"
+                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+              >
+                Contact
+              </Link>
               <WorkerMenu />
             </>
           ) : auth?.user?.role == 2 ? (
@@ -179,6 +187,12 @@ const Navbar = () => {
               >
                 Verify Workers
               </Link>{" "}
+              <Link
+                href="/Contact"
+                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+              >
+                Contact
+              </Link>
               <AdminMenu />
             </>
           ) : (
@@ -189,21 +203,24 @@ const Navbar = () => {
               >
                 Home
               </Link>{" "}
-              <hr></hr>
+              <Link
+                href="/Contact"
+                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+              >
+                Contact
+              </Link>
               <Link
                 href="/register"
                 className={`${pathname === "/register" ? "border-b-2 " : ""}`}
               >
                 Register
               </Link>
-              <hr></hr>
               <Link
                 href="/login"
                 className={`${pathname === "/login" ? "border-b-2 " : ""}`}
               >
                 Login
               </Link>
-              <hr></hr>
             </>
           )}
         </div>
@@ -387,7 +404,10 @@ const Navbar = () => {
                   {/* all request  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/worker/all_request"  className="m-auto flex items-center gap-2">
+                      <Link
+                        href="/worker/all_request"
+                        className="m-auto flex items-center gap-2"
+                      >
                         <ListItemIcon>
                           <TbHandClick />
                         </ListItemIcon>
@@ -398,8 +418,14 @@ const Navbar = () => {
                   {/* hiring request  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/worker/hire"  className="m-auto flex items-center gap-2">
-                        <ListItemIcon> <FaHandshake /></ListItemIcon>
+                      <Link
+                        href="/worker/hire"
+                        className="m-auto flex items-center gap-2"
+                      >
+                        <ListItemIcon>
+                          {" "}
+                          <FaHandshake />
+                        </ListItemIcon>
                         <ListItemText primary="Hiring Requests" />
                       </Link>
                     </ListItemButton>
@@ -524,29 +550,66 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
+              {/* not login  */}
               {!auth?.user && (
                 <>
+                  {/* home  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link href="/" className="m-auto flex items-center gap-2">
+                        <ListItemIcon>
+                          {" "}
+                          <FaHome />
+                        </ListItemIcon>
                         <ListItemText primary="Home" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
+                  <hr></hr>
+                  {/* register  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/register" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link
+                        href="/register"
+                        className="m-auto flex items-center gap-2"
+                      >
+                        <ListItemIcon>
+                          <GiArchiveRegister />
+                        </ListItemIcon>
                         <ListItemText primary="Register" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
+
+                  <hr></hr>
+
+                  {/* login  */}
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleDrawerClose}>
-                      <Link href="/login" className="m-auto flex">
-                        <ListItemIcon></ListItemIcon>
+                      <Link
+                        href="/login"
+                        className="m-auto flex items-center gap-2"
+                      >
+                        <ListItemIcon>
+                          <FiLogIn />
+                        </ListItemIcon>
                         <ListItemText primary="Login" />
+                      </Link>
+                    </ListItemButton>
+                    {/* contact  */}
+                  </ListItem>
+                  <hr></hr>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={handleDrawerClose}>
+                      <Link
+                        href="/Contact"
+                        className="m-auto flex items-center gap-2"
+                      >
+                        <ListItemIcon>
+                          {" "}
+                          <IoCall />
+                        </ListItemIcon>
+                        <ListItemText primary="Contact" />
                       </Link>
                     </ListItemButton>
                   </ListItem>
