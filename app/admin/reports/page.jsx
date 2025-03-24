@@ -30,12 +30,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
 import toast, { Toaster } from "react-hot-toast";
 import { StyledTableCell } from "../../_Arrays/Arrays";
 import isAdmin from "@/app/_components/privateroutes/isAdmin";
 import { Textarea } from "@mui/joy";
-
 
 const Page = ({ role }) => {
   const [reports, setReports] = useState([]);
@@ -49,7 +47,7 @@ const Page = ({ role }) => {
   const [rejectReviewModal, SetRejectReviewModal] = useState(false);
   const [requestId, SetRequestId] = useState("");
   const [info, SetInfo] = useState("");
-  
+
   useEffect(() => {
     fetchPageData(currentPage);
   }, [currentPage]);

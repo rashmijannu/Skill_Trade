@@ -13,17 +13,17 @@ import {
 } from "@mui/material";
 import { Tag } from "antd";
 import { ClockCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import toast,{Toaster} from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast";
 import { Button } from "../../../components/ui/button";
 import { StyledTableCell, StyledTableRow } from "../../_Arrays/Arrays";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+// } from "@/components/ui/dialog";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
 
 const HiringRequest = () => {
   const [data, setData] = useState([]);
@@ -31,10 +31,10 @@ const HiringRequest = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [auth, setAuth] = useAuth();
-  const [estimatedPrice, setEstimatedPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [open, setOpen] = useState(false);
-  const [uid, setUid] = useState(null);
+  // const [estimatedPrice, setEstimatedPrice] = useState("");
+  // const [description, setDescription] = useState("");
+  // const [open, setOpen] = useState(false);
+  // const [requestId, setRequestId] = useState(null);
 
   useEffect(() => {
     const fetchHiringRequests = async () => {
@@ -92,12 +92,43 @@ const HiringRequest = () => {
     setPageNumber(value);
   };
 
-  const handleModalOpen = (uid) => {
-    setUid(uid);
-    if (uid) {
-      setOpen(true);
-    }
-  };
+  // const handleModalOpen = (uid) => {
+  //   setRequestId(uid);
+  //   if (uid) { 
+  //     setOpen(true);
+  //   }
+  // };
+
+  // async function AcceptRequest(wid, rid, EstimatedPrice, description) {
+  //   try {
+  //     if (!EstimatedPrice) {
+  //       toast.error("estimated price is required");
+  //       return;
+  //     }
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/AcceptRequest/${wid}/${rid}`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({
+  //           EstimatedPrice,
+  //           description,
+  //         }),
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       toast.error(data.message || "Failed to accept request");
+  //       return;
+  //     }
+
+  //     toast.success("Request accepted successfully!");
+  //   } catch (error) {
+  //     toast.error("Error, please try again.");
+  //   }
+  // }
 
   return (
     <div>
@@ -187,13 +218,13 @@ const HiringRequest = () => {
                       <Link href={`/worker/Request_Details/${item._id}`}>
                         <Button>view</Button>
                       </Link>
-                      <Button
+                      {/* <Button
                         onClick={() => {
                           handleModalOpen(item._id);
                         }}
                       >
                         Accept request
-                      </Button>
+                      </Button> */}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -219,8 +250,8 @@ const HiringRequest = () => {
       )}
 
       {/* modal to accept request  */}
-      <Dialog open={open}>
-        <DialogContent className="w-[280px] sm:w-[400px]" >
+      {/* <Dialog open={open}>
+        <DialogContent className="w-[280px] sm:w-[400px]">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl font-bold">
               Accept Request
@@ -244,7 +275,16 @@ const HiringRequest = () => {
               className="w-full h-40 overflow-y-scroll"
             />
             <div className="flex flex-col gap-2 w-full">
-              <Button onClick={() => onAccept(estimatedPrice, description)}>
+              <Button
+                onClick={() =>
+                  AcceptRequest(
+                    auth?.user?._id,
+                    requestId,
+                    estimatedPrice,
+                    description
+                  )
+                }
+              >
                 Accept Request
               </Button>
               <Button
@@ -258,7 +298,7 @@ const HiringRequest = () => {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

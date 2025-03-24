@@ -296,7 +296,7 @@ const LoginForm = () => {
           >
             <Box
               sx={style}
-              className="flex flex-col gap-3 sm:w-[400px] w-[300px]"
+              className="flex flex-col gap-3 sm:w-[400px] w-[350px]"
             >
               <RxCross1
                 className="absolute right-4 top-4 cursor-pointer"

@@ -23,7 +23,7 @@ const RecommadedJobs = () => {
   async function fetchRecommandedForYou() {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/workers/RecommandedForYou/${auth?.user?._id}`,
+        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/RecommandedForYou/${auth?.user?._id}`,
         {
           method: "GET",
           headers: {

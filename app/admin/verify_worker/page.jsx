@@ -1,5 +1,4 @@
 "use client";
-export const dynamicMode = "force-dynamic";
 import React, { useState, useEffect } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
 import Image from "next/image";
@@ -21,31 +20,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import { Button } from "../../../components/ui/button";
 import { RxCross1 } from "react-icons/rx";
-import dynamic from "next/dynamic";
+import { StyledTableCell, StyledTableRow, style } from "../../_Arrays/Arrays";
+import isAdmin from "@/app/_components/privateroutes/isAdmin";
+import { Textarea } from "@mui/joy";
+import toast,{ Toaster } from "react-hot-toast";
 
-const StyledTableCell = dynamic(
-  () => import("../../_Arrays/Arrays").then((mod) => mod.StyledTableCell),
-  { ssr: false }
-);
-const StyledTableRow = dynamic(
-  () => import("../../_Arrays/Arrays").then((mod) => mod.StyledTableRow),
-  { ssr: false }
-);
-const style = dynamic(
-  () => import("../../_Arrays/Arrays").then((mod) => mod.style),
-  { ssr: false }
-);
-const isAdmin = dynamic(
-  () => import("@/app/_components/privateroutes/isAdmin"),
-  { ssr: false }
-);
-const Textarea = dynamic(() => import("@mui/joy").then((mod) => mod.Textarea), {
-  ssr: false,
-});
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
 
 const Page = ({ role }) => {
   const [requests, setRequests] = useState([]);
@@ -59,12 +38,7 @@ const Page = ({ role }) => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [selectedId, SetSelectedId] = useState(null);
   const [backdrop, SetBackDrop] = useState(false);
-  const toast = dynamic(
-    () => import("react-hot-toast").then((mod) => mod.toast),
-    {
-      ssr: false,
-    }
-  );
+ 
   const fetchPageData = async (page) => {
     setLoading(true);
     try {

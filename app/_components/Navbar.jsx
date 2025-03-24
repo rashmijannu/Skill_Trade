@@ -113,7 +113,7 @@ const Navbar = () => {
           width={200}
           height={70}
         ></Image>
-        <div className=" xl:w-1/2 sm:w-1/2 flex items-center justify-around xl:justify-around font-bold">
+        <div className="xl:w-3/4 sm:w-3/4 flex items-center justify-around xl:justify-around font-bold">
           {auth?.user?.role == 0 ? (
             <>
               <Link
@@ -136,6 +136,12 @@ const Navbar = () => {
                 className={`${pathname === "/user/hire" ? "border-b-2 " : ""}`}
               >
                 Hire
+              </Link>
+              <Link
+                href="/Contact"
+                className={`${pathname === "/login" ? "border-b-2 " : ""}`}
+              >
+                Contact
               </Link>
               <Menu2 />
             </>
@@ -165,7 +171,7 @@ const Navbar = () => {
               </Link>
               <Link
                 href="/Contact"
-                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+                className={`${pathname === "/login" ? "border-b-2 " : ""}`}
               >
                 Contact
               </Link>
@@ -187,12 +193,7 @@ const Navbar = () => {
               >
                 Verify Workers
               </Link>{" "}
-              <Link
-                href="/Contact"
-                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
-              >
-                Contact
-              </Link>
+              
               <AdminMenu />
             </>
           ) : (

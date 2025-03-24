@@ -1,5 +1,4 @@
 "use client";
-export const dynamicMode = "force-dynamic";
 import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -22,21 +21,11 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-import dynamic from "next/dynamic";
 import Image from "next/image";
+import { StyledTableCell } from "../../_Arrays/Arrays";
+import toast,{ Toaster } from "react-hot-toast";
+import isAdmin from "./../../_components/privateroutes/isAdmin";
 
-const StyledTableCell = dynamic(
-  () => import("../../_Arrays/Arrays").then((mod) => mod.StyledTableCell),
-  { ssr: false }
-);
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
-const isAdmin = dynamic(
-  () => import("./../../_components/privateroutes/isAdmin"),
-  { ssr: false }
-);
 
 const WorkersTable = ({ role }) => {
   const [workers, setWorkers] = useState([]);
