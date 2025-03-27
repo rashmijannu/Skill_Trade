@@ -260,7 +260,7 @@ async function RejectReviewRequest(req, resp) {
     }
     report.ReviewRequested = false;
     request.ReportedInfo.Info = info;
-    request.ReportedInfo.Review = false;
+    request.ReportedInfo.Review = true;
     await request.save();
     await report.save();
 
