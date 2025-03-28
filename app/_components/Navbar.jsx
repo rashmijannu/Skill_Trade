@@ -113,7 +113,7 @@ const Navbar = () => {
           width={200}
           height={70}
         ></Image>
-        <div className="xl:w-3/4 sm:w-3/4 flex items-center justify-around xl:justify-around font-bold">
+        <div className="xl:w-1/2 sm:w-3/4 flex items-center justify-around xl:justify-around font-bold">
           {auth?.user?.role == 0 ? (
             <>
               <Link
@@ -122,7 +122,7 @@ const Navbar = () => {
               >
                 Home
               </Link>{" "}
-              <hr></hr>
+           
               <Link
                 href="/user/create_request"
                 className={`${

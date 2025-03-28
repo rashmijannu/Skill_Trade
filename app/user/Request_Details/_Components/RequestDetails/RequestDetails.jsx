@@ -447,7 +447,10 @@ const params = useParams();
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box sx={style} className="flex flex-col gap-2 w-[300px] sm:w-[400px]">
+            <Box
+              sx={style}
+              className="flex flex-col gap-2 w-[300px] sm:w-[400px]"
+            >
               <p className="font-bold text-center">
                 Are you sure you want to delete this request ?
               </p>{" "}
@@ -470,7 +473,10 @@ const params = useParams();
               SetCompleted(false);
             }}
           >
-            <Box sx={style} className="flex flex-col gap-2 sm:w-[400px] w-[310px]">
+            <Box
+              sx={style}
+              className="flex flex-col gap-2 sm:w-[400px] w-[310px]"
+            >
               <p className="text-center font-semibold">
                 Rate you experience with the worker
               </p>
@@ -565,7 +571,10 @@ const params = useParams();
 
           {/* request review modal  */}
           <Modal open={reviewmodal}>
-            <Box sx={style} className="flex flex-col gap-2 ">
+            <Box
+              sx={style}
+              className="flex flex-col gap-2 sm:w-[400px] w-[310px]"
+            >
               <p className="text-center font-semibold">
                 Make the changes before requesting review
               </p>
@@ -596,7 +605,10 @@ const params = useParams();
               SetunassignModal(false);
             }}
           >
-            <Box sx={style} className="flex flex-col gap-2">
+            <Box
+              sx={style}
+              className="flex flex-col gap-2 sm:w-[400px] w-[310px]"
+            >
               <p className="font-bold text-center">
                 Are you sure you want to unassign this worker ?
               </p>{" "}

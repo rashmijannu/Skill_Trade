@@ -20,30 +20,20 @@ import Modal from "@mui/material/Modal";
 // ✅ Joy UI Imports
 import { Input } from "@mui/joy";
 
-// ✅ Ant Design Imports (Using Dynamic Import)
-const Typography = dynamic(() => import("antd").then((mod) => mod.Typography), {
-  ssr: false,
-});
+// ✅ Ant Design Imports
+import { Typography, Input as Otp } from "antd";
 const { Title } = Typography;
-const Otp = dynamic(() => import("antd").then((mod) => mod.Input), {
-  ssr: false,
-});
 
 // ✅ External Library Imports
-const PhoneInput = dynamic(() => import("react-phone-input-2"), { ssr: false });
+import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-// ✅ Custom Component Imports (Using Dynamic Import for Modal)
-const ModalComponent = dynamic(() => import("../Modal"), { ssr: false });
-const ResetPassModal = dynamic(() => import("./ResetPassModal"), {
-  ssr: false,
-});
+// ✅ Custom Component Imports
+import ModalComponent from "../Modal";
+import ResetPassModal from "./ResetPassModal";
 
 // ✅ Toaster (Prevent SSR Issues)
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
+import toast, { Toaster } from "react-hot-toast";
 
 // ✅ Other Imports
 import { style } from "../../_Arrays/Arrays";
@@ -96,7 +86,11 @@ const LoginForm = () => {
 
       if (response.ok) {
         toast.success("verification successfull");
+         setOpen(false);
+        setLoading(true);
+       
         setTimeout(() => {
+          setLoading(false);
           SetResetPass(true);
           setOpen(false);
         }, 3000);

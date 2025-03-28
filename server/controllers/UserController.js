@@ -317,7 +317,7 @@ async function SendOtp(req, resp) {
     const emailTemplate = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
         <div style="text-align: center;">
-        <img src="https://yourdomain.com/path-to-your-image/skill-trade-logo.png" alt="Skill Trade Logo" style="width: 250px; margin-bottom: 10px; background-color: black;">
+        <img src="https://res.cloudinary.com/dqe7okgzb/image/upload/v1743163315/logo_yhxmjl.png" alt="Skill Trade Logo" style="width: 250px; margin-bottom: 10px; background-color: black;">
 
           <h1 style="color: #333;">Your Otp To Reset Password</h1>
           <p style="font-size: 18px; color: #555;">Hello,</p>
