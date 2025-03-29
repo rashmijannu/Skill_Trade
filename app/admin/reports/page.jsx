@@ -164,7 +164,7 @@ const Page = ({ role }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ info, role }),
+          body: JSON.stringify({ role }),
         }
       );
 

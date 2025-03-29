@@ -235,7 +235,7 @@ const params = useParams();
     } catch (error) {
       toast.error("error try again later");
     } finally {
-      SetReviewModal(false);
+      setReviewModal(false);
       GetData();
       setFetchLoading(false);
     }
@@ -264,7 +264,7 @@ const params = useParams();
         <Alert severity="warning" className="w-full max-w-2xl mb-4">
           <strong>Warning:</strong> Please follow the guidelines below, or your
           request may be deleted.
-          <br /> {data.ReportedInfo.Info}
+          <br /> {data?.ReportedInfo?.Info}
           <span
             onClick={() => setReviewModal(true)}
             className="ml-3 text-blue-600 cursor-pointer"

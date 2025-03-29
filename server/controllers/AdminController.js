@@ -243,7 +243,7 @@ async function ApproveRequest(req, resp) {
 async function RejectReviewRequest(req, resp) {
   try {
     const { rid } = req.params;
-    const { info } = req.body;
+    // const { info } = req.body;
     const report = await ReportModal.findOne({ requestId: rid });
     const request = await RequestModal.findById(rid);
     if (!report) {
@@ -259,7 +259,7 @@ async function RejectReviewRequest(req, resp) {
       });
     }
     report.ReviewRequested = false;
-    request.ReportedInfo.Info = info;
+    // request.ReportedInfo.Info = info;
     request.ReportedInfo.Review = false;
     await request.save();
     await report.save();

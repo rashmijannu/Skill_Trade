@@ -51,7 +51,7 @@ export default function CheckLogin(WrappedComponent) {
     // Show loading spinner while checking authentication
     if (loading) {
       return (
-        <div className="flex justify-center w-100 h-screen items-center gap-4">
+        <div className="flex justify-center w-full h-screen items-center gap-4">
           <p className="font-bold text-3xl">Checking Authentication</p>
           <PulseLoader />
         </div>
@@ -61,7 +61,7 @@ export default function CheckLogin(WrappedComponent) {
     if (isAuthenticated) {
       router.push("/");
       return (
-        <div className="flex justify-center w-100 h-screen items-center">
+        <div className="flex justify-center w-full h-screen items-center">
           <p className="font-bold text-3xl">Redirecting...</p>
         </div>
       );
