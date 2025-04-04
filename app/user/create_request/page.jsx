@@ -246,7 +246,7 @@ const CreateRequest = () => {
                   className="w-full"
                   placeholder="Select service"
                 />
-                <div className="flex gap-3 items-center justify-center w-full">
+              <div className="flex gap-3 items-center justify-center w-full">
                   <p className="font-bold text-red-600">
                     Service not available?
                   </p>
@@ -257,6 +257,7 @@ const CreateRequest = () => {
                     {isCustomService ? "Revert" : "Add custom service"}
                   </CustomButton>
                 </div>
+
                 {isCustomService && (
                   <Input
                     name="custom_service"

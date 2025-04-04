@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
@@ -32,13 +31,9 @@ import {
 } from "react-icons/md";
 import { FaHandshake } from "react-icons/fa";
 import { Tag } from "antd";
-import dynamic from "next/dynamic";
 import { useAuth } from "@/app/_context/UserAuthContent";
-
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
+import toast,{ Toaster } from "react-hot-toast";
+import UserPrivateRoutes from "@/app/_components/privateroutes/UserPrivateRoutes";
 
 const Hire = () => {
   const [workers, setWorkers] = useState([]);
@@ -57,12 +52,7 @@ const Hire = () => {
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
   const [useCurrentLocation, setUseCurrentLocation] = useState(false);
-  const toast = dynamic(
-    () => import("react-hot-toast").then((mod) => mod.toast),
-    {
-      ssr: false,
-    }
-  );
+
   // Function to get user location
   const getUserLocation = () => {
     return new Promise((resolve, reject) => {
@@ -146,13 +136,13 @@ const Hire = () => {
     setServiceType(value);
   };
 
-  function handleOpenHireModal(id, workerName) {
-    if (id) {
-      SetWorkerId(id);
-      SetWorkerName(workerName);
-      setHireModal(true);
-    }
-  }
+  // function handleOpenHireModal(id, workerName) {
+  //   if (id) {
+  //     SetWorkerId(id);
+  //     SetWorkerName(workerName);
+  //     setHireModal(true);
+  //   }
+  // }
 
   async function SendHireRequest() {
     try {
@@ -356,10 +346,10 @@ const Hire = () => {
                       </Link>
                       <Link
                         href={`/user/create_request?id=${encodeURIComponent(
-                          worker._id
+                          worker?._id
                         )}&name=${encodeURIComponent(
-                          worker.Name
-                        )}&expertise=${encodeURIComponent(worker.ServiceType)}`}
+                          worker?.Name
+                        )}&expertise=${encodeURIComponent(worker?.ServiceType)}`}
                       >
                         {" "}
                         <Button
@@ -488,4 +478,4 @@ const Hire = () => {
   );
 };
 
-export default Hire;
+export default UserPrivateRoutes(Hire);

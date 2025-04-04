@@ -323,7 +323,7 @@ const Userinfo = () => {
         <CircularProgress color="primary" />
       </Backdrop>
 
-      {/* modal for emial verification  */}
+      {/* modal for email verification  */}
       <AlertDialog open={openmodal}>
         <AlertDialogContent className="p-6 w-[400px] rounded-lg shadow-lg">
           <AlertDialogHeader className="text-center">
@@ -348,7 +348,7 @@ const Userinfo = () => {
             />
 
             <Button
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              className="w-full"
               onClick={() => {
                 verifyOtp(auth?.user?.Email);
               }}

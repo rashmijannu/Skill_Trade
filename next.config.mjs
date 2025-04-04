@@ -1,12 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["localhost", "skill-trade-next-15.vercel.app"], // Add the domain you want to allow for external images
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "skilltrade-backed.onrender.com",
+        pathname: "/api/v1/users/GetUserImage/**",
+      },
+      {
+        protocol: "https",
+        hostname: "skill-trade-next-15.vercel.app",
+      },
+      {
+        protocol: "http", 
+        hostname: "localhost",
+        port: "8000",
+      },
+    ],
   },
-  reactStrictMode: false, // Disable StrictMode
-  // eslint:{
-  //   ignoreDuringBuildsx:true
-  // },
+  reactStrictMode: false,
 };
 
 export default nextConfig;
