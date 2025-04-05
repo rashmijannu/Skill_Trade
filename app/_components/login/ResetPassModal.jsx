@@ -37,7 +37,7 @@ const ResetPassModal = ({ handleClose, email }) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/Resetpassword`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/Resetpassword`,
         {
           method: "POST",
           headers: {

@@ -69,7 +69,7 @@ const LoginForm = () => {
     try {
       SetVerifyOtp(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/VerifyOtp`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
         {
           method: "POST",
           headers: {
@@ -125,7 +125,7 @@ const LoginForm = () => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/UserLogin`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/UserLogin`,
         {
           method: "POST",
           headers: {
@@ -175,7 +175,7 @@ const LoginForm = () => {
       SetSendingOtp(true);
       SetOtpGenerate(false);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/SendOtp`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendOtp`,
         {
           method: "POST",
           headers: {

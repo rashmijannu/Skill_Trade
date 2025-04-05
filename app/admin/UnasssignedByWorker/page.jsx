@@ -42,7 +42,7 @@ const WorkersTable = ({ role }) => {
   const fetchWorkers = async (page) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/admin/getWorkersWithUnAssignedRequests/${page}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/admin/getWorkersWithUnAssignedRequests/${page}`,
         {
           method: "POST",
           headers: {
@@ -68,7 +68,7 @@ const WorkersTable = ({ role }) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/admin/banWorker/${selectedWorker}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/admin/banWorker/${selectedWorker}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -96,7 +96,7 @@ const WorkersTable = ({ role }) => {
   async function ValidateUnassignedRequest(rid) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/admin/ValidateUnassignedRequest/${rid}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/admin/ValidateUnassignedRequest/${rid}`,
         {
           method: "PUT",
           headers: {

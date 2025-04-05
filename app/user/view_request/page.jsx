@@ -35,7 +35,7 @@ function ViewRequest() {
     try {
       setloading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetUserRequest/${auth?.user?._id}/${pageNumber}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetUserRequest/${auth?.user?._id}/${pageNumber}`
       );
       const info = await response.json();
       if (response.status === 200) {

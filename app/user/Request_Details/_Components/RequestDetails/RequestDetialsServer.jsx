@@ -22,7 +22,7 @@ export default function RequestDetailsClient({ params}) {
         console.log(`Fetching data for rid: ${rid}`);
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`,{
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`,{
             next:{revalidate:60}
           }
         );
@@ -59,7 +59,7 @@ export default function RequestDetailsClient({ params}) {
     <RequestDetails
       initialData={data}
       loadingstate={false}
-      intialimage={`${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`}
+      intialimage={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`}
     />
   );
 }

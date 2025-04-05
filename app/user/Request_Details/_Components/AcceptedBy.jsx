@@ -83,7 +83,7 @@ function AcceptedBy() {
     try {
       setLoading2(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/AssignRequest/${rid}/${wid}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/AssignRequest/${rid}/${wid}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

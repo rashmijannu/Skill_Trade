@@ -100,7 +100,7 @@ const Hire = () => {
   const fetchWorkers = async (coordinates, pincode) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/ListWorkers/${currentPage}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/ListWorkers/${currentPage}`,
         {
           method: "POST",
           headers: {
@@ -161,7 +161,7 @@ const Hire = () => {
       setBackDrop(true);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/hire/${workerid}/${auth?.user?._id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/hire/${workerid}/${auth?.user?._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -281,7 +281,7 @@ const Hire = () => {
                   <div className="flex gap-4 items-center">
                     <Avatar
                       alt={worker.Name}
-                      src={`${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/GetWorkerImage/${worker._id}`}
+                      src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerImage/${worker._id}`}
                       sx={{ width: 90, height: 90 }}
                     />
                     <div className="flex flex-col gap-1">
@@ -374,7 +374,7 @@ const Hire = () => {
                     <AlertDialogTitle className="text-center flex items-center justify-center gap-2">
                       <Avatar
                         alt={workername}
-                        src={`${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/GetWorkerImage/${workerid}`}
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerImage/${workerid}`}
                         sx={{ width: 40, height: 40 }}
                       />{" "}
                       Hire {workername}

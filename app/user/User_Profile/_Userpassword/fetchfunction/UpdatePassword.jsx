@@ -1,7 +1,7 @@
 export async function UpdatePassword(uid, passwords) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/UserPassword/${uid}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/UserPassword/${uid}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

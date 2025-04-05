@@ -3,7 +3,7 @@ import RequestDetailsClient from "./RequestDetailsClient";
 async function fetchRequestDetails(rid) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`,
       {
         next: { revalidate: 100 }, // ISR: Revalidate every 100 seconds
       }
@@ -38,7 +38,7 @@ export default async function RequestDetailsServer({ params }) {
     <RequestDetailsClient
       IntialRequestData={data.requestdetails}
       loadingstate={false}
-      requestimage={`${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`}
+      requestimage={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`}
     />
   );
 }

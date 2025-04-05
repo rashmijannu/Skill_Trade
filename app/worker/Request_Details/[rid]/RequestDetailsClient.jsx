@@ -52,7 +52,7 @@ const RequestDetailsClient = ({
        return;
      }
      const response = await fetch(
-       `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/CheckBan/${auth?.user?._id}`
+       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/CheckBan/${auth?.user?._id}`
      );
      const data = await response.json();
 

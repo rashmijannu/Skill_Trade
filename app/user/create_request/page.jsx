@@ -172,7 +172,7 @@ const CreateRequest = () => {
     formData.append("workerid", workerId);
     try {
       const request = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/CreateRequest`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/CreateRequest`,
         {
           method: "POST",
           body: formData,
@@ -204,7 +204,7 @@ const CreateRequest = () => {
           <span className="flex ml-2 gap-2 items-center">
             To Hire{" "}
             <Avatar
-              src={`${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/GetWorkerImage/${workerId}`}
+              src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerImage/${workerId}`}
               sx={{ width: 35, height: 35 }}
             />{" "}
             {workerName}

@@ -1,7 +1,7 @@
 export default async function GetRequestData(rid) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`
     );
 
     if (response) {

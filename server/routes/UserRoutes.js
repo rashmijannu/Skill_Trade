@@ -13,6 +13,7 @@ const {
   SubmitForReview,
   SendEmailVerificationOtp,
   ListWorkers,
+  SubmitUserQuery,
   // SendHireRequest,
 } = require("../controllers/UserController");
 
@@ -46,6 +47,8 @@ router.post("/review_request/:rid", SubmitForReview);
 router.post("/SendEmailVerificationOtp", SendEmailVerificationOtp);
 
 router.post("/ListWorkers/:page", ListWorkers);
+
+router.post("/SubmitUserQueryForm", SubmitUserQuery);
 
 // router.post("/hire/:wid/:uid", SendHireRequest);
 

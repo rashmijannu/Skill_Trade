@@ -2,19 +2,10 @@
 import React, { useState } from "react";
 import { FaGithub, FaEnvelope, FaLinkedin } from "react-icons/fa";
 import dynamic from "next/dynamic";
+import {Button} from "../../components/ui/button"
+import toast, {Toaster} from "react-hot-toast"
+import Image from "next/image"
 
-// ✅ Dynamically import react-hot-toast
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  {
-    ssr: false,
-  }
-);
-
-// ✅ Dynamically import Next.js Image if needed
-const Image = dynamic(() => import("next/image"), { ssr: false });
-
-// ✅ Dynamically import Footer if it uses document/window
 const Footer = dynamic(() => import("../_components/Footer"), { ssr: false });
 
 
@@ -26,11 +17,10 @@ const ContactForm = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const toast = (await import("react-hot-toast")).toast;
     try {
       Setloading(true);
       const response = await fetch(
-        "https://ayushreactbackend.onrender.com/api/v1/auth/SubmitUserQueryForm",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SubmitUserQueryForm`,
         {
           method: "POST",
           headers: {
@@ -106,13 +96,13 @@ const ContactForm = () => {
             onChange={(e) => SetMessage(e.target.value)}
           ></textarea>
         </div>
-        <button
+        <Button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg"
+          className="w-full  font-bold py-2 rounded-lg"
           disabled={loading}
         >
           {loading ? "Sending..." : "Submit"}
-        </button>
+        </Button>
       </form>
     </div>
   );

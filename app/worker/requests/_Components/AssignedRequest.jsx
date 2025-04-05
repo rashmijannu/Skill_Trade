@@ -56,7 +56,7 @@ const AssignedRequest = () => {
     try {
       const currentdate = new Date();
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/UnassignRequest/${rid}/${auth?.user._id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/UnassignRequest/${rid}/${auth?.user._id}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -40,7 +40,7 @@ const Userinfo = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [emailVerified, SetEmailVerified] = useState(false);
   const [imgurl, SetImgUrl] = useState(
-    `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
   );
 
   const handleInputChange = (e) => {
@@ -115,7 +115,7 @@ const Userinfo = () => {
           );
           toast.success(response.message);
           SetImgUrl(
-            `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
           );
         } else {
           toast.error(response.message);
@@ -138,7 +138,7 @@ const Userinfo = () => {
       SetOpenModal(false);
       setOpenBackdrop(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
         {
           method: "POST",
           headers: {
@@ -170,7 +170,7 @@ const Userinfo = () => {
     try {
       SetLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/VerifyOtp`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
         {
           method: "POST",
           headers: {

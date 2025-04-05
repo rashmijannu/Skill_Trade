@@ -43,7 +43,7 @@ const HiringRequest = () => {
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/HiringRequest/${auth.user._id}?page=${pageNumber}&limit=5`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/HiringRequest/${auth.user._id}?page=${pageNumber}&limit=5`
         );
         if (!response) {
           throw new Error(
@@ -106,7 +106,7 @@ const HiringRequest = () => {
   //       return;
   //     }
   //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/AcceptRequest/${wid}/${rid}`,
+  //       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/AcceptRequest/${wid}/${rid}`,
   //       {
   //         method: "POST",
   //         headers: { "Content-Type": "application/json" },

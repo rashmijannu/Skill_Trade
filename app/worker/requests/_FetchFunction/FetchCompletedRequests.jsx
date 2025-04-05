@@ -1,7 +1,7 @@
 export async function FetchCompletedRequest(wid, pageNumber = 1) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/workers/GetWorkerCompletedRequest/${wid}?pagenumber=${pageNumber}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerCompletedRequest/${wid}?pagenumber=${pageNumber}`
     );
     if (response) {
       const data = await response.json();

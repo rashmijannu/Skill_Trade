@@ -30,7 +30,7 @@ export default function UserPrivateRoutes(WrappedComponent) {
       const checkAuth = async () => {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/userAuth`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/userAuth`,
             {
               headers: {
                 authorization: auth?.token,

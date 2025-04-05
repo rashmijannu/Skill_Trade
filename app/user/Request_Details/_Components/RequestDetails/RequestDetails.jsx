@@ -142,7 +142,7 @@ const params = useParams();
       formData.append("image", image);
       setFetchLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/UpdateRequestPhoto/${rid}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/UpdateRequestPhoto/${rid}`,
         {
           method: "POST",
           body: formData,
@@ -186,12 +186,12 @@ const params = useParams();
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetSingleUserRequest/${rid}`
       );
       const info = await response.json();
       if (info.success) {
         SetImgUrl(
-          `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`
         );
         setData(info.requestdetails);
       } else {
@@ -220,7 +220,7 @@ const params = useParams();
     try {
       setFetchLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC__BASE_URL}/api/v1/users/review_request/${rid}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/review_request/${rid}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

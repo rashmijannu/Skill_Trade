@@ -4,6 +4,7 @@ const UserModal = require("../modals/UserModal");
 const ReportModal = require("../modals/ReportModal");
 const RequestModal = require("../modals/RequestModal");
 const fs = require("fs").promises;
+const Tesseract = require("tesseract.js");
 
 async function RegisterWorker(req, resp) {
   try {
@@ -300,6 +301,38 @@ async function GetWorkerData(req, resp) {
   }
 }
 
+// verify addhar function
+const verifyAadharImage = async (imageBuffer) => {
+  try {
+    const result = await Tesseract.recognize(imageBuffer, "eng");
+
+    const text = result.data.text.replace(/\s+/g, " ").toLowerCase();
+
+    let score = 0;
+
+    // 1. Aadhaar Number Check
+    const aadhaarRegex = /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/;
+    if (aadhaarRegex.test(text)) {
+      score += 40;
+    }
+
+    // 2. Check for "Government of India"
+    if (text.includes("government of india")) {
+      score += 30;
+    }
+
+    // 3. Check for "Unique Identification Authority of India"
+    if (text.includes("unique identification authority of india")) {
+      score += 30;
+    }
+
+    return Math.min(score, 100); // Cap at 100
+  } catch (error) {
+    console.error("OCR Error:", error);
+    return 0; // fallback score
+  }
+};
+
 async function UpdateProfile(req, resp) {
   try {
     const { wid } = req.params;
@@ -369,17 +402,24 @@ async function UpdateProfile(req, resp) {
 
     if (vimage) {
       try {
+        const vimageBuffer = await fs.readFile(vimage.filepath || vimage.path);
+
         updatedWorker.VerifyId = {
-          data: await fs.readFile(vimage.filepath || vimage.path),
+          data: vimageBuffer,
           contentType: vimage.mimetype || vimage.type,
         };
+
+        // Aadhar verification logic
+        const confidenceScore = await verifyAadharImage(vimageBuffer);
+        console.log("confidenceScore", confidenceScore);
+        updatedWorker.Verified.verified =
+          confidenceScore >= 70 ? "Verified" : "Pending";
       } catch (error) {
         return resp.status(400).send({
           success: false,
           message: "Verification image processing failed",
         });
       }
-      updatedWorker.Verified.verified = "Pending";
     }
 
     await updatedWorker.save();
@@ -729,8 +769,6 @@ async function GetHiringRequest(req, resp) {
     });
   }
 }
-
-
 
 module.exports = {
   RegisterWorker,
