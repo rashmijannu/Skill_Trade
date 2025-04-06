@@ -31,7 +31,7 @@ Follow these steps to run the project locally.
 - Clone your forked repo instead of the main one
 - 
 ```bash
-git clone link of your forked repo
+git clone "link of your forked repo"
 ```
 frontend set up:
 ```bash
@@ -85,11 +85,11 @@ push to github
 git push origin  your-feature-name
 ```
 
-. Open a Pull Request
+Open a Pull Request
 Go to your GitHub repository
 
 You’ll see an option to "Compare & pull request"
 
-Add a title, description, and submit the pull request
+Add a title, description,images and submit the pull request
 
 
