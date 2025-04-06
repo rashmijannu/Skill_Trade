@@ -25,10 +25,13 @@ Follow these steps to run the project locally.
 
 ## 📦 Installation
 
-### 1. Clone the repository
+### 1. Fork the repository
 
+- Click the **Fork** button on the top right of the repo
+- Clone your forked repo instead of the main one
+- 
 ```bash
-git clone https://github.com/AyushSharma72/Skill_Trade_Next_15.git
+git clone link of your forked repo
 ```
 frontend set up:
 ```bash
@@ -62,5 +65,31 @@ move to the server folder: cd server
 install dependancy : npm install 
 start the server : nodemon server
 ```
+
+
+
+## 🚀 How to Push Code
+create a new branch 
+```
+git checkout -b your-feature-name
+```
+
+Stage and Commit Your Changes
+```
+git add .
+git commit -m "Add: your meaningful commit message"
+```
+
+push to github
+```
+git push origin  your-feature-name
+```
+
+. Open a Pull Request
+Go to your GitHub repository
+
+You’ll see an option to "Compare & pull request"
+
+Add a title, description, and submit the pull request
 
 
