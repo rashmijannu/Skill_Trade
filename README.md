@@ -38,20 +38,24 @@ npm run dev
 ```
 
 create .env.local file in the skill folder:
+
+```
 NEXT_PUBLIC_BASE_URL=http://localhost:8000
 NEXT_PUBLIC_HERE_API_KEY=you api key (Go to https://developer.here.com to generate api key)  
+```
 
 ---
 
 backend set up:
 
 create .env file in the server folder:
-
+```
 DB_CONNECT=your mongodb database link
 email_id=your email(only needed when working with email functionality)
 pass_key=email pass key 
 PORT=8000
 SECRET=UJSBBFGSIERNFDJDKKSJ
+```
 
 ```
 move to the server folder: cd server
