@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build": "echo 'No build step required for this backend.'",
     "dev": "cross-env PORT=8000 nodemon server.js",
     "prod": "cross-env PORT=8080 node server.js"
   },
@@ -13,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "depcheck": "^1.4.7",
