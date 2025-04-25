@@ -16,10 +16,18 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Avatar from "@mui/material/Avatar";
 
-import { services, steps } from "../../_Arrays/Arrays";
+import {
+  services,
+  steps,
+  city_mapping,
+  Service_mapping,
+} from "../../_Arrays/Arrays";
+
 import { useAuth } from "@/app/_context/UserAuthContent";
 import UserPrivateRoutes from "../../_components/privateroutes/UserPrivateRoutes";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { Backdrop, CircularProgress } from "@mui/material";
+
 
 const CreateRequest = () => {
   //mui
@@ -40,6 +48,7 @@ const CreateRequest = () => {
   const [isCustomLocation, setIsCustomLocation] = useState(false);
   const [pincode, Setpincode] = useState(null);
   const [city, Setcity] = useState("");
+  const [predictedPrice, setPredictedPrice] = useState(null);
 
   const searchParams = useSearchParams();
   const workerId = searchParams.get("id");
@@ -48,6 +57,7 @@ const CreateRequest = () => {
   const defaultService = services.find((s) => s.value === expertise) || null;
   const minDate = new Date();
   const [auth, setAuth] = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const locations = [
     {
@@ -170,6 +180,7 @@ const CreateRequest = () => {
     formData.append("city", city);
     formData.append("coordinates", JSON.stringify(coordinates));
     formData.append("workerid", workerId);
+
     try {
       const request = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/CreateRequest`,
@@ -183,7 +194,7 @@ const CreateRequest = () => {
 
       if (result.success) {
         toast.success(result.message);
-        setActiveStep(3);
+        PredictPrice();
       } else {
         toast.error(result.message);
       }
@@ -193,10 +204,64 @@ const CreateRequest = () => {
     }
   }
 
+  async function PredictPrice() {
+    try {
+      if (!service || !city || !time) {
+        return;
+      }
+
+      // Start loading
+      setLoading(true);
+
+      const City = city.trim().toLowerCase();
+      const InputService = Service_mapping[service];
+      const InputCity = city_mapping[City];
+
+      const response = await fetch(
+        "https://pricepredictionapi-kl6p.onrender.com/predict",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            serviceType: InputService,
+            city: InputCity,
+            time: time,
+          }),
+        }
+      );
+
+      if (response) {
+        const data = await response.json();
+        setPredictedPrice(data.predictedPrice);
+        setActiveStep(3);
+      }
+      // End loading
+      setLoading(false);
+    } catch (error) {
+      setActiveStep(3);
+      setLoading(false);
+      toast.error("Error in price prediction");
+      console.log(error)
+    }
+  }
+
   const isStepOptional = (step) => step === 1;
 
   return (
     <Box sx={{ width: "100%" }}>
+      {/* backdrop  */}
+      <Backdrop
+        sx={{
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <Toaster position="bottom-center" reverseOrder={false} />
       <p className="w-full text-center font-bold text-3xl mt-20 sm:mt-4 flex justify-center ">
         Create Request
@@ -224,7 +289,15 @@ const CreateRequest = () => {
       {activeStep === steps.length ? (
         <div className="flex flex-col justify-center items-center gap-y-4 h-[500px]">
           <p className="font-bold text-2xl">Request submitted</p>
-          <Image src="/success.svg" className="w-[300px]"></Image>
+
+          {predictedPrice !== null && (
+            <p className="text-lg font-medium text-green-600">
+              Estimated Price: ₹{predictedPrice}
+            </p>
+          )}
+
+          <Image src="/success.svg" className="w-[300px]" alt="Success" width={300} height={300} />
+
           <Link href="/user/view_request">
             <CustomButton>View request</CustomButton>
           </Link>
@@ -246,7 +319,7 @@ const CreateRequest = () => {
                   className="w-full"
                   placeholder="Select service"
                 />
-              <div className="flex gap-3 items-center justify-center w-full">
+                <div className="flex gap-3 items-center justify-center w-full">
                   <p className="font-bold text-red-600">
                     Service not available?
                   </p>

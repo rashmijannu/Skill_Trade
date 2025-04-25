@@ -202,7 +202,10 @@ const HiringRequest = () => {
                         <Tag icon={<CheckCircleOutlined />} color="purple">
                           {item.status}
                         </Tag>
-                      ) : null}
+                      ) :  item.status === "Assigned" ? (
+                        <Tag icon={<CheckCircleOutlined />} color="green">
+                          {item.status}
+                        </Tag>):null}
                     </StyledTableCell>
 
                     {/* creation date  */}

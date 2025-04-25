@@ -47,6 +47,9 @@ body::-webkit-scrollbar {
   width: 400px !important;
 }
 
+.border-input{
+  width: 100%;
+}
 .swiper-button-next::after {
   content: url("/arrowsvgicon.svg") !important;
   background-size: cover;

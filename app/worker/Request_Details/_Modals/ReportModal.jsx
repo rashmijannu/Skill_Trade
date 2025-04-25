@@ -52,7 +52,7 @@ const ReportModal = ({ handleClose, rid }) => {
   }
 
   return (
-    <Box sx={style} className="w-[280px] sm:w-[400px]">
+    <Box sx={style} className="w-[320px] sm:w-[400px]">
       <p className="w-full text-center mb-2 text-2xl font-bold">
         Report request
       </p>
@@ -61,6 +61,7 @@ const ReportModal = ({ handleClose, rid }) => {
           required
           onValueChange={(value) => handleIssueTypeChange(value)}
           value={IssueType || undefined}
+        
         >
           <SelectTrigger>
             <SelectValue placeholder="Select issue" />

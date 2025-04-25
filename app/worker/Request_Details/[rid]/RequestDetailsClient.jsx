@@ -314,7 +314,7 @@ const RequestDetailsClient = ({
               ModalType={ReportModal}
               id={rid}
             />
-            {/* Accept Request Modal */}
+            {/* Accept Request Modal */}  
             <ModalComponent
               open={open2}
               handleClose={handleClose2}

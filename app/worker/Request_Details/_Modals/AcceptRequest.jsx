@@ -44,7 +44,7 @@ const AcceptRequest = ({ handleClose, rid }) => {
   }
 
   return (
-    <Box sx={style} className="w-[280px] sm:w-[400px]">
+    <Box sx={style} className="w-[320px] sm:w-[400px]">
       <p className="w-full text-center mb-2 text-2xl font-bold">
         Accept Request
       </p>

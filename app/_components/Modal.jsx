@@ -10,7 +10,12 @@ const ModalComponent = ({ handleClose, open, ModalType, id, email }) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <ModalType handleClose={handleClose} rid={id} email={email} />
+        <ModalType
+          handleClose={handleClose}
+          rid={id}
+          email={email}
+         
+        />
       </Modal>
     </div>
   );

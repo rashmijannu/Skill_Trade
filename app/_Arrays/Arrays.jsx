@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 import TableRow from "@mui/material/TableRow";
 
 const services = [
-  
   {
     value: "electrician",
     label: "Electrician",
@@ -167,7 +166,6 @@ const services = [
   },
 ];
 
-
 //form steps
 
 const steps = [
@@ -265,6 +263,37 @@ const marks = [
 ];
 
 
+const Service_mapping = {
+  electrician: 0,
+  carpenter: 1,
+  plumber: 2,
+  painter: 3,
+  gardener: 4,
+  mechanic: 5,
+  locksmith: 6,
+  handyman: 7,
+  welder: 8,
+  pest_control: 9,
+  roofer: 10,
+  tiler: 11,
+  appliance_repair: 12,
+  flooring_specialist: 13,
+};
+
+const city_mapping = {
+  delhi: 0,
+  mumbai: 1,
+  bangalore: 2,
+  hyderabad: 3,
+  chennai: 4,
+  kolkata: 5,
+  pune: 6,
+  ahmedabad: 7,
+  jaipur: 8,
+  lucknow: 9,
+  indore: 10,
+};
+
 export {
   services,
   steps,
@@ -274,4 +303,6 @@ export {
   labels,
   calculateDistance,
   marks,
+  Service_mapping,
+  city_mapping,
 };
