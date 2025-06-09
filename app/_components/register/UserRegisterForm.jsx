@@ -1,46 +1,25 @@
 "use client";
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
-
-// Dynamically import components that might access `document`
-const TextField = dynamic(() => import("@mui/material/TextField"), {
-  ssr: false,
-});
-const IconButton = dynamic(() => import("@mui/material/IconButton"), {
-  ssr: false,
-});
-const InputAdornment = dynamic(() => import("@mui/material/InputAdornment"), {
-  ssr: false,
-});
-const Visibility = dynamic(() => import("@mui/icons-material/Visibility"), {
-  ssr: false,
-});
-const VisibilityOff = dynamic(
-  () => import("@mui/icons-material/VisibilityOff"),
-  { ssr: false }
-);
-const Backdrop = dynamic(() => import("@mui/material/Backdrop"), {
-  ssr: false,
-});
-const CircularProgress = dynamic(
-  () => import("@mui/material/CircularProgress"),
-  { ssr: false }
-);
-const PhoneInput = dynamic(() => import("react-phone-input-2"), { ssr: false });
+import { Eye, EyeOff, User, Mail, MapPin, Hash } from "lucide-react";
 import toast from "react-hot-toast";
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
 
+// Static imports
+import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/app/_context/UserAuthContent";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import "react-phone-input-2/lib/style.css";
 
-const UserRegisterForm = () => {
+const UserRegisterForm = ({ loading, setLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [auth, setauth] = useAuth();
   const [mobileNo, setMobileNo] = useState("");
 
   const handleClickShowPassword = () => {
@@ -95,96 +74,165 @@ const UserRegisterForm = () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <Toaster position="bottom-center" reverseOrder={false} />
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+    <div className="w-full max-w-2xl mx-auto">
+      <Card className="border-0 shadow-none bg-transparent">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-slate-800">
+            Create User Account
+          </CardTitle>
+          <CardDescription className="text-slate-600">
+            Fill in your details to create your user account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={RegisterUser} className="space-y-6">
+            <div className="space-y-2">
+              <Label
+                htmlFor="name"
+                className="text-sm font-medium text-slate-700"
+              >
+                Full Name
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="name"
+                  name="Name"
+                  type="text"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            </div>
 
-      <form
-        className="w-full flex justify-center flex-col items-center gap-y-5 mt-5 formshadow py-2 rounded-md"
-        onSubmit={RegisterUser}
-      >
-        <p className="font-bold text-2xl">Create User Account</p>
-        <TextField
-          label="Name"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="text"
-          name="Name"
-        />
-        <div className="w-3/4">
-          <label className="text-sm text-gray-600 mb-1 block">
-            Mobile Number
-          </label>
-          <PhoneInput
-            country={"in"}
-            value={mobileNo}
-            onChange={(value) => setMobileNo(value)}
-            inputStyle={{
-              width: "100%",
-              height: "56px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-              paddingLeft: "48px",
-            }}
-            buttonStyle={{
-              border: "none",
-              borderRadius: "4px 0 0 4px",
-            }}
-          />
-        </div>
-        <TextField
-          label="Email"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="email"
-          name="Email"
-        />
-        <TextField
-          label="Password"
-          variant="outlined"
-          className="w-3/4"
-          required
-          name="Password"
-          type={showPassword ? "text" : "password"}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-slate-700">
+                Mobile Number
+              </Label>
+              <PhoneInput
+                country={"in"}
+                value={mobileNo}
+                onChange={(value) => setMobileNo(value)}
+                inputStyle={{
+                  width: "100%",
+                  height: "48px",
+                  borderRadius: "6px",
+                  border: "1px solid #e2e8f0",
+                  paddingLeft: "48px",
+                  fontSize: "14px",
+                }}
+                buttonStyle={{
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px 0 0 6px",
+                  backgroundColor: "#f8fafc",
+                }}
+                containerStyle={{
+                  width: "100%",
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-slate-700"
+              >
+                Email Address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="email"
+                  name="Email"
+                  type="email"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your email address"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-slate-700"
+              >
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="Password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="pr-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Create a strong password"
+                />
+                <button
+                  type="button"
                   onClick={handleClickShowPassword}
-                  edge="end"
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          label="Full Address"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="text"
-          name="Address"
-        />
-        <TextField
-          label="Area Pincode"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="number"
-          name="Pincode"
-        />
-        <Button>Register</Button>
-      </form>
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="address"
+                className="text-sm font-medium text-slate-700"
+              >
+                Full Address
+              </Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="address"
+                  name="Address"
+                  type="text"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your complete address"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="pincode"
+                className="text-sm font-medium text-slate-700"
+              >
+                Area Pincode
+              </Label>
+              <div className="relative">
+                <Hash className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="pincode"
+                  name="Pincode"
+                  type="number"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your area pincode"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-12 font-medium"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

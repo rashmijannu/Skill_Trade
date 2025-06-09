@@ -3,6 +3,7 @@ import Navbar from "./_components/Navbar";
 import { AuthProvider } from "./_context/UserAuthContent";
 import GoogleTranslator from "./_components/GoogleTranslator";
 import Chatbot from "./_components/ChatBot"
+import Footer from "./_components/Footer"
 
 export const metadata = {
   title: "Skill Trade",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         </AuthProvider>
         {/* <GoogleTranslator /> */}
         <Chatbot/>
+        <Footer/>
       </body>
     </html>
   );

@@ -153,12 +153,12 @@ const params = useParams();
 
       if (response.ok) {
         toast.success("Photo updated successfully!");
-
         SetImgUrl(`${imageurl}?timestamp=${new Date().getTime()}`);
       } else {
         toast.error(result.message);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update photo. Please try again.");
     } finally {
       setFetchLoading(false);
@@ -190,7 +190,7 @@ const params = useParams();
       );
       const info = await response.json();
       if (info.success) {
-        SetImgUrl(
+        setImgUrl(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/GetRequestPhotoController/${rid}`
         );
         setData(info.requestdetails);

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
 import { RxCross1 } from "react-icons/rx";
 import { useAuth } from "@/app/_context/UserAuthContent";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,6 @@ import { Input } from "@mui/joy";
 
 // ✅ Ant Design Imports
 import { Typography, Input as Otp } from "antd";
-const { Title } = Typography;
 
 // ✅ External Library Imports
 import PhoneInput from "react-phone-input-2";
@@ -33,10 +31,16 @@ import ModalComponent from "../Modal";
 import ResetPassModal from "./ResetPassModal";
 
 // ✅ Toaster (Prevent SSR Issues)
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 // ✅ Other Imports
 import { style } from "../../_Arrays/Arrays";
+
+// Additional UI imports for improved design
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent} from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Phone, Mail, Lock, Shield } from "lucide-react";
 
 const LoginForm = () => {
   const [auth, SetAuth] = useAuth();
@@ -49,6 +53,7 @@ const LoginForm = () => {
   const [GeneratedOtp, SetGeneratedOtp] = useState("");
   const [ResetPass, SetResetPass] = useState(false);
   const [VerifyOtp, SetVerifyOtp] = useState(false);
+  const [loginMethod, setLoginMethod] = useState("phone");
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -86,9 +91,9 @@ const LoginForm = () => {
 
       if (response.ok) {
         toast.success("verification successfull");
-         setOpen(false);
+        setOpen(false);
         setLoading(true);
-       
+
         setTimeout(() => {
           setLoading(false);
           SetResetPass(true);
@@ -201,172 +206,378 @@ const LoginForm = () => {
   }
 
   return (
-    <>
-      <p className="text-5xl font-bold leading-md tracking-md  text-center sm:mt-2 mt-20">
-        Welcome Back
-      </p>
-      <div className="relative flex justify-around sm:mt-20 mt-5">
-        <Toaster position="bottom-center" reverseOrder={false} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
+      <Toaster position="bottom-center" reverseOrder={false} />
 
-        <div className="flex flex-col items-center md:w-[40%] sm:w-3/4 w-[90%] formshadow py-10 px-2 rounded-md h-fit gap-3">
-          <p className="font-bold text-3xl tracking-wide text-gray-800">
-            LOGIN
-          </p>
-          <form
-            className="w-full flex justify-center flex-col items-center gap-y-10"
-            onSubmit={HandleLogin}
-          >
-            <PhoneInput
-              country={"in"}
-              value={mobileNo}
-              onChange={(value) => setMobileNo(value)}
-              inputStyle={{
-                width: "100%",
-                height: "56px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                paddingLeft: "48px",
-              }}
-              buttonStyle={{
-                border: "none",
-                borderRadius: "4px 0 0 4px",
-              }}
-            />
-            <div className="w-full flex flex-col gap-2  items-end">
-              <TextField
-                id="standard-password"
-                label="Password"
-                variant="outlined"
+      {/* Header */}
+      {/* <div className="p-4">
+        <Link
+          href="/"
+          className="inline-flex items-center text-gray-700 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Link> 
+      </div> */}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md space-y-6 sm:mt-0 mt-10">
+          {/* Welcome Header */}
+          <div className="text-center space-y-2 ">
+            <h1 className="text-4xl font-bold text-gray-900">Welcome Back</h1>
+            <p className="text-gray-600">Sign in to your Skill Trade account</p>
+          </div>
+
+          {/* Login Card */}
+          <Card className="shadow-xl border-0">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold text-center">
+                Sign In
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              <Tabs
+                value={loginMethod}
+                onValueChange={setLoginMethod}
                 className="w-full"
-                name="Password"
-                required
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        edge="end"
+              >
+                <form onSubmit={HandleLogin} className="space-y-6">
+                  <TabsContent value="phone" className="space-y-4 mt-0">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Phone className="h-4 w-4" />
+                        Phone Number
+                      </label>
+                      <PhoneInput
+                        country={"in"}
+                        value={mobileNo}
+                        onChange={(value) => setMobileNo(value)}
+                        inputStyle={{
+                          width: "100%",
+                          height: "48px",
+                          borderRadius: "6px",
+                          border: "1px solid #d1d5db",
+                          paddingLeft: "48px",
+                          fontSize: "16px",
+                        }}
+                        buttonStyle={{
+                          border: "1px solid #d1d5db",
+                          borderRadius: "6px 0 0 6px",
+                          backgroundColor: "#f9fafb",
+                        }}
+                        containerStyle={{
+                          width: "100%",
+                        }}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="email" className="space-y-4 mt-0">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Mail className="h-4 w-4" />
+                        Email Address
+                      </label>
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Enter your email"
+                        type="email"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            height: "48px",
+                            borderRadius: "6px",
+                          },
+                        }}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                      <Lock className="h-4 w-4" />
+                      Password
+                    </label>
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      placeholder="Enter your password"
+                      name="Password"
+                      required
+                      type={showPassword ? "text" : "password"}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          height: "48px",
+                          borderRadius: "6px",
+                        },
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+
+                    <div className="flex justify-between items-center mt-2">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="remember"
+                          className="rounded border-gray-300"
+                        />
+                        <label
+                          htmlFor="remember"
+                          className="text-sm text-gray-600"
+                        >
+                          Remember me
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleOpen}
+                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <span
-                className="text-right w-[132px] cursor-pointer"
-                onClick={() => {
-                  handleOpen();
-                }}
-              >
-                Forgot password?
-              </span>
-            </div>
-            <div className="w-full flex flex-col items-center gap-3">
-              {" "}
-              <Button
-                type="submit"
-                className="sm:w-1/2 w-3/4 text-xl tracking-wider"
-              >
-                Login
-              </Button>
-              <p>
-                Don&#39;t have an account?{" "}
-                <Link href="/register" className="text-blue-700">
-                  Register
-                </Link>
-              </p>
-            </div>
-          </form>
+                        Forgot password?
+                      </button>
+                    </div>
+                  </div>
 
-          {/* forgot password modal  */}
+                  <Button
+                    type="submit"
+                    className="w-full h-12 text-base font-medium bg-gray-900 hover:bg-gray-800"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Signing in...
+                      </div>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </form>
+              </Tabs>
 
-          <Modal
-            open={open}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box
-              sx={style}
-              className="flex flex-col gap-3 sm:w-[400px] w-[350px]"
+              {/* Register Link */}
+              <div className="text-center pt-4">
+                <p className="text-gray-600">
+                  Don&#39;t have an account?{" "}
+                  <Link
+                    href="/register"
+                    className="text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors"
+                  >
+                    Create one now
+                  </Link>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Security Badge */}
+          <div className="flex items-center justify-center">
+            <Badge
+              variant="secondary"
+              className="flex items-center gap-2 px-3 py-1"
             >
+              <Shield className="h-3 w-3" />
+              <span className="text-xs">
+                Secured with 256-bit SSL encryption
+              </span>
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+     
+      {open && (
+        <Modal
+          open={open}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              ...style,
+              borderRadius: "12px",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            }}
+            className="flex flex-col gap-4 sm:w-[450px] w-[350px] p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Lock className="h-5 w-5 text-gray-700" />
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Reset Password
+                </h2>
+              </div>
               <RxCross1
-                className="absolute right-4 top-4 cursor-pointer"
+                className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors"
                 title="close"
                 onClick={handleClose}
+                size={20}
               />
-              <p className="text-center text-xl">Forgot Password ?</p>
-              <Input
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter Email"
-                className="w-full"
-                required
-              />
-              <Button
-                onClick={async () => {
-                  const toast = (await import("react-hot-toast")).toast;
-                  if (email) {
-                    generateOTP();
-                    if (GeneratedOtp) {
-                      SendOtp();
-                    }
-                  } else {
-                    toast.error("Enter email");
-                  }
-                }}
-                disabled={SendingOtp}
-              >
-                {SendingOtp ? "Generating..." : " Generate OTP"}
-              </Button>
+            </div>
 
-              {OtpGenerate ? (
-                <>
-                  <p className="text-center text-red-600 m-0">
-                    If not received generate OTP again
+            {!OtpGenerate ? (
+              <>
+                <p className="text-gray-600 text-sm">
+                  Enter your email address and we'll send you a verification
+                  code to reset your password.
+                </p>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Email Address
+                  </label>
+                  <Input
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full"
+                    required
+                    sx={{
+                      "--Input-radius": "6px",
+                      "--Input-minHeight": "48px",
+                    }}
+                  />
+                </div>
+                <Button
+                  onClick={async () => {
+                    const toast = (await import("react-hot-toast")).toast;
+                    if (email) {
+                      generateOTP();
+                      if (GeneratedOtp) {
+                        SendOtp();
+                      }
+                    } else {
+                      toast.error("Enter email");
+                    }
+                  }}
+                  disabled={SendingOtp}
+                  className="w-full h-11"
+                >
+                  {SendingOtp ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Sending...
+                    </div>
+                  ) : (
+                    "Send Verification Code"
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <p className="text-blue-800 text-sm">
+                    We've sent a 6-digit verification code to{" "}
+                    <strong>{email}</strong>. Check your spam folder if you
+                    don't see it.
                   </p>
-                  <Title level={5}>Enter OTP</Title>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Verification Code
+                  </label>
                   <Otp.OTP
                     formatter={(str) => str.toUpperCase()}
                     {...sharedProps}
-                  />
-                  <Button
-                    onClick={() => {
-                      verifyOtp();
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      justifyContent: "center",
                     }}
-                  >
-                    {VerifyOtp ? "Verifying..." : "Verify"}
-                  </Button>
-                </>
-              ) : null}
-            </Box>
-          </Modal>
+                  />
+                </div>
 
-          {/* reset password modal */}
-          <ModalComponent
-            handleClose={handleResetPassClose}
-            open={ResetPass}
-            ModalType={ResetPassModal}
-            email={email}
-          />
-          {/* backdrop */}
-          {loading && (
-            <Backdrop
-              sx={(theme) => ({
-                color: "#fff",
-                zIndex: theme.zIndex.drawer + 1,
-              })}
-              open={loading}
-            >
-              <CircularProgress color="inherit" />
-            </Backdrop>
-          )}
-        </div>
-      </div>
-    </>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      SetOtpGenerate(false);
+                      setOtp("");
+                    }}
+                    className="flex-1"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={verifyOtp}
+                    disabled={VerifyOtp}
+                    className="flex-1"
+                  >
+                    {VerifyOtp ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Verifying...
+                      </div>
+                    ) : (
+                      "Verify Code"
+                    )}
+                  </Button>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    onClick={async () => {
+                      const toast = (await import("react-hot-toast")).toast;
+                      if (email) {
+                        generateOTP();
+                        if (GeneratedOtp) {
+                          SendOtp();
+                        }
+                      } else {
+                        toast.error("Enter email");
+                      }
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                    disabled={SendingOtp}
+                  >
+                    Didn't receive the code? Resend
+                  </button>
+                </div>
+              </>
+            )}
+          </Box>
+        </Modal>
+      )}
+
+      {/* Reset Password Modal */}
+      {ResetPass && (
+        <ModalComponent
+          handleClose={handleResetPassClose}
+          open={ResetPass}
+          ModalType={ResetPassModal}
+          email={email}
+        />
+      )}
+
+      {/* Backdrop */}
+      {loading && (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+    </div>
   );
 };
 

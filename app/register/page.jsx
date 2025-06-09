@@ -1,39 +1,69 @@
 "use client";
-import dynamic from "next/dynamic";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { Card, CardContent } from "@/components/ui/card";
 import UserRegisterForm from "../_components/register/UserRegisterForm";
 import WorkerRegisterForm from "../_components/register/WorkerRegisterForm";
-import CheckLogin from "../_components/privateroutes/CheckLogin";
-
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Toaster } from "react-hot-toast";
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
+
   return (
-    <div className="flex justify-center sm:mt-0 mt-20">
-      <Tabs defaultValue="user" className="lg:w-1/2 mt-4 sm:w-3/4 w-[90%]">
-        <TabsList className="w-full justify-around">
-          <TabsTrigger value="user" className="font-bold">
-            Register As User
-          </TabsTrigger>
-          <TabsTrigger value="worker" className="font-bold">
-            Register As Service Provider
-          </TabsTrigger>
-        </TabsList>
+    <>
+      <Toaster position="bottom-center" reverseOrder={false} />
+      <div className="min-h-screen relative bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
+        <Backdrop sx={{ color: "#fff", zIndex: 9999 }} open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
 
-        {/* tab 1 */}
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-2">
+            <h1 className="text-4xl font-bold text-slate-800 mb-2">
+              Join Our Platform
+            </h1>
+            <p className="text-slate-600 text-lg">
+              Create your account and get started today
+            </p>
+          </div>
 
-        <TabsContent value="user">
-          <UserRegisterForm />
-        </TabsContent>
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <Tabs defaultValue="user" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 h-12 bg-slate-100">
+                  <TabsTrigger
+                    value="user"
+                    className="font-semibold text-base data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    Register As User
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="worker"
+                    className="font-semibold text-base data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  >
+                    Register As Service Provider
+                  </TabsTrigger>
+                </TabsList>
 
-        {/* tab 2 */}
+                <TabsContent value="user" className="mt-0">
+                  <UserRegisterForm setLoading={setLoading} loading={loading} />
+                </TabsContent>
 
-        <TabsContent value="worker">
-          <WorkerRegisterForm />
-        </TabsContent>
-      </Tabs>
-    </div>
+                <TabsContent value="worker" className="mt-0">
+                  <WorkerRegisterForm
+                    setLoading={setLoading}
+                    loading={loading}
+                  />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
   );
 };
 
-export default CheckLogin(Register);
+export default Register;

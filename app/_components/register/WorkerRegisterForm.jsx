@@ -1,40 +1,18 @@
 "use client";
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-
-// Dynamically import components that access `document`
-const TextField = dynamic(() => import("@mui/material/TextField"), {
-  ssr: false,
-});
-const IconButton = dynamic(() => import("@mui/material/IconButton"), {
-  ssr: false,
-});
-const InputAdornment = dynamic(() => import("@mui/material/InputAdornment"), {
-  ssr: false,
-});
-const Visibility = dynamic(() => import("@mui/icons-material/Visibility"), {
-  ssr: false,
-});
-const VisibilityOff = dynamic(
-  () => import("@mui/icons-material/VisibilityOff"),
-  { ssr: false }
-);
-const Backdrop = dynamic(() => import("@mui/material/Backdrop"), {
-  ssr: false,
-});
-const CircularProgress = dynamic(
-  () => import("@mui/material/CircularProgress"),
-  { ssr: false }
-);
-const PhoneInput = dynamic(() => import("react-phone-input-2"), { ssr: false });
-const Toaster = dynamic(
-  () => import("react-hot-toast").then((mod) => mod.Toaster),
-  { ssr: false }
-);
-
+import { useState, useRef } from "react";
+import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench } from "lucide-react";
+import toast from "react-hot-toast";
+import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
-
-// Ensure `@/components/ui/select` does not depend on `document`
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -42,17 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import "react-phone-input-2/lib/style.css";
 
-const WorkerRegisterForm = () => {
+const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [serviceType, setServiceType] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
+  const debounceTimeout = useRef(null);
   const API_KEY = process.env.NEXT_PUBLIC_HERE_API_KEY;
 
   const handleClickShowPassword = () => {
@@ -63,16 +40,23 @@ const WorkerRegisterForm = () => {
     setServiceType(value);
   };
 
-  const handleAddressChange = async (query) => {
+  const handleAddressChange = (query) => {
     console.log("working");
     setAddress(query);
-    if (query.length < 2) return;
 
-    const response = await fetch(
-      `https://autosuggest.search.hereapi.com/v1/autosuggest?at=28.6139,77.2090&q=${query}&apiKey=${API_KEY}`
-    );
-    const data = await response.json();
-    setSuggestions(data.items || []);
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(async () => {
+      if (query.length < 2) return;
+
+      const response = await fetch(
+        `https://autosuggest.search.hereapi.com/v1/autosuggest?at=28.6139,77.2090&q=${query}&apiKey=${API_KEY}`
+      );
+      const data = await response.json();
+      setSuggestions(data.items || []);
+    }, 1000); // 1s debounce delay
   };
 
   const selectAddress = (place) => {
@@ -146,146 +130,225 @@ const WorkerRegisterForm = () => {
       toast.error("Please try again");
     }
   }
+
   return (
-    <div className="flex flex-col items-center mb-4">
-      <Toaster position="bottom-center" reverseOrder={false} />
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-
-      <form
-        className="w-full flex justify-center flex-col items-center gap-y-5 mt-5 formshadow py-2 rounded-md"
-        onSubmit={RegisterWorker}
-      >
-        <p className="font-bold text-2xl ">Create Service Provider Account</p>
-        <TextField
-          id="name"
-          label="Name"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="text"
-          name="Name"
-        />
-        <div className="w-3/4">
-          <label className="text-sm text-gray-600 mb-1 block">
-            Mobile Number
-          </label>
-          <PhoneInput
-            country={"in"}
-            value={mobileNo}
-            onChange={(value) => setMobileNo(value)}
-            inputStyle={{
-              width: "100%",
-              height: "56px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-              paddingLeft: "48px",
-            }}
-            buttonStyle={{
-              border: "none",
-              borderRadius: "4px 0 0 4px",
-            }}
-          />
-        </div>
-        <TextField
-          id="email"
-          label="Email"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="email"
-          name="Email"
-        />
-
-        <div className="w-3/4 relative">
-          <label className="text-sm text-gray-600 mb-1 block">
-            Your closest working location
-          </label>
-          <TextField
-            id="address"
-            variant="outlined"
-            className="w-full"
-            required
-            value={address}
-            onChange={(e) => handleAddressChange(e.target.value)}
-          />
-          {suggestions.length > 0 && (
-            <ul className="absolute bg-white border border-gray-300 w-full z-10 max-h-48 overflow-auto">
-              {suggestions.map((place, index) => (
-                <li
-                  key={index}
-                  onClick={() => selectAddress(place)}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
+   
+    
+      <div className="w-full max-w-2xl mx-auto">
+        <Card className="border-0 shadow-none bg-transparent">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-bold text-slate-800">
+              Create Service Provider Account
+            </CardTitle>
+            <CardDescription className="text-slate-600">
+              Join our platform as a service provider and start earning
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={RegisterWorker} className="space-y-6">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-medium text-slate-700"
                 >
-                  {place.title}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                  Full Name
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Input
+                    id="name"
+                    name="Name"
+                    type="text"
+                    required
+                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+              </div>
 
-        <TextField
-          id="pincode"
-          label="Area Pincode"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type="number"
-          inputProps={{ maxLength: 6 }}
-          name="pincode"
-        />
-        <TextField
-          id="password"
-          label="Password"
-          variant="outlined"
-          className="w-3/4"
-          required
-          type={showPassword ? "text" : "password"}
-          name="Password"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  edge="end"
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-slate-700">
+                  Mobile Number
+                </Label>
+                <PhoneInput
+                  country={"in"}
+                  value={mobileNo}
+                  onChange={(value) => setMobileNo(value)}
+                  inputStyle={{
+                    width: "100%",
+                    height: "48px",
+                    borderRadius: "6px",
+                    border: "1px solid #e2e8f0",
+                    paddingLeft: "48px",
+                    fontSize: "14px",
+                  }}
+                  buttonStyle={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px 0 0 6px",
+                    backgroundColor: "#f8fafc",
+                  }}
+                  containerStyle={{
+                    width: "100%",
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-slate-700"
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Select required onValueChange={handleServiceTypeChange}>
-          <SelectTrigger className="w-3/4">
-            <SelectValue placeholder="Select Service Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="electrician">Electrician</SelectItem>
-            <SelectItem value="carpenter">Carpenter</SelectItem>
-            <SelectItem value="plumber">Plumber</SelectItem>
-            <SelectItem value="painter">Painter</SelectItem>
-            <SelectItem value="gardener">Gardener</SelectItem>
-            <SelectItem value="mechanic">Mechanic</SelectItem>
-            <SelectItem value="locksmith">Locksmith</SelectItem>
-            <SelectItem value="handyman">Handyman</SelectItem>
-            <SelectItem value="welder">Welder</SelectItem>
-            <SelectItem value="pest_control">Pest Control</SelectItem>
-            <SelectItem value="roofer">Roofer</SelectItem>
-            <SelectItem value="tiler">Tiler</SelectItem>
-            <SelectItem value="appliance_repair">Appliance Repair</SelectItem>
-            <SelectItem value="flooring_specialist">
-              Flooring Specialist
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <Button>Register</Button>
-      </form>
-    </div>
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Input
+                    id="email"
+                    name="Email"
+                    type="email"
+                    required
+                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-slate-700">
+                  Your Closest Working Location
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+                  <Input
+                    id="address"
+                    value={address}
+                    onChange={(e) => handleAddressChange(e.target.value)}
+                    required
+                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                    placeholder="Start typing your address..."
+                  />
+                  {suggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-md shadow-lg z-50 max-h-48 overflow-auto">
+                      {suggestions.map((place, index) => (
+                        <div
+                          key={index}
+                          onClick={() => selectAddress(place)}
+                          className="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                        >
+                          <div className="text-sm font-medium text-slate-800">
+                            {place.title}
+                          </div>
+                          {place.vicinity && (
+                            <div className="text-xs text-slate-500 mt-1">
+                              {place.vicinity}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="pincode"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Area Pincode
+                </Label>
+                <div className="relative">
+                  <Hash className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Input
+                    id="pincode"
+                    name="pincode"
+                    type="number"
+                    required
+                    inputProps={{ maxLength: 6 }}
+                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                    placeholder="Enter your area pincode"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="Password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="pr-10 h-12 border-slate-200 focus:border-slate-400"
+                    placeholder="Create a strong password"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleClickShowPassword}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-slate-700">
+                  Service Type
+                </Label>
+                <div className="relative">
+                  <Wrench className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+                  <Select required onValueChange={handleServiceTypeChange}>
+                    <SelectTrigger className="h-12 pl-10 border-slate-200 focus:border-slate-400">
+                      <SelectValue placeholder="Select your service type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="electrician">Electrician</SelectItem>
+                      <SelectItem value="carpenter">Carpenter</SelectItem>
+                      <SelectItem value="plumber">Plumber</SelectItem>
+                      <SelectItem value="painter">Painter</SelectItem>
+                      <SelectItem value="gardener">Gardener</SelectItem>
+                      <SelectItem value="mechanic">Mechanic</SelectItem>
+                      <SelectItem value="locksmith">Locksmith</SelectItem>
+                      <SelectItem value="handyman">Handyman</SelectItem>
+                      <SelectItem value="welder">Welder</SelectItem>
+                      <SelectItem value="pest_control">Pest Control</SelectItem>
+                      <SelectItem value="roofer">Roofer</SelectItem>
+                      <SelectItem value="tiler">Tiler</SelectItem>
+                      <SelectItem value="appliance_repair">
+                        Appliance Repair
+                      </SelectItem>
+                      <SelectItem value="flooring_specialist">
+                        Flooring Specialist
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-white font-medium"
+                disabled={loading}
+              >
+                {loading
+                  ? "Creating Account..."
+                  : "Create Service Provider Account"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    
   );
 };
 

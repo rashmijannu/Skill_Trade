@@ -113,7 +113,7 @@ const Navbar = () => {
           width={200}
           height={70}
         ></Image>
-        <div className="xl:w-1/2 sm:w-3/4 flex items-center justify-between  font-bold">
+        <div className="xl:w-[40%] sm:w-1/2 p-2 flex items-center justify-between  font-bold">
           {auth?.user?.role == 0 ? (
             <>
               <Link
