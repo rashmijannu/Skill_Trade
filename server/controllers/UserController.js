@@ -585,7 +585,7 @@ async function ListWorkers(req, resp) {
     const limit = 5;
 
     page = parseInt(page) || 1;
-
+ 
     if (ServiceType) {
       query.ServiceType = ServiceType;
     }
@@ -644,13 +644,29 @@ async function ListWorkers(req, resp) {
       query.pincode = Pincode;
 
       totalWorkers = await WorkerModal.countDocuments(query);
-      Workers = await WorkerModal.find(query)
-        .select(
-          "Name MobileNo ServiceType coordinates city OverallRaitngs Reviews SubSerives"
-        )
-        .sort({ overAllSentimentScore: -1, OverallRaitngs: -1 })
-        .limit(limit)
-        .skip((page - 1) * limit);
+      Workers = await WorkerModal.aggregate([
+        { $match: query },
+        {
+          $project: {
+            Name: 1,
+            ServiceType: 1,
+            city: 1,
+            OverallRaitngs: 1,
+            CompletedRequest: 1,
+            SubSerives: 1,
+            overAllSentimentScore: 1,
+            ReviewsCount: { $size: "$Reviews" }, // Only include the count of Reviews
+          },
+        },
+        {
+          $sort: {
+            overAllSentimentScore: -1,
+            OverallRaitngs: -1,
+          },
+        },
+        { $skip: (page - 1) * limit },
+        { $limit: limit },
+      ]);
     }
 
     if (!Workers.length) {

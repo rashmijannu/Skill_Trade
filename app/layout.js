@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
         </AuthProvider>
         {/* <GoogleTranslator /> */}
         <Chatbot/>
-        <Footer/>
+        {/* <Footer/> */}
       </body>
     </html>
   );

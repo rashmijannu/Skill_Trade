@@ -28,7 +28,6 @@ import UserPrivateRoutes from "../../_components/privateroutes/UserPrivateRoutes
 import toast, { Toaster } from "react-hot-toast";
 import { Backdrop, CircularProgress } from "@mui/material";
 
-
 const CreateRequest = () => {
   //mui
   const [activeStep, setActiveStep] = useState(0);
@@ -67,6 +66,20 @@ const CreateRequest = () => {
     { value: "current", label: "Your current location" },
   ];
 
+  const cityOptions = [
+    { value: "delhi", label: "Delhi" },
+    { value: "mumbai", label: "Mumbai" },
+    { value: "bangalore", label: "Bangalore" },
+    { value: "hyderabad", label: "Hyderabad" },
+    { value: "chennai", label: "Chennai" },
+    { value: "kolkata", label: "Kolkata" },
+    { value: "pune", label: "Pune" },
+    { value: "ahmedabad", label: "Ahmedabad" },
+    { value: "jaipur", label: "Jaipur" },
+    { value: "lucknow", label: "Lucknow" },
+    { value: "indore", label: "Indore" },
+  ];
+
   const VisuallyHiddenInput = styled("input")`
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -91,7 +104,10 @@ const CreateRequest = () => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setImage({ file, url: imageUrl });
+      setImage((prev) => {
+        if (prev?.url) URL.revokeObjectURL(prev.url); // cleanup previous
+        return { file, url: imageUrl };
+      });
     }
   };
 
@@ -143,8 +159,8 @@ const CreateRequest = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (!description || !time || !date) {
+    setLoading(true);
+    if (!description || !time || !date || !pincode) {
       toast.error("All fields are required");
       return;
     }
@@ -194,58 +210,63 @@ const CreateRequest = () => {
 
       if (result.success) {
         toast.success(result.message);
-        PredictPrice();
+        // PredictPrice();
       } else {
         toast.error(result.message);
       }
     } catch (error) {
       console.log(error);
       toast.error("Please try again");
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function PredictPrice() {
-    try {
-      if (!service || !city || !time) {
-        return;
-      }
+  // async function PredictPrice() {
+  //   try {
+  //     if (!service || !city || !time) {
+  //       return;
+  //     }
 
-      // Start loading
-      setLoading(true);
+  //     // Start loading
+  //     setLoading(true);
 
-      const City = city.trim().toLowerCase();
-      const InputService = Service_mapping[service];
-      const InputCity = city_mapping[City];
+  //     const City = city.trim().toLowerCase();
+  //     const InputService = Service_mapping[service];
+  //     const InputCity = city_mapping[City];
 
-      const response = await fetch(
-        "https://pricepredictionapi-kl6p.onrender.com/predict",
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            serviceType: InputService,
-            city: InputCity,
-            time: time,
-          }),
-        }
-      );
+  //     const response = await fetch(
+  //       "https://pricepredictionapi-kl6p.onrender.com/predict",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           serviceType: InputService,
+  //           city: InputCity,
+  //           time: time,
+  //         }),
+  //       }
+  //     );
 
-      if (response) {
-        const data = await response.json();
-        setPredictedPrice(data.predictedPrice);
-        setActiveStep(3);
-      }
-      // End loading
-      setLoading(false);
-    } catch (error) {
-      setActiveStep(3);
-      setLoading(false);
-      toast.error("Error in price prediction");
-      console.log(error)
-    }
-  }
+  //     if (response) {
+  //       const data = await response.json();
+  //       setPredictedPrice(data.predictedPrice);
+  //       setActiveStep(3);
+  //     }
+
+  //     // End loading
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setActiveStep(3);
+  //     setLoading(false);
+  //     toast.error("Error in price prediction");
+  //     console.log(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   const isStepOptional = (step) => step === 1;
 
@@ -290,17 +311,24 @@ const CreateRequest = () => {
         <div className="flex flex-col justify-center items-center gap-y-4 h-[500px]">
           <p className="font-bold text-2xl">Request submitted</p>
 
-          {predictedPrice !== null && (
+          {/* {predictedPrice !== null && (
             <p className="text-lg font-medium text-green-600">
               Estimated Price: ₹{predictedPrice}
             </p>
-          )}
+          )} */}
 
-          <Image src="/success.svg" className="w-[300px]" alt="Success" width={300} height={300} />
+          <Image
+            src="/success.svg"
+            className="w-[300px]"
+            alt="Success"
+            width={300}
+            height={300}
+          />
 
           <Link href="/user/view_request">
             <CustomButton>View request</CustomButton>
           </Link>
+          
         </div>
       ) : (
         <React.Fragment>
@@ -432,22 +460,26 @@ const CreateRequest = () => {
                   />
                 )}
                 <input
-                  type="number"
+                  type="text"
+                  maxLength={6}
                   className="p-2 border-2 border-gray-300 rounded-md"
                   value={pincode}
                   onChange={(e) => {
-                    Setpincode(e.target.value);
+                    const value = e.target.value;
+                    if (/^\d{0,6}$/.test(value)) {
+                      Setpincode(value);
+                    }
                   }}
                   placeholder="Area Pincode"
                 />
-                <input
-                  type="text"
-                  className="p-2 border-2 border-gray-300 rounded-md"
-                  value={city}
-                  onChange={(e) => {
-                    Setcity(e.target.value);
-                  }}
-                  placeholder="City"
+
+                {/* city  */}
+                <Select
+                  options={cityOptions}
+                  value={cityOptions.find((c) => c.value === city)}
+                  onChange={(selected) => Setcity(selected?.value || "")}
+                  placeholder="Select city"
+                  className="w-full"
                 />
 
                 <DatePicker
@@ -486,6 +518,7 @@ const CreateRequest = () => {
                 </Button>
               )}
               <Button
+                disabled={loading}
                 onClick={
                   activeStep === steps.length - 1 ? handleSubmit : handleNext
                 }

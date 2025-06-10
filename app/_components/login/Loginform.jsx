@@ -361,14 +361,7 @@ const LoginForm = () => {
                     className="w-full h-12 text-base font-medium bg-gray-900 hover:bg-gray-800"
                     disabled={loading}
                   >
-                    {loading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Signing in...
-                      </div>
-                    ) : (
-                      "Sign In"
-                    )}
+                      Sign In
                   </Button>
                 </form>
               </Tabs>
