@@ -1,38 +1,48 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Upload,
+  MapPin,
+  Calendar,
+  Clock,
+  CheckCircle,
+  ArrowLeft,
+  ArrowRight,
+  X,
+  User,
+  ImageIcon,
+  Settings,
+} from "lucide-react";
 import Select from "react-select";
-import { Input, Textarea, SvgIcon, styled } from "@mui/joy";
-import { Button as CustomButton } from "@/components/ui/button";
-import Button from "@mui/joy/Button";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import { MdDeleteOutline } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import Avatar from "@mui/material/Avatar";
+import toast, { Toaster } from "react-hot-toast";
 
 import {
   services,
   steps,
-  city_mapping,
-  Service_mapping,
+  timeOptions,
+  cityOptions,
 } from "../../_Arrays/Arrays";
-
 import { useAuth } from "@/app/_context/UserAuthContent";
 import UserPrivateRoutes from "../../_components/privateroutes/UserPrivateRoutes";
-import toast, { Toaster } from "react-hot-toast";
-import { Backdrop, CircularProgress } from "@mui/material";
 
 const CreateRequest = () => {
-  //mui
   const [activeStep, setActiveStep] = useState(0);
-
-  //form data
   const [service, setService] = useState(null);
   const [customService, setCustomService] = useState("");
   const [description, setDescription] = useState("");
@@ -41,13 +51,12 @@ const CreateRequest = () => {
   const [location, setLocation] = useState(null);
   const [customLocation, setCustomLocation] = useState("");
   const [date, setdate] = useState("");
-  const [coordinates, setCoordinates] = useState(""); // Updated to store coordinates
-  // useful states
+  const [coordinates, setCoordinates] = useState("");
   const [isCustomService, setIsCustomService] = useState(false);
   const [isCustomLocation, setIsCustomLocation] = useState(false);
   const [pincode, Setpincode] = useState(null);
   const [city, Setcity] = useState("");
-  const [predictedPrice, setPredictedPrice] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const searchParams = useSearchParams();
   const workerId = searchParams.get("id");
@@ -55,8 +64,7 @@ const CreateRequest = () => {
   const expertise = searchParams.get("expertise");
   const defaultService = services.find((s) => s.value === expertise) || null;
   const minDate = new Date();
-  const [auth, setAuth] = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [auth] = useAuth();
 
   const locations = [
     {
@@ -66,46 +74,21 @@ const CreateRequest = () => {
     { value: "current", label: "Your current location" },
   ];
 
-  const cityOptions = [
-    { value: "delhi", label: "Delhi" },
-    { value: "mumbai", label: "Mumbai" },
-    { value: "bangalore", label: "Bangalore" },
-    { value: "hyderabad", label: "Hyderabad" },
-    { value: "chennai", label: "Chennai" },
-    { value: "kolkata", label: "Kolkata" },
-    { value: "pune", label: "Pune" },
-    { value: "ahmedabad", label: "Ahmedabad" },
-    { value: "jaipur", label: "Jaipur" },
-    { value: "lucknow", label: "Lucknow" },
-    { value: "indore", label: "Indore" },
+  const stepIcons = [
+    { icon: Settings, label: "Service Details" },
+    { icon: ImageIcon, label: "Upload Image" },
+    { icon: MapPin, label: "Location & Schedule" },
   ];
 
-  const VisuallyHiddenInput = styled("input")`
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    white-space: nowrap;
-    width: 1px;
-  `;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  const handleNext = () => setActiveStep((prev) => prev + 1);
+  const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage((prev) => {
-        if (prev?.url) URL.revokeObjectURL(prev.url); // cleanup previous
+        if (prev?.url) URL.revokeObjectURL(prev.url);
         return { file, url: imageUrl };
       });
     }
@@ -116,14 +99,13 @@ const CreateRequest = () => {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
       );
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+
       const data = await response.json();
-      const readableAddress = data.display_name || "Unknown Location";
-      return readableAddress;
+      return data.display_name || "Unknown Location";
     } catch (error) {
-      console.error("Error fetching human-readable address:", error.message);
+      console.error("Error fetching address:", error.message);
       return "Unknown Location";
     }
   };
@@ -132,43 +114,47 @@ const CreateRequest = () => {
     setLocation(selectedLocation);
 
     if (selectedLocation.value === "current") {
-      if (navigator.geolocation) {
-        try {
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 10000,
-            });
-          });
-
-          const { latitude, longitude } = position.coords;
-          setCoordinates({ latitude, longitude });
-
-          const address = await getHumanReadableAddress(latitude, longitude);
-          setCustomLocation(address);
-        } catch (error) {
-          console.error("Error getting location:", error);
-          setCustomLocation("Unknown Location");
-        }
-      } else {
-        console.error("Geolocation is not supported by this browser.");
+      if (!navigator.geolocation) {
         setCustomLocation("Geolocation not supported");
+        return;
+      }
+
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+          });
+        });
+
+        const { latitude, longitude } = position.coords;
+        setCoordinates({ latitude, longitude });
+        const address = await getHumanReadableAddress(latitude, longitude);
+        setCustomLocation(address);
+      } catch (error) {
+        console.error("Error getting location:", error);
+        setCustomLocation("Unknown Location");
       }
     }
   };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validation
     if (!description || !time || !date || !pincode) {
       toast.error("All fields are required");
+      setLoading(false);
       return;
     }
+
     if (
       (!location && !customLocation) ||
       (!service && !customService && !defaultService)
     ) {
       toast.error("All fields are required");
+      setLoading(false);
       return;
     }
 
@@ -183,7 +169,7 @@ const CreateRequest = () => {
         : service?.value
     );
     formData.append("description", description);
-    formData.append("image", image?.file ? image.file : null);
+    formData.append("image", image?.file || null);
     formData.append("time", time);
     formData.append("date", date);
     formData.append(
@@ -198,338 +184,426 @@ const CreateRequest = () => {
     formData.append("workerid", workerId);
 
     try {
-      const request = await fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/request/CreateRequest`,
-        {
-          method: "POST",
-          body: formData,
-        }
+        { method: "POST", body: formData }
       );
-
-      const result = await request.json();
+      const result = await response.json();
 
       if (result.success) {
         toast.success(result.message);
-        // PredictPrice();
+        handleNext();
       } else {
         toast.error(result.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Please try again");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // async function PredictPrice() {
-  //   try {
-  //     if (!service || !city || !time) {
-  //       return;
-  //     }
-
-  //     // Start loading
-  //     setLoading(true);
-
-  //     const City = city.trim().toLowerCase();
-  //     const InputService = Service_mapping[service];
-  //     const InputCity = city_mapping[City];
-
-  //     const response = await fetch(
-  //       "https://pricepredictionapi-kl6p.onrender.com/predict",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           serviceType: InputService,
-  //           city: InputCity,
-  //           time: time,
-  //         }),
-  //       }
-  //     );
-
-  //     if (response) {
-  //       const data = await response.json();
-  //       setPredictedPrice(data.predictedPrice);
-  //       setActiveStep(3);
-  //     }
-
-  //     // End loading
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setActiveStep(3);
-  //     setLoading(false);
-  //     toast.error("Error in price prediction");
-  //     console.log(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
-  const isStepOptional = (step) => step === 1;
+  const IconComponent = stepIcons[activeStep]?.icon;
+  const progressPercentage = ((activeStep + 1) / steps.length) * 100;
 
   return (
-    <Box sx={{ width: "100%" }}>
-      {/* backdrop  */}
-      <Backdrop
-        sx={{
-          color: "#fff",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-        }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
       <Toaster position="bottom-center" reverseOrder={false} />
-      <p className="w-full text-center font-bold text-3xl mt-20 sm:mt-4 flex justify-center ">
-        Create Request
-        {workerId && workerName && (
-          <span className="flex ml-2 gap-2 items-center">
-            To Hire{" "}
-            <Avatar
-              src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerImage/${workerId}`}
-              sx={{ width: 35, height: 35 }}
-            />{" "}
-            {workerName}
-          </span>
-        )}
-      </p>
-      <Stepper
-        activeStep={activeStep}
-        className="xl:w-1/2 sm:w-3/4 w-[90%] m-auto mt-10"
-      >
-        {steps.map((label, index) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      {activeStep === steps.length ? (
-        <div className="flex flex-col justify-center items-center gap-y-4 h-[500px]">
-          <p className="font-bold text-2xl">Request submitted</p>
 
-          {/* {predictedPrice !== null && (
-            <p className="text-lg font-medium text-green-600">
-              Estimated Price: ₹{predictedPrice}
-            </p>
-          )} */}
-
-          <Image
-            src="/success.svg"
-            className="w-[300px]"
-            alt="Success"
-            width={300}
-            height={300}
-          />
-
-          <Link href="/user/view_request">
-            <CustomButton>View request</CustomButton>
-          </Link>
-          
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Create Service Request
+          </h1>
+          {workerId && workerName && (
+            <div className="flex items-center justify-center gap-3 bg-white rounded-full px-6 py-3 shadow-sm border">
+              <span className="text-gray-600">Hiring</span>
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/GetWorkerImage/${workerId}`}
+                />
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              <span className="font-semibold text-gray-900">{workerName}</span>
+            </div>
+          )}
         </div>
-      ) : (
-        <React.Fragment>
-          <form
-            onSubmit={handleSubmit}
-            className="xl:w-1/2 sm:w-3/4 w-[90%] mt-4 mb-10 flex flex-col gap-y-3 justify-center p-4 formshadow items-center rounded-md m-auto"
-          >
-            {activeStep === 0 && (
-              <React.Fragment>
-                <Select
-                  required
-                  options={services}
-                  isDisabled={defaultService ? true : isCustomService}
-                  value={defaultService || service}
-                  onChange={setService}
-                  className="w-full"
-                  placeholder="Select service"
-                />
-                <div className="flex gap-3 items-center justify-center w-full">
-                  <p className="font-bold text-red-600">
-                    Service not available?
-                  </p>
-                  <CustomButton
-                    type="button"
-                    onClick={() => setIsCustomService(!isCustomService)}
-                  >
-                    {isCustomService ? "Revert" : "Add custom service"}
-                  </CustomButton>
-                </div>
 
-                {isCustomService && (
-                  <Input
-                    name="custom_service"
-                    value={customService}
-                    onChange={(e) => setCustomService(e.target.value)}
-                    placeholder="Request custom service"
-                    className="w-full"
-                    required
-                  />
-                )}
-                <Textarea
-                  name="description"
-                  placeholder="Describe your problem"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full h-40 overflow-y-scroll scrollbar-hide"
-                  required
-                />
-              </React.Fragment>
-            )}
-            {activeStep === 1 && (
-              <React.Fragment>
-                <div className="flex flex-col items-center mt-4 w-full">
-                  <Button
-                    component="label"
-                    variant="outlined"
-                    color="neutral"
-                    className="w-full"
-                    startDecorator={
-                      <SvgIcon>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                          />
-                        </svg>
-                      </SvgIcon>
-                    }
-                  >
-                    Upload a file
-                    <VisuallyHiddenInput
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {image && (
-                    <div className="mt-2 flex">
-                      <img
-                        src={image.url}
-                        alt="Uploaded preview"
-                        style={{ maxWidth: "100%", height: "auto" }}
-                      />
-                      <MdDeleteOutline
-                        className="text-red-600 text-xl cursor-pointer"
-                        onClick={() => setImage(null)}
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            {stepIcons.map((step, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                    index <= activeStep
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "bg-white border-gray-300 text-gray-400"
+                  }`}
+                >
+                  <step.icon className="h-5 w-5" />
+                </div>
+                <span
+                  className={`text-sm mt-2 font-medium transition-colors duration-300 ${
+                    index <= activeStep ? "text-primary" : "text-gray-400"
+                  }`}
+                >
+                  {step.label}
+                </span>
+              </div>
+            ))}
+          </div>
+          <Progress value={progressPercentage} className="h-2" />
+        </div>
+
+        {activeStep === steps.length ? (
+          /* Success State */
+          <Card className="text-center py-12">
+            <CardContent className="space-y-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle className="h-10 w-10 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Request Submitted Successfully!
+                </h2>
+                <p className="text-gray-600">
+                  Your service request has been created and sent to the service
+                  provider.
+                </p>
+              </div>
+             
+              <Link href="/user/view_request">
+                <Button size="lg" className="px-8">
+                  View My Requests
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          /* Form Steps */
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {IconComponent && <IconComponent className="h-5 w-5" />}
+                {steps[activeStep]}
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Step 1: Service Details */}
+                {activeStep === 0 && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="service">Service Type</Label>
+                      <Select
+                        id="service"
+                        options={services}
+                        isDisabled={defaultService || isCustomService}
+                        value={defaultService || service}
+                        onChange={setService}
+                        placeholder="Select a service..."
+                        classNamePrefix="select"
                       />
                     </div>
-                  )}
-                </div>
-              </React.Fragment>
-            )}
-            {activeStep === 2 && (
-              <div className="w-full flex flex-col gap-6">
-                <Select
-                  required
-                  options={locations}
-                  isDisabled={isCustomLocation}
-                  value={location}
-                  onChange={handleLocationChange} // Use the new handler
-                  className="w-full"
-                  placeholder="Select location"
-                />
 
-                <div className="flex gap-3 items-center justify-center w-full">
-                  <p className="font-bold text-red-600">
-                    Need service somewhere else?
-                  </p>
-                  <CustomButton
-                    type="button"
-                    onClick={() => setIsCustomLocation(!isCustomLocation)}
-                  >
-                    {isCustomLocation ? "Revert" : "Add custom location"}
-                  </CustomButton>
-                </div>
-                {isCustomLocation && (
-                  <Input
-                    name="custom_location"
-                    value={customLocation}
-                    onChange={(e) => setCustomLocation(e.target.value)}
-                    placeholder="Enter custom location"
-                    className="w-full"
-                  />
+                    <div className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <span className="text-amber-700 font-medium">
+                        Need a custom service?
+                      </span>
+                      <Button
+                        type="button"
+                        variant={isCustomService ? "destructive" : "outline"}
+                        size="sm"
+                        onClick={() => setIsCustomService(!isCustomService)}
+                      >
+                        {isCustomService ? "Cancel" : "Add Custom"}
+                      </Button>
+                    </div>
+
+                    {isCustomService && (
+                      <div className="space-y-2">
+                        <Label htmlFor="customService">Custom Service</Label>
+                        <Input
+                          id="customService"
+                          value={customService}
+                          onChange={(e) => setCustomService(e.target.value)}
+                          placeholder="Describe your custom service need..."
+                          required
+                        />
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Problem Description</Label>
+                      <Textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Please describe your problem in detail..."
+                        className="min-h-[120px] resize-none"
+                        required
+                      />
+                    </div>
+                  </div>
                 )}
-                <input
-                  type="text"
-                  maxLength={6}
-                  className="p-2 border-2 border-gray-300 rounded-md"
-                  value={pincode}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (/^\d{0,6}$/.test(value)) {
-                      Setpincode(value);
-                    }
-                  }}
-                  placeholder="Area Pincode"
-                />
 
-                {/* city  */}
-                <Select
-                  options={cityOptions}
-                  value={cityOptions.find((c) => c.value === city)}
-                  onChange={(selected) => Setcity(selected?.value || "")}
-                  placeholder="Select city"
-                  className="w-full"
-                />
+                {/* Step 2: Image Upload */}
+                {activeStep === 1 && (
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <p className="text-gray-600 mb-4">
+                        Upload an image to help us better understand your
+                        request (optional)
+                      </p>
 
-                <DatePicker
-                  onChange={(date) => setdate(date)}
-                  selected={date}
-                  className="border border-gray-300 w-full p-2 rounded-md"
-                  placeholderText="Select date"
-                  minDate={minDate}
-                  dateFormat="dd/MM/yyyy"
-                />
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-gray-400 transition-colors">
+                        <input
+                          type="file"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          className="hidden"
+                          id="file-upload"
+                        />
+                        <label
+                          htmlFor="file-upload"
+                          className="cursor-pointer flex flex-col items-center gap-4"
+                        >
+                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Upload className="h-8 w-8 text-gray-400" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-medium text-gray-900">
+                              Click to upload image
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              PNG, JPG, GIF up to 10MB
+                            </p>
+                          </div>
+                        </label>
+                      </div>
 
-                <input
-                  type="time"
-                  className="p-2 border-2 border-gray-300 rounded-md"
-                  value={time}
-                  onChange={(e) => {
-                    settime(e.target.value);
-                  }}
-                  placeholder="select time"
-                />
-              </div>
-            )}
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: "1 1 auto" }} />
-              {isStepOptional(activeStep) && (
-                <Button color="inherit" onClick={handleNext} sx={{ mr: 1 }}>
-                  Skip
-                </Button>
-              )}
-              <Button
-                disabled={loading}
-                onClick={
-                  activeStep === steps.length - 1 ? handleSubmit : handleNext
-                }
-              >
-                {activeStep === steps.length - 1 ? "Submit" : "Next"}
-              </Button>
-            </Box>
-          </form>
-        </React.Fragment>
-      )}
-    </Box>
+                      {image && (
+                        <div className="mt-6 relative inline-block">
+                          <img
+                            src={image.url || "/placeholder.svg"}
+                            alt="Upload preview"
+                            className="max-w-full h-auto max-h-64 rounded-lg shadow-md"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0"
+                            onClick={() => setImage(null)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Location & Schedule */}
+                {activeStep === 2 && (
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <MapPin className="h-5 w-5" />
+                          Location Details
+                        </h3>
+
+                        <div className="space-y-2">
+                          <Label>Service Location</Label>
+                          <Select
+                            options={locations}
+                            isDisabled={isCustomLocation}
+                            value={location}
+                            onChange={handleLocationChange}
+                            placeholder="Select location..."
+                            classNamePrefix="select"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                          <span className="text-blue-700 text-sm font-medium">
+                            Different location?
+                          </span>
+                          <Button
+                            type="button"
+                            variant={
+                              isCustomLocation ? "destructive" : "outline"
+                            }
+                            size="sm"
+                            onClick={() =>
+                              setIsCustomLocation(!isCustomLocation)
+                            }
+                          >
+                            {isCustomLocation ? "Cancel" : "Custom"}
+                          </Button>
+                        </div>
+
+                        {isCustomLocation && (
+                          <Input
+                            value={customLocation}
+                            onChange={(e) => setCustomLocation(e.target.value)}
+                            placeholder="Enter custom location..."
+                          />
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="pincode">Pincode</Label>
+                            <Input
+                              id="pincode"
+                              type="text"
+                              maxLength={6}
+                              value={pincode || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (/^\d{0,6}$/.test(value)) {
+                                  Setpincode(value);
+                                }
+                              }}
+                              placeholder="000000"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>City</Label>
+                            <Select
+                              options={cityOptions}
+                              value={cityOptions.find((c) => c.value === city)}
+                              onChange={(selected) =>
+                                Setcity(selected?.value || "")
+                              }
+                              placeholder="Select city..."
+                              classNamePrefix="select"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Calendar className="h-5 w-5" />
+                          Schedule
+                        </h3>
+
+                        <div className="space-y-2">
+                          <Label>Preferred Date</Label>
+                          <DatePicker
+                            selected={date}
+                            onChange={(date) => setdate(date)}
+                            minDate={minDate}
+                            dateFormat="dd/MM/yyyy"
+                            placeholderText="Select date..."
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                            required
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="time">Preferred Time</Label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className="w-full justify-start pl-10 text-left"
+                                id="time"
+                              >
+                                <Clock className="text-gray-400" />
+                                {time || "Select time"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="max-h-64 overflow-y-auto p-0">
+                              {timeOptions.map((t) => (
+                                <Button
+                                  key={t}
+                                  variant="ghost"
+                                  className="w-full justify-start rounded-none px-4"
+                                  onClick={() => settime(t)}
+                                >
+                                  {t}
+                                </Button>
+                              ))}
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between pt-6 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                  </Button>
+
+                  <div className="flex gap-2">
+                    {activeStep === 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={handleNext}
+                      >
+                        Skip
+                      </Button>
+                    )}
+
+                    <Button
+                      type={
+                        activeStep === steps.length - 1 ? "submit" : "button"
+                      }
+                      onClick={
+                        activeStep === steps.length - 1
+                          ? handleSubmit
+                          : handleNext
+                      }
+                      disabled={loading}
+                      className="flex items-center gap-2 min-w-[120px]"
+                    >
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Processing...
+                        </>
+                      ) : activeStep === steps.length - 1 ? (
+                        <>
+                          Submit Request
+                          <CheckCircle className="h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          Next
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
   );
 };
 

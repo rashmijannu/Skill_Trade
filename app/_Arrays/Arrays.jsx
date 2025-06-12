@@ -262,6 +262,13 @@ const marks = [
   },
 ];
 
+const timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
+  const hour = Math.floor(i / 2);
+  const minutes = i % 2 === 0 ? "00" : "30";
+  const suffix = hour < 12 ? "AM" : "PM";
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${formattedHour}:${minutes} ${suffix}`;
+});
 
 const Service_mapping = {
   electrician: 0,
@@ -294,6 +301,19 @@ const city_mapping = {
   indore: 10,
 };
 
+const cityOptions = [
+  { value: "delhi", label: "Delhi" },
+  { value: "mumbai", label: "Mumbai" },
+  { value: "bangalore", label: "Bangalore" },
+  { value: "hyderabad", label: "Hyderabad" },
+  { value: "chennai", label: "Chennai" },
+  { value: "kolkata", label: "Kolkata" },
+  { value: "pune", label: "Pune" },
+  { value: "ahmedabad", label: "Ahmedabad" },
+  { value: "jaipur", label: "Jaipur" },
+  { value: "lucknow", label: "Lucknow" },
+  { value: "indore", label: "Indore" },
+];
 export {
   services,
   steps,
@@ -305,4 +325,6 @@ export {
   marks,
   Service_mapping,
   city_mapping,
+  timeOptions,
+  cityOptions
 };

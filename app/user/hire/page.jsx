@@ -46,7 +46,7 @@ const Hire = () => {
   // const [WorkerCoordinates, setWorkerCoordinates] = useState(null);
 
   const [backdrop, setBackDrop] = useState(false);
- 
+
   const [showFilters, setShowFilters] = useState(false);
 
   // Function to get user location
@@ -93,10 +93,11 @@ const Hire = () => {
   }, [currentPage, ServiceType]);
 
   // Fetch workers only after coordinates are available
-  const fetchWorkers = async (coordinates, pincode) => {
+  const fetchWorkers = async (coordinates, pincode) => { 
+    console.log("working") 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/users/ListWorkers/${currentPage}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/ListWorkers/${currentPage}`,
         {
           method: "POST",
           headers: {
