@@ -227,7 +227,7 @@ const Navbar = () => {
       <LogoutModal modalState={modal} onClose={handleCloseModal}></LogoutModal>
       {/* small screen navbar */}
       <div className="sm:hidden">
-        <Box className="flex justify-between">
+        <Box className="flex justify-between z-15">
           <CssBaseline />
           <AppBar
             position="fixed"
