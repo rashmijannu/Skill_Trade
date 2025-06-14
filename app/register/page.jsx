@@ -32,16 +32,16 @@ const Register = () => {
           <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
             <CardContent className="p-6">
               <Tabs defaultValue="user" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-12 bg-slate-100">
+                <TabsList className="flex flex-col sm:flex-row w-full h-auto sm:h-12 bg-slate-100">
                   <TabsTrigger
                     value="user"
-                    className="font-semibold text-base data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    className="font-semibold text-base py-3 sm:py-0 data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     Register As User
                   </TabsTrigger>
                   <TabsTrigger
                     value="worker"
-                    className="font-semibold text-base data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    className="font-semibold text-base py-3 sm:py-0 data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     Register As Service Provider
                   </TabsTrigger>

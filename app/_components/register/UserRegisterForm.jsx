@@ -84,9 +84,10 @@ const UserRegisterForm = ({ loading, setLoading }) => {
             Fill in your details to create your user account
           </CardDescription>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="p-0">
           <form onSubmit={RegisterUser} className="space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-1 w-full">
               <Label
                 htmlFor="name"
                 className="text-sm font-medium text-slate-700"
@@ -106,7 +107,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label className="text-sm font-medium text-slate-700">
                 Mobile Number
               </Label>
@@ -133,7 +134,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="email"
                 className="text-sm font-medium text-slate-700"
@@ -153,7 +154,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="password"
                 className="text-sm font-medium text-slate-700"
@@ -183,7 +184,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="address"
                 className="text-sm font-medium text-slate-700"
@@ -203,7 +204,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="pincode"
                 className="text-sm font-medium text-slate-700"

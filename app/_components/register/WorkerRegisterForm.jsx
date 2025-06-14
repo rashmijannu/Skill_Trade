@@ -132,223 +132,220 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   }
 
   return (
-   
-    
-      <div className="w-full max-w-2xl mx-auto">
-        <Card className="border-0 shadow-none bg-transparent">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-slate-800">
-              Create Service Provider Account
-            </CardTitle>
-            <CardDescription className="text-slate-600">
-              Join our platform as a service provider and start earning
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={RegisterWorker} className="space-y-6">
-              <div className="space-y-2">
-                <Label
-                  htmlFor="name"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                  <Input
-                    id="name"
-                    name="Name"
-                    type="text"
-                    required
-                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-700">
-                  Mobile Number
-                </Label>
-                <PhoneInput
-                  country={"in"}
-                  value={mobileNo}
-                  onChange={(value) => setMobileNo(value)}
-                  inputStyle={{
-                    width: "100%",
-                    height: "48px",
-                    borderRadius: "6px",
-                    border: "1px solid #e2e8f0",
-                    paddingLeft: "48px",
-                    fontSize: "14px",
-                  }}
-                  buttonStyle={{
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "6px 0 0 6px",
-                    backgroundColor: "#f8fafc",
-                  }}
-                  containerStyle={{
-                    width: "100%",
-                  }}
+    <div className="w-full max-w-2xl mx-auto">
+      <Card className="border-0 shadow-none bg-transparent">
+        <CardHeader className="text-center pb-6">
+          <CardTitle className="text-2xl font-bold text-slate-800">
+            Create Service Provider Account
+          </CardTitle>
+          <CardDescription className="text-slate-600">
+            Join our platform as a service provider and start earning
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <form onSubmit={RegisterWorker} className="space-y-6">
+            <div className="space-y-1">
+              <Label
+                htmlFor="name"
+                className="text-sm font-medium text-slate-700"
+              >
+                Full Name
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="name"
+                  name="Name"
+                  type="text"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your full name"
                 />
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                  <Input
-                    id="email"
-                    name="Email"
-                    type="email"
-                    required
-                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
-                    placeholder="Enter your email address"
-                  />
-                </div>
-              </div>
+            <div className="space-y-1">
+              <Label className="text-sm font-medium text-slate-700">
+                Mobile Number
+              </Label>
+              <PhoneInput
+                country={"in"}
+                value={mobileNo}
+                onChange={(value) => setMobileNo(value)}
+                inputStyle={{
+                  width: "100%",
+                  height: "48px",
+                  borderRadius: "6px",
+                  border: "1px solid #e2e8f0",
+                  paddingLeft: "48px",
+                  fontSize: "14px",
+                }}
+                buttonStyle={{
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px 0 0 6px",
+                  backgroundColor: "#f8fafc",
+                }}
+                containerStyle={{
+                  width: "100%",
+                }}
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-700">
-                  Your Closest Working Location
-                </Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
-                  <Input
-                    id="address"
-                    value={address}
-                    onChange={(e) => handleAddressChange(e.target.value)}
-                    required
-                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
-                    placeholder="Start typing your address..."
-                  />
-                  {suggestions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-md shadow-lg z-50 max-h-48 overflow-auto">
-                      {suggestions.map((place, index) => (
-                        <div
-                          key={index}
-                          onClick={() => selectAddress(place)}
-                          className="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
-                        >
-                          <div className="text-sm font-medium text-slate-800">
-                            {place.title}
-                          </div>
-                          {place.vicinity && (
-                            <div className="text-xs text-slate-500 mt-1">
-                              {place.vicinity}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="pincode"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Area Pincode
-                </Label>
-                <div className="relative">
-                  <Hash className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                  <Input
-                    id="pincode"
-                    name="pincode"
-                    type="number"
-                    required
-                    inputProps={{ maxLength: 6 }}
-                    className="pl-10 h-12 border-slate-200 focus:border-slate-400"
-                    placeholder="Enter your area pincode"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="password"
-                  className="text-sm font-medium text-slate-700"
-                >
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="Password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    className="pr-10 h-12 border-slate-200 focus:border-slate-400"
-                    placeholder="Create a strong password"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleClickShowPassword}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-700">
-                  Service Type
-                </Label>
-                <div className="relative">
-                  <Wrench className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
-                  <Select required onValueChange={handleServiceTypeChange}>
-                    <SelectTrigger className="h-12 pl-10 border-slate-200 focus:border-slate-400">
-                      <SelectValue placeholder="Select your service type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="electrician">Electrician</SelectItem>
-                      <SelectItem value="carpenter">Carpenter</SelectItem>
-                      <SelectItem value="plumber">Plumber</SelectItem>
-                      <SelectItem value="painter">Painter</SelectItem>
-                      <SelectItem value="gardener">Gardener</SelectItem>
-                      <SelectItem value="mechanic">Mechanic</SelectItem>
-                      <SelectItem value="locksmith">Locksmith</SelectItem>
-                      <SelectItem value="handyman">Handyman</SelectItem>
-                      <SelectItem value="welder">Welder</SelectItem>
-                      <SelectItem value="pest_control">Pest Control</SelectItem>
-                      <SelectItem value="roofer">Roofer</SelectItem>
-                      <SelectItem value="tiler">Tiler</SelectItem>
-                      <SelectItem value="appliance_repair">
-                        Appliance Repair
-                      </SelectItem>
-                      <SelectItem value="flooring_specialist">
-                        Flooring Specialist
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-12 text-white font-medium"
-                disabled={loading}
+            <div className="space-y-1">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-slate-700"
               >
-                {loading
-                  ? "Creating Account..."
-                  : "Create Service Provider Account"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    
+                Email Address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="email"
+                  name="Email"
+                  type="email"
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your email address"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-sm font-medium text-slate-700">
+                Your Closest Working Location
+              </Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+                <Input
+                  id="address"
+                  value={address}
+                  onChange={(e) => handleAddressChange(e.target.value)}
+                  required
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Start typing your address..."
+                />
+                {suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-md shadow-lg z-50 max-h-48 overflow-auto">
+                    {suggestions.map((place, index) => (
+                      <div
+                        key={index}
+                        onClick={() => selectAddress(place)}
+                        className="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                      >
+                        <div className="text-sm font-medium text-slate-800">
+                          {place.title}
+                        </div>
+                        {place.vicinity && (
+                          <div className="text-xs text-slate-500 mt-1">
+                            {place.vicinity}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label
+                htmlFor="pincode"
+                className="text-sm font-medium text-slate-700"
+              >
+                Area Pincode
+              </Label>
+              <div className="relative">
+                <Hash className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="pincode"
+                  name="pincode"
+                  type="number"
+                  required
+                  inputProps={{ maxLength: 6 }}
+                  className="pl-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Enter your area pincode"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-slate-700"
+              >
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="Password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="pr-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Create a strong password"
+                />
+                <button
+                  type="button"
+                  onClick={handleClickShowPassword}
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-sm font-medium text-slate-700">
+                Service Type
+              </Label>
+              <div className="relative">
+                <Wrench className="absolute left-3 top-3 h-4 w-4 text-slate-400 z-10" />
+                <Select required onValueChange={handleServiceTypeChange}>
+                  <SelectTrigger className="h-12 pl-10 border-slate-200 focus:border-slate-400">
+                    <SelectValue placeholder="Select your service type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="electrician">Electrician</SelectItem>
+                    <SelectItem value="carpenter">Carpenter</SelectItem>
+                    <SelectItem value="plumber">Plumber</SelectItem>
+                    <SelectItem value="painter">Painter</SelectItem>
+                    <SelectItem value="gardener">Gardener</SelectItem>
+                    <SelectItem value="mechanic">Mechanic</SelectItem>
+                    <SelectItem value="locksmith">Locksmith</SelectItem>
+                    <SelectItem value="handyman">Handyman</SelectItem>
+                    <SelectItem value="welder">Welder</SelectItem>
+                    <SelectItem value="pest_control">Pest Control</SelectItem>
+                    <SelectItem value="roofer">Roofer</SelectItem>
+                    <SelectItem value="tiler">Tiler</SelectItem>
+                    <SelectItem value="appliance_repair">
+                      Appliance Repair
+                    </SelectItem>
+                    <SelectItem value="flooring_specialist">
+                      Flooring Specialist
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-12 text-white font-medium"
+              disabled={loading}
+            >
+              {loading
+                ? "Creating Account..."
+                : "Create Service Provider Account"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

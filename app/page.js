@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -97,8 +96,8 @@ function Home() {
          bg-[url('/hero_backGround.webp')] bg-cover bg-center bg-no-repeat 
          gap-7 sm:gap-5 p-3 sm:mt-0 mt-[70px] relative"
       >
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+       
+        <div className="relative  max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-5xl sm:text-6xl font-bold font-sans text-white text-center mb-4">
             Your Trusted Partner for Home Services
           </h1>

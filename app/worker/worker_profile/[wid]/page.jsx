@@ -25,7 +25,7 @@ async function fetchWorkerData(wid) {
 
 export default async function WorkerProfile({ params }) {
   const { wid } = params;
-  const data = await fetchWorkerData(wid); // Fetch data before rendering
+  const data = await fetchWorkerData(wid); // Fetch data 
 
   if (!data) {
     return (

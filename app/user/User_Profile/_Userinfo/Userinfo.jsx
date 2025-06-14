@@ -1,27 +1,44 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Input from "@mui/joy/Input";
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Input as Otp, Typography } from "antd";
-const { Title } = Typography;
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Camera,
+  Shield,
+  AlertTriangle,
+  Loader2,
+  Home,
+  CheckCircle,
+  Upload,
+} from "lucide-react";
 import { GetUserInfo } from "./fetchfunction/GetUserInfo";
 import { UpdateUserInfo } from "./fetchfunction/UpdateUserInfo";
 import { useAuth } from "../../../_context/UserAuthContent";
-
 
 const Userinfo = () => {
   const [auth, setAuth] = useAuth();
@@ -49,12 +66,6 @@ const Userinfo = () => {
       ...prevData,
       [name]: value,
     }));
-  };
-  const onChange = (text) => {
-    setOtp(text);
-  };
-  const sharedProps = {
-    onChange,
   };
 
   const handleImageChange = (e) => {
@@ -204,185 +215,275 @@ const Userinfo = () => {
   }, [auth]);
 
   return (
-    <div className="flex justify-center items-center  bg-gray-50">
-      <Toaster position="bottom-center" reverseOrder={false} />
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl">
-        {emailVerified ? null : (
-          <Alert severity="warning">
-            your email is unverified please verify your email.{" "}
-            <span
-              className="text-blue-500 cursor-pointer"
-              onClick={() => {
-                generateOTP();
-                if (GeneratedOtp) {
-                  SendOtp(auth?.user?.Email);
-                }
-              }}
-            >
-              Verify
-            </span>
-          </Alert>
-        )}
-        <p className="text-2xl font-semibold text-gray-800 text-center">
-          Personal Information
-        </p>
-        <hr className="my-4" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-4 ">
+      <Toaster position="top-center" />
 
-        {/* Profile Image */}
-        <div className="flex flex-col items-center gap-4">
-          <Image
-            src={imgurl}
-            alt="User Profile"
-            className="w-[200px] h-[200px] rounded-full object-cover shadow"
-            width={228}
-            height={228}
-          />
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            size="md"
-            className="w-full"
-          />
-        </div>
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center ">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                  Personal Information
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage your account details and preferences
+                </p>
+              </div>
+            </div>
 
-        {/* Form Fields */}
-        <div className="mt-6">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1">
-              <label className="font-medium text-gray-700">Name</label>
-              <Input
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                size="md"
-                placeholder="Enter your name"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="font-medium text-gray-700">Mobile Number</label>
-              <Input
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleInputChange}
-                size="md"
-                placeholder="Enter your mobile number"
-              />
-            </div>
-          </div>
+            {!emailVerified && (
+              <Alert className="border-amber-200 bg-amber-50">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  Your email is unverified. Please{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-amber-700 underline font-medium"
+                    onClick={() => {
+                      generateOTP();
+                      if (GeneratedOtp) {
+                        SendOtp(auth?.user?.Email);
+                      }
+                    }}
+                  >
+                    verify your email
+                  </Button>{" "}
+                  to secure your account.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardHeader>
 
-          <div className="flex flex-wrap gap-4 mt-4">
-            <div className="flex-1">
-              <label className="font-medium text-gray-700">Email </label>
-              <Input
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                size="md"
-                disabled
-              />
-            </div>
-            <div className="flex-1">
-              <label className="font-medium text-gray-700">Address</label>
-              <Input
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                size="md"
-                placeholder="Enter your address"
-              />
-            </div>
-          </div>
+          <CardContent className="space-y-6">
+            {/* Profile Image Section */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative group">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                  <Image
+                    src={imgurl || "/placeholder.svg"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    width={128}
+                    height={128}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-white" />
+                </div>
+              </div>
 
-          <div className="flex flex-wrap gap-4 mt-4 items-center">
-            <div className="flex-1">
-              <label className="font-medium text-gray-700">Pincode</label>
-              <Input
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleInputChange}
-                size="md"
-                type="number"
-                placeholder="Enter your pincode"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="profile-image"
+                />
+                <Label
+                  htmlFor="profile-image"
+                  className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-black/90 text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                  <Upload className="w-4 h-4" />
+                  Change Photo
+                </Label>
+              </div>
             </div>
-            <Button onClick={updateuserdata} className="px-6 py-2 mt-4">
-              Save
-            </Button>
-          </div>
-        </div>
 
-        <div className="text-center mt-6">
-          <Link href="/">
-            <Button className="px-4 py-2">Home</Button>
-          </Link>
-        </div>
+            <Separator />
+
+            {/* Form Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <User className="w-4 h-4" />
+                  Full Name
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter your full name"
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="mobile"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <Phone className="w-4 h-4" />
+                  Mobile Number
+                </Label>
+                <Input
+                  id="mobile"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleInputChange}
+                  placeholder="Enter your mobile number"
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <Mail className="w-4 h-4" />
+                  Email Address
+                  {emailVerified && (
+                    <Badge
+                      variant="secondary"
+                      className="ml-2 bg-green-100 text-green-700"
+                    >
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Verified
+                    </Badge>
+                  )}
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  disabled
+                  className="h-11 bg-muted"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="pincode"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Pincode
+                </Label>
+                <Input
+                  id="pincode"
+                  name="pincode"
+                  value={formData.pincode}
+                  onChange={handleInputChange}
+                  type="number"
+                  placeholder="Enter 6-digit pincode"
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label
+                  htmlFor="address"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Address
+                </Label>
+                <Input
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Enter your complete address"
+                  className="h-11"
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={updateuserdata}
+                disabled={openBackdrop}
+                className="h-11 px-8  text-white font-medium"
+              >
+                {openBackdrop ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving Changes...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+
+              <Link href="/">
+                <Button variant="outline" className="h-11 w-full font-medium">
+                  <Home className="mr-2 h-4 w-4" />
+                  Back to Home
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Backdrop open={openBackdrop} className="z-50">
-        <CircularProgress color="primary" />
-      </Backdrop>
+      {/* Email Verification Modal */}
+      <Dialog open={openmodal} onOpenChange={SetOpenModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <DialogTitle className="text-xl font-semibold">
+              Verify Your Email
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              We've sent a 6-digit verification code to{" "}
+              <span className="font-medium text-foreground">
+                {auth?.user?.Email}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
 
-      {/* modal for email verification  */}
-      <AlertDialog open={openmodal}>
-        <AlertDialogContent className="p-6 w-[400px] rounded-lg shadow-lg">
-          <AlertDialogHeader className="text-center">
-            <AlertDialogTitle className="text-lg font-semibold">
-              Verify Email
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600 text-sm">
-              We sent an OTP to your registered email{" "}
-              <strong>({auth?.user?.Email})</strong>. Please enter it below to
-              verify your email.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <div className="flex flex-col items-center gap-4 mt-4">
-            <Title level={5} className="text-gray-700">
-              Enter OTP
-            </Title>
-            <Otp.OTP
-              formatter={(str) => str.toUpperCase()}
-              {...sharedProps}
-              className="border rounded-lg p-2 text-center text-lg"
-            />
+          <div className="flex flex-col items-center space-y-6 py-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Enter verification code
+              </Label>
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={(value) => setOtp(value)}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
 
             <Button
-              className="w-full"
-              onClick={() => {
-                verifyOtp(auth?.user?.Email);
-              }}
-              disabled={Loading}
+              className="w-full h-11 "
+              onClick={() => verifyOtp(auth?.user?.Email)}
+              disabled={Loading || otp.length !== 6}
             >
               {Loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
-                  </svg>
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Verifying...
-                </span>
+                </>
               ) : (
-                "Verify"
+                "Verify Email"
               )}
             </Button>
 
-            <button
-              className="text-sm text-blue-600 hover:underline"
+            <Button
+              variant="link"
+              className="text-sm"
               onClick={() => {
                 generateOTP();
                 if (GeneratedOtp) {
@@ -390,21 +491,31 @@ const Userinfo = () => {
                 }
               }}
             >
-              Resend OTP
-            </button>
+              Didn't receive the code? Resend
+            </Button>
           </div>
 
-          <AlertDialogFooter className="flex justify-end mt-4">
+          <DialogFooter>
             <Button
               variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100"
               onClick={() => SetOpenModal(false)}
+              className="w-full"
             >
               Cancel
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Loading Backdrop */}
+      {openBackdrop && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+            <span className="text-sm font-medium">Processing...</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
