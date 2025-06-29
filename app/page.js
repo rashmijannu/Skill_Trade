@@ -96,7 +96,7 @@ function Home() {
          bg-[url('/hero_backGround.webp')] bg-cover bg-center bg-no-repeat 
          gap-7 sm:gap-5 p-3 sm:mt-0 mt-[70px] relative"
       >
-       
+
         <div className="relative  max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-5xl sm:text-6xl font-bold font-sans text-white text-center mb-4">
             Your Trusted Partner for Home Services

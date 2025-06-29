@@ -334,7 +334,7 @@ async function SendOtp(req, resp) {
       from: process.env.email_id,
       to: email,
       subject: "Reset Password - Skill Trade",
-      html: emailTemplate, // No need for attachments, the image is now linked
+      html: emailTemplate, 
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
