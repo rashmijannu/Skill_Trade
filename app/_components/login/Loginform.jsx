@@ -5,7 +5,6 @@ import { useAuth } from "@/app/_context/UserAuthContent";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// ✅ MUI Imports
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -16,31 +15,22 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 
-// ✅ Joy UI Imports
 import { Input } from "@mui/joy";
+import { Input as Otp } from "antd";
 
-// ✅ Ant Design Imports
-import { Typography, Input as Otp } from "antd";
-
-// ✅ External Library Imports
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import toast, { Toaster } from "react-hot-toast";
 
-// ✅ Custom Component Imports
 import ModalComponent from "../Modal";
 import ResetPassModal from "./ResetPassModal";
 
-// ✅ Toaster (Prevent SSR Issues)
-import { Toaster } from "react-hot-toast";
-
-// ✅ Other Imports
-import { style } from "../../_Arrays/Arrays";
-
-// Additional UI imports for improved design
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent} from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Lock, Shield } from "lucide-react";
+
+import { style } from "../../_Arrays/Arrays";
 
 const LoginForm = () => {
   const [auth, SetAuth] = useAuth();
@@ -53,20 +43,15 @@ const LoginForm = () => {
   const [GeneratedOtp, SetGeneratedOtp] = useState("");
   const [ResetPass, SetResetPass] = useState(false);
   const [VerifyOtp, SetVerifyOtp] = useState(false);
-  const [loginMethod, setLoginMethod] = useState("phone");
+  const [mobileNo, setMobileNo] = useState("");
+  const [open, setOpen] = useState(false);
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const [open, setOpen] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleResetPassClose = () => SetResetPass(false);
-  const [mobileNo, setMobileNo] = useState("");
 
   const verifyOtp = async () => {
-    const toast = (await import("react-hot-toast")).toast;
     if (!otp) {
       toast.error("OTP is required");
       return;
@@ -77,84 +62,56 @@ const LoginForm = () => {
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            otp,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
-        toast.success("verification successfull");
+        toast.success("Verification successful");
         setOpen(false);
         setLoading(true);
-
         setTimeout(() => {
           setLoading(false);
           SetResetPass(true);
-          setOpen(false);
-        }, 3000);
+        }, 2000);
       } else {
         toast.error(data.message);
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred. Please try again.");
     } finally {
       SetVerifyOtp(false);
     }
   };
 
-  const onChange = (text) => {
-    setOtp(text);
-  };
-
-  const sharedProps = {
-    onChange,
-  };
+  const onChange = (text) => setOtp(text);
 
   async function HandleLogin(event) {
     event.preventDefault();
-    const toast = (await import("react-hot-toast")).toast;
-    setLoading(true); // Start loading
-
-    // Create FormData from the form event
+    setLoading(true);
     const formData = new FormData(event.target);
-
-    const MobileNo = formData.get("MobileNo");
     const Password = formData.get("Password");
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/UserLogin`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            MobileNo: mobileNo,
-            Password,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ MobileNo: mobileNo, Password }),
         }
       );
-
       const data = await response.json();
-
       if (data.success) {
         SetAuth({
           ...auth,
-          user: data.user ? data.user : data.worker,
+          user: data.user || data.worker,
           token: data.token,
         });
         localStorage.setItem(
           "auth",
           JSON.stringify({
-            user: data.user ? data.user : data.worker,
+            user: data.user || data.worker,
             token: data.token,
           })
         );
@@ -163,42 +120,35 @@ const LoginForm = () => {
       } else {
         toast.error(data.message);
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   }
 
-  function generateOTP(length = 6) {
-    SetGeneratedOtp(Math.floor(100000 + Math.random() * 900000).toString()); // Generates a 6-digit OTP
-  }
-
   async function SendOtp() {
-    const toast = (await import("react-hot-toast")).toast;
     try {
       SetSendingOtp(true);
       SetOtpGenerate(false);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      SetGeneratedOtp(otp);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendOtp`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ GeneratedOtp, email }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ GeneratedOtp: otp, email }),
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
         toast.success("OTP sent successfully");
         SetOtpGenerate(true);
       } else {
         toast.error(data.message || "Failed to send OTP");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       SetSendingOtp(false);
@@ -209,164 +159,111 @@ const LoginForm = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
       <Toaster position="bottom-center" reverseOrder={false} />
 
-      {/* Header */}
-      {/* <div className="p-4">
-        <Link
-          href="/"
-          className="inline-flex items-center text-gray-700 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </Link> 
-      </div> */}
-
-      {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md space-y-6 sm:mt-0 mt-10">
-          {/* Welcome Header */}
-          <div className="text-center space-y-2 ">
+          <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Welcome Back</h1>
             <p className="text-gray-600">Sign in to your Skill Trade account</p>
           </div>
 
-          {/* Login Card */}
           <Card className="shadow-xl border-0">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center">
                 Sign In
               </CardTitle>
             </CardHeader>
-
             <CardContent className="space-y-6">
-              <Tabs
-                value={loginMethod}
-                onValueChange={setLoginMethod}
-                className="w-full"
-              >
-                <form onSubmit={HandleLogin} className="space-y-6">
-                  <TabsContent value="phone" className="space-y-4 mt-0">
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <Phone className="h-4 w-4" />
-                        Phone Number
-                      </label>
-                      <PhoneInput
-                        country={"in"}
-                        value={mobileNo}
-                        onChange={(value) => setMobileNo(value)}
-                        inputStyle={{
-                          width: "100%",
-                          height: "48px",
-                          borderRadius: "6px",
-                          border: "1px solid #d1d5db",
-                          paddingLeft: "48px",
-                          fontSize: "16px",
-                        }}
-                        buttonStyle={{
-                          border: "1px solid #d1d5db",
-                          borderRadius: "6px 0 0 6px",
-                          backgroundColor: "#f9fafb",
-                        }}
-                        containerStyle={{
-                          width: "100%",
-                        }}
+              <form onSubmit={HandleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Phone className="h-4 w-4" />
+                    Phone Number
+                  </label>
+                  <PhoneInput
+                    country={"in"}
+                    value={mobileNo}
+                    onChange={(value) => setMobileNo(value)}
+                    inputStyle={{
+                      width: "100%",
+                      height: "48px",
+                      borderRadius: "6px",
+                      border: "1px solid #d1d5db",
+                      paddingLeft: "48px",
+                      fontSize: "16px",
+                    }}
+                    buttonStyle={{
+                      border: "1px solid #d1d5db",
+                      borderRadius: "6px 0 0 6px",
+                      backgroundColor: "#f9fafb",
+                    }}
+                    containerStyle={{ width: "100%" }}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Lock className="h-4 w-4" />
+                    Password
+                  </label>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Enter your password"
+                    name="Password"
+                    required
+                    type={showPassword ? "text" : "password"}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "48px",
+                        borderRadius: "6px",
+                      },
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="remember"
+                        className="rounded border-gray-300"
                       />
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="email" className="space-y-4 mt-0">
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <Mail className="h-4 w-4" />
-                        Email Address
-                      </label>
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Enter your email"
-                        type="email"
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            height: "48px",
-                            borderRadius: "6px",
-                          },
-                        }}
-                      />
-                    </div>
-                  </TabsContent>
-
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                      <Lock className="h-4 w-4" />
-                      Password
-                    </label>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Enter your password"
-                      name="Password"
-                      required
-                      type={showPassword ? "text" : "password"}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          height: "48px",
-                          borderRadius: "6px",
-                        },
-                      }}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-
-                    <div className="flex justify-between items-center mt-2">
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="remember"
-                          className="rounded border-gray-300"
-                        />
-                        <label
-                          htmlFor="remember"
-                          className="text-sm text-gray-600"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleOpen}
-                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                      <label
+                        htmlFor="remember"
+                        className="text-sm text-gray-600"
                       >
-                        Forgot password?
-                      </button>
+                        Remember me
+                      </label>
                     </div>
+                    <button
+                      type="button"
+                      onClick={handleOpen}
+                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                    >
+                      Forgot password?
+                    </button>
                   </div>
+                </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full h-12 text-base font-medium bg-gray-900 hover:bg-gray-800"
-                    disabled={loading}
-                  >
-                      Sign In
-                  </Button>
-                </form>
-              </Tabs>
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-base font-medium bg-gray-900 hover:bg-gray-800"
+                  disabled={loading}
+                >
+                  Sign In
+                </Button>
+              </form>
 
-              {/* Register Link */}
               <div className="text-center pt-4">
                 <p className="text-gray-600">
                   Don&#39;t have an account?{" "}
@@ -381,7 +278,6 @@ const LoginForm = () => {
             </CardContent>
           </Card>
 
-          {/* Security Badge */}
           <div className="flex items-center justify-center">
             <Badge
               variant="secondary"
@@ -396,7 +292,6 @@ const LoginForm = () => {
         </div>
       </div>
 
-     
       {open && (
         <Modal
           open={open}
@@ -420,7 +315,6 @@ const LoginForm = () => {
               </div>
               <RxCross1
                 className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors"
-                title="close"
                 onClick={handleClose}
                 size={20}
               />
@@ -450,17 +344,9 @@ const LoginForm = () => {
                   />
                 </div>
                 <Button
-                  onClick={async () => {
-                    const toast = (await import("react-hot-toast")).toast;
-                    if (email) {
-                      generateOTP();
-                      if (GeneratedOtp) {
-                        SendOtp();
-                      }
-                    } else {
-                      toast.error("Enter email");
-                    }
-                  }}
+                  onClick={() =>
+                    email ? SendOtp() : toast.error("Enter email")
+                  }
                   disabled={SendingOtp}
                   className="w-full h-11"
                 >
@@ -479,18 +365,16 @@ const LoginForm = () => {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-blue-800 text-sm">
                     We've sent a 6-digit verification code to{" "}
-                    <strong>{email}</strong>. Check your spam folder if you
-                    don't see it.
+                    <strong>{email}</strong>.
                   </p>
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Verification Code
                   </label>
                   <Otp.OTP
                     formatter={(str) => str.toUpperCase()}
-                    {...sharedProps}
+                    onChange={onChange}
                     style={{
                       display: "flex",
                       gap: "8px",
@@ -498,7 +382,6 @@ const LoginForm = () => {
                     }}
                   />
                 </div>
-
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
@@ -525,20 +408,11 @@ const LoginForm = () => {
                     )}
                   </Button>
                 </div>
-
                 <div className="text-center">
                   <button
-                    onClick={async () => {
-                      const toast = (await import("react-hot-toast")).toast;
-                      if (email) {
-                        generateOTP();
-                        if (GeneratedOtp) {
-                          SendOtp();
-                        }
-                      } else {
-                        toast.error("Enter email");
-                      }
-                    }}
+                    onClick={() =>
+                      email ? SendOtp() : toast.error("Enter email")
+                    }
                     className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                     disabled={SendingOtp}
                   >
@@ -551,7 +425,6 @@ const LoginForm = () => {
         </Modal>
       )}
 
-      {/* Reset Password Modal */}
       {ResetPass && (
         <ModalComponent
           handleClose={handleResetPassClose}
@@ -561,7 +434,6 @@ const LoginForm = () => {
         />
       )}
 
-      {/* Backdrop */}
       {loading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
