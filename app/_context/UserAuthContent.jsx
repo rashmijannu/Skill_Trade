@@ -11,7 +11,7 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ✅ Check if window exists (Prevents SSR issues)
+   
     if (typeof window !== "undefined") {
       const data = localStorage.getItem("auth");
 
@@ -31,7 +31,7 @@ function AuthProvider({ children }) {
     }
   }, []);
 
-  if (loading) return <div>Loading...</div>; // ✅ Prevents hydration mismatch
+  if (loading) return <div>Loading...</div>; 
 
   return (
     <AuthContext.Provider value={[auth, setAuth]}>
