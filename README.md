@@ -1,95 +1,190 @@
-# 🛠️ Skilltrade
+# 🛠️ SkillTrade
 
-**Skilltrade** is a web-based platform that allows users to book skilled professionals such as electricians, painters, plumbers, and more. It’s built to simplify the process of finding and hiring trusted service providers.
+**SkillTrade** is a modern web platform that connects users with skilled professionals—electricians, painters, plumbers, and more—to simplify the process of hiring trusted service providers.
+
+---
+
+## ✨ Features
+
+- 🔍 Browse and book skilled professionals easily
+- 🔐 Secure user and provider authentication
+- 💡 Intuitive, modern UI built with Next.js
+- 👥 Role-based access: Users and Service Providers
+
+---
+
+## 📸 Preview
+
+Here’s a glimpse of what Skilltrade looks like:
+
+### 🖥️ Landing Page
+![Landing Page](./public/landingPage.jpg)
+
+### 📋 Service Booking Flow
+![Booking Flow](./assets/booking.png)
+
+### 👤 User Dashboard
+![User Dashboard](./assets/dashboard.png)
+
 
 ## 🧰 Tech Stack
 
-**Frontend:** next.js  
-**Backend:** Node.js, Express.js  
-**Database:** MongoDB  
-**Others:** Mongoose, JWT (Authentication), and more
+| Area     | Technology          |
+| -------- | ------------------- |
+| Frontend | Next.js             |
+| Backend  | Node.js, Express.js |
+| Database | MongoDB             |
+| Auth/ORM | JWT, Mongoose       |
 
 ---
 
 ## 🧑‍💻 Getting Started
 
-Follow these steps to run the project locally.
+To run SkillTrade locally, follow the steps below. Make sure you have all required tools installed.
 
-### Prerequisites
+### 🔗 Prerequisites
 
-- Node.js installed
-- MongoDB instance (local or cloud)
-- Git installed
+- **Node.js** – [Download here](https://nodejs.org/)
+- **MongoDB** – Local instance or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- **Git** – Version control
 
 ---
 
 ## 📦 Installation
 
-### 1. Fork the repository
+### 1. Fork & Clone the Repository
 
-- Click the **Fork** button on the top right of the repo
-- Clone your forked repo instead of the main one
-- 
+- Click the **Fork** button (top-right of this page)
+- Clone your forked repository:
+
 ```bash
-git clone "link of your forked repo"
-```
-frontend set up:
-```bash
-cd skill
-npm install
-npm run dev
-```
-
-create .env.local file in the skill folder:
-
-```
-NEXT_PUBLIC_BASE_URL=http://localhost:8000
-NEXT_PUBLIC_HERE_API_KEY=you api key (Go to https://developer.here.com to generate api key)  
+git clone https://github.com/YOUR_USERNAME/Skill_Trade.git
+cd Skill_Trade
 ```
 
 ---
 
-backend set up:
+### ⚙️ Frontend Setup
 
-create .env file in the server folder:
+1. Navigate to the frontend directory:
+
+```bash
+cd skill
 ```
-DB_CONNECT=your mongodb database link
-email_id=your email(only needed when working with email functionality)
-pass_key=email pass key 
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env.local` file in the `skill` directory:
+
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_HERE_API_KEY=
+```
+
+> 🔑 Get your HERE Maps API key from [developer.here.com](https://developer.here.com)
+
+4. Run the frontend server:
+
+```bash
+npm run dev
+```
+
+The app will be running at [http://localhost:3000](http://localhost:3000)
+
+---
+
+### 🔧 Backend Setup
+
+1. Navigate to the backend directory:
+
+```bash
+cd ../server
+```
+
+2. Create a `.env` file in the `server` directory:
+
+```env
+DB_CONNECT=your_mongodb_uri
+email_id=             # Optional: for email functionality
+pass_key=             # Optional: for email functionality
 PORT=8000
-SECRET=UJSBBFGSIERNFDJDKKSJ
+SECRET=UJSBBFGSIERNFDJDKKSJ    # Change this for production!
 ```
 
-```
-move to the server folder: cd server
-install dependancy : npm install 
-start the server : nodemon server
+3. Install backend dependencies:
+
+```bash
+npm install
 ```
 
+4. Start the backend server:
 
-
-## 🚀 How to Push Code
-create a new branch 
+```bash
+npx nodemon server
 ```
+
+The backend will be running at [http://localhost:8000](http://localhost:8000)
+
+---
+
+## 📝 Usage
+
+Once both frontend and backend are running:
+
+1. Open your browser and visit: [http://localhost:3000](http://localhost:3000)
+2. Register or login
+3. Browse and book nearby service providers 🎯
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Follow the steps below:
+
+### Steps
+
+1. Fork the repository
+2. Create a new branch for your feature or bug fix:
+
+```bash
 git checkout -b your-feature-name
 ```
 
-Stage and Commit Your Changes
-```
+3. Make your changes
+4. Stage and commit:
+
+```bash
 git add .
 git commit -m "Add: your meaningful commit message"
 ```
 
-push to github
+5. Push your branch:
+
+```bash
+git push origin your-feature-name
 ```
-git push origin  your-feature-name
-```
 
-Open a Pull Request
-Go to your GitHub repository
+6. Open a Pull Request:
+   - Go to your fork on GitHub
+   - Click "Compare & pull request"
+   - Fill in a clear title and description
+   - Submit!
 
-You’ll see an option to "Compare & pull request"
+**Contribution Guidelines:**
+- Ensure your code builds and works correctly
+- Use descriptive commit messages ([Conventional Commits](https://www.conventionalcommits.org/))
+- Address feedback in code reviews
 
-Add a title, description,images and submit the pull request
+---
 
+## 📢 Contact
 
+For any questions, suggestions, or issues, feel free to open an [issue on GitHub](https://github.com/AyushSharma72/Skill_Trade/issues).
+
+---
+
+*Happy Coding!* 🎉
