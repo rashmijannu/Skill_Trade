@@ -18,13 +18,7 @@
 Here’s a glimpse of what Skilltrade looks like:
 
 ### 🖥️ Landing Page
-![Landing Page](./public/landingPage.jpg)
-
-### 📋 Service Booking Flow
-![Booking Flow](./assets/booking.png)
-
-### 👤 User Dashboard
-![User Dashboard](./assets/dashboard.png)
+![Landing Page](/landingPage.jpg)
 
 
 ## 🧰 Tech Stack
