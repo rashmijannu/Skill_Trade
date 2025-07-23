@@ -119,40 +119,34 @@ const Navbar = () => {
               <Link
                 href="/"
                 className={`${
-                  pathname === "/" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Home</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Home
               </Link>
               <Link
                 href="/user/create_request"
                 className={`${
-                  pathname === "/user/create_request"
-                    ? "border-b-2 border-white"
-                    : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/user/create_request" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Create request</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Create request
               </Link>
               <Link
                 href="/user/hire"
                 className={`${
-                  pathname === "/user/hire" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/user/hire" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Hire</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Hire
               </Link>
               <Link
                 href="/Contact"
                 className={`${
-                  pathname === "/Contact" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Contact</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-violet-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Contact
               </Link>
               <Menu2 />
             </>
@@ -161,40 +155,34 @@ const Navbar = () => {
               <Link
                 href="/"
                 className={`${
-                  pathname === "/" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Home</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Home
               </Link>
               <Link
                 href="/worker/all_request"
                 className={`${
-                  pathname === "/worker/all_request"
-                    ? "border-b-2 border-white"
-                    : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/worker/all_request" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">All Request</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                All Request
               </Link>
               <Link
                 href="/worker/hire"
                 className={`${
-                  pathname === "/worker/hire" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/worker/hire" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Hiring Requests</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Hiring Requests
               </Link>
               <Link
                 href="/Contact"
                 className={`${
-                  pathname === "/Contact" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Contact</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-violet-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Contact
               </Link>
               <WorkerMenu />
             </>
@@ -203,22 +191,18 @@ const Navbar = () => {
               <Link
                 href="/"
                 className={`${
-                  pathname === "/" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Home</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Home
               </Link>
               <Link
                 href="/admin/verify_worker"
                 className={`${
-                  pathname === "/admin/verify_worker"
-                    ? "border-b-2 border-white"
-                    : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/admin/verify_worker" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Verify Workers</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Verify Workers
               </Link>
               <AdminMenu />
             </>
@@ -227,38 +211,34 @@ const Navbar = () => {
               <Link
                 href="/"
                 className={`${
-                  pathname === "/" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Home</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Home
               </Link>
               <Link
                 href="/Contact"
                 className={`${
-                  pathname === "/Contact" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Contact</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-violet-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Contact
               </Link>
               <Link
                 href="/register"
                 className={`${
-                  pathname === "/register" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/register" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Register</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Register
               </Link>
               <Link
                 href="/login"
                 className={`${
-                  pathname === "/login" ? "border-b-2 border-white" : ""
-                } text-lg relative px-3 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-gray-800 hover:text-white hover:shadow-lg hover:scale-105 hover:-translate-y-0.5 group`}
+                  pathname === "/login" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
-                <span className="relative z-10">Login</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-md opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                Login
               </Link>
             </>
           )}
