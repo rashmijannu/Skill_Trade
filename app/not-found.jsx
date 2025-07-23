@@ -14,7 +14,7 @@ export default function NotFound() {
                 height={300}
                 className="mb-8"
             />
-            <h1 className="text-6xl font-bold tracking-tight mb-4">Error 404</h1>
+            <h1 className="text-5xl font-bold tracking-tight mb-4">Error 404</h1>
             <p className="text-xl mb-6">Oops! The page you are looking for does not exist.</p>
             <Link href="https://skill-trade-next-15.vercel.app/">
                 <Button className="px-6 py-3 text-lg">
