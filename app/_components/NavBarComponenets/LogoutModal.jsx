@@ -25,14 +25,14 @@ const LogoutModal = ({ modalState, onClose }) => {
       <Box sx={style} className="w-[300px] sm:w-[400px]">
         <Typography
           id="modal-modal-title"
-          className="text-center text-red-600 font-bold"
+          className="text-center text-black font-bold"
           variant="h6"
         >
           Are you sure you want to logout?
         </Typography>
         <div className="flex flex-col mt-2">
           <Button
-            className="w-full m-auto mb-1 flex"
+            className="w-full m-auto mb-1 flex text-black  bg-red-500 hover:bg-red-400"
             onClick={() => {
               handleLogout();
               onClose();
