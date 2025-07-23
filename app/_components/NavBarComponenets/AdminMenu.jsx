@@ -41,7 +41,7 @@ const AdminMenu = () => {
         onClose={onClose}
         open={open}
       >
-       
+
         <Link href="/admin/reports">
           <CustomButton
             className="w-full flex gap-2 items-center"

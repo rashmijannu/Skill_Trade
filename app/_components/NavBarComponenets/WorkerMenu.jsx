@@ -11,8 +11,8 @@ import { useAuth } from "../../_context/UserAuthContent";
 const WorkerMenu = () => {
   const [open, setOpen] = useState(false);
   const [modal, setModalState] = useState(false);
-  const [auth,SetAuth] = useAuth();
-  
+  const [auth, SetAuth] = useAuth();
+
   const showDrawer = () => {
     setOpen(true);
   };
