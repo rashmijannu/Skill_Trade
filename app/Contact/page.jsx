@@ -111,7 +111,7 @@ const ContactForm = () => {
 const Contact = () => {
   return (
     <>
-      <div className="flex flex-col items-center w-full px-4 mt-8">
+      <div className="flex flex-col items-center w-full px-4 mt-8 mb-4">
         <Toaster />
         <div className="flex flex-wrap justify-center gap-8 sm:w-3/4 p-3 bg-white shadow-lg mt-3">
           <ContactForm />
