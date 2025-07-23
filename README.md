@@ -4,6 +4,12 @@
 
 ---
 
+## 🔗 Live Demo
+
+Check out the live version here: [SkillTrade Live](https://skill-trade-next-15.vercel.app/)
+
+---
+
 ## ✨ Features
 
 - 🔍 Browse and book skilled professionals easily
@@ -18,7 +24,19 @@
 Here’s a glimpse of what Skilltrade looks like:
 
 ### 🖥️ Landing Page
-![Landing Page](/landingPage.jpg)
+![Landing Page](./assets/landingPage.jpg)
+
+### 🛠️ New Service Section  
+![New Service](/assets/createNewService.jpg)
+
+### 📝 Register  
+![Register](/assets/register.jpg)
+
+### 💬 Testimonials  
+![Testimonial](/assets/testimonial.jpg)
+
+### 📞 Contact Us  
+![Contact Us](/assets/contactUs.jpg)
 
 
 ## 🧰 Tech Stack
@@ -63,7 +81,7 @@ cd Skill_Trade
 1. Navigate to the frontend directory:
 
 ```bash
-cd skill
+cd Skill_Trade
 ```
 
 2. Install dependencies:
