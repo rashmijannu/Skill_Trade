@@ -106,13 +106,15 @@ const Navbar = () => {
     <div className="bg-black flex justify-center text-white sticky top-0 z-[10] !font-serif">
       {/* navbar big screen  */}
       <div className="w-full xl:w-[95%] justify-between sm:flex hidden">
+      <Link href="/">
         <Image
           src="/logo.png"
-          className="w-[200px] h-[70px]"
+          className="w-[200px] h-[70px] cursor-pointer"
           alt="skill trade logo"
           width={200}
           height={70}
         ></Image>
+      </Link>
         <div className="xl:w-[40%] sm:w-1/2 p-2 flex items-center justify-between  font-bold">
           {auth?.user?.role == 0 ? (
             <>
