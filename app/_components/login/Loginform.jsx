@@ -26,9 +26,8 @@ import ModalComponent from "../Modal";
 import ResetPassModal from "./ResetPassModal";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, Lock, Shield } from "lucide-react";
+import { Phone, Lock, Shield } from "lucide-react";
 
 import { style } from "../../_Arrays/Arrays";
 
