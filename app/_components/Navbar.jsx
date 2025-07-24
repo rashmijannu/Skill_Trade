@@ -114,33 +114,43 @@ const Navbar = () => {
           width={200}
           height={70}
         ></Image>
-      </Link>
-        <div className="xl:w-[40%] sm:w-1/2 p-2 flex items-center justify-between  font-bold">
+ </Link>
+
+        <div className="p-2 px-6 flex items-center justify-end gap-8 font-bold text-xl">
+
+     
+
           {auth?.user?.role == 0 ? (
             <>
               <Link
                 href="/"
-                className={`${pathname === "/" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Home
-              </Link>{" "}
+              </Link>
               <Link
                 href="/user/create_request"
                 className={`${
                   pathname === "/user/create_request" ? "border-b-2 " : ""
-                }`}
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Create request
               </Link>
               <Link
                 href="/user/hire"
-                className={`${pathname === "/user/hire" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/user/hire" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Hire
               </Link>
               <Link
                 href="/Contact"
-                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Contact
               </Link>
@@ -150,15 +160,17 @@ const Navbar = () => {
             <>
               <Link
                 href="/"
-                className={`${pathname === "/" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Home
-              </Link>{" "}
+              </Link>
               <Link
                 href="/worker/all_request"
                 className={`${
                   pathname === "/worker/all_request" ? "border-b-2 " : ""
-                }`}
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 All Request
               </Link>
@@ -166,13 +178,15 @@ const Navbar = () => {
                 href="/worker/hire"
                 className={`${
                   pathname === "/worker/hire" ? "border-b-2 " : ""
-                }`}
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Hiring Requests
               </Link>
               <Link
                 href="/Contact"
-                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Contact
               </Link>
@@ -182,43 +196,53 @@ const Navbar = () => {
             <>
               <Link
                 href="/"
-                className={`${pathname === "/" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Home
-              </Link>{" "}
+              </Link>
               <Link
                 href="/admin/verify_worker"
                 className={`${
                   pathname === "/admin/verify_worker" ? "border-b-2 " : ""
-                }`}
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Verify Workers
-              </Link>{" "}
+              </Link>
               <AdminMenu />
             </>
           ) : (
             <>
               <Link
                 href="/"
-                className={`${pathname === "/" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Home
-              </Link>{" "}
+              </Link>
               <Link
                 href="/Contact"
-                className={`${pathname === "/Contact" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/Contact" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Contact
               </Link>
               <Link
                 href="/register"
-                className={`${pathname === "/register" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/register" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Register
               </Link>
               <Link
                 href="/login"
-                className={`${pathname === "/login" ? "border-b-2 " : ""}`}
+                className={`${
+                  pathname === "/login" ? "border-b-2 " : ""
+                } text-lg hover:text-gray-300 transition-colors`}
               >
                 Login
               </Link>

@@ -199,4 +199,11 @@ For any questions, suggestions, or issues, feel free to open an [issue on GitHub
 
 ---
 
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).  
+You’re free to use, modify, and share this software under the license terms.
+
+---
+
 *Happy Coding!* 🎉😀

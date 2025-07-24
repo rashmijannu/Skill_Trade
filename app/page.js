@@ -24,7 +24,7 @@ function Home() {
       id: 1,
       title: "Electrical Repairs",
       description: "Professional electrical services for your home and office",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/homepage_assets/electrical.svg?height=200&width=300",
       rating: 4.8,
       reviews: 124,
       price: "₹500/hr",
@@ -33,7 +33,7 @@ function Home() {
       id: 2,
       title: "Plumbing Services",
       description: "Expert plumbing solutions for all your needs",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/homepage_assets/plumbing.svg?height=200&width=300",
       rating: 4.7,
       reviews: 98,
       price: "₹450/hr",
@@ -42,7 +42,7 @@ function Home() {
       id: 3,
       title: "Carpentry Work",
       description: "Custom carpentry and furniture repair services",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/homepage_assets/carpentary.svg?height=200&width=300",
       rating: 4.9,
       reviews: 87,
       price: "₹600/hr",
@@ -51,7 +51,7 @@ function Home() {
       id: 4,
       title: "Painting Services",
       description: "Transform your space with professional painting",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/homepage_assets/painting.svg?height=200&width=300",
       rating: 4.6,
       reviews: 76,
       price: "₹400/hr",
@@ -65,7 +65,7 @@ function Home() {
       role: "Homeowner",
       content:
         "Found an excellent electrician through Skill Trade. The service was prompt and professional. Highly recommended!",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "/homepage_assets/user_profileicon.png",
       rating: 5,
     },
     {
@@ -74,7 +74,7 @@ function Home() {
       role: "Business Owner",
       content:
         "As a small business owner, finding reliable service providers was always a challenge until I discovered Skill Trade.",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "/homepage_assets/user_profileicon.png",
       rating: 4,
     },
     {
@@ -83,7 +83,7 @@ function Home() {
       role: "Interior Designer",
       content:
         "The platform connects me with skilled professionals who help bring my design visions to life. Great experience!",
-      avatar: "/placeholder.svg?height=80&width=80",
+      avatar: "/homepage_assets/user_profileicon.png",
       rating: 5,
     },
   ];
