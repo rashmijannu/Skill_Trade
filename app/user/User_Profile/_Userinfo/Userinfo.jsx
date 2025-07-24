@@ -57,7 +57,7 @@ const Userinfo = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [emailVerified, SetEmailVerified] = useState(false);
   const [imgurl, SetImgUrl] = useState(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
+    "/demouserimage.jpg"
   );
 
   const handleInputChange = (e) => {
@@ -210,6 +210,30 @@ const Userinfo = () => {
     }
   };
 
+useEffect(() => {
+  const fetchImage = async () => {
+    if (!auth?.user?._id) return;
+
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth.user._id}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.success) {
+        SetImgUrl(url);
+      } else {
+        SetImgUrl("/demouserimage.jpg");
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      SetImgUrl("/demouserimage.jpg");
+    }
+  };
+
+  fetchImage();
+}, [auth?.user?._id]);
+
   useEffect(() => {
     if (auth?.user?._id) getuserdata();
   }, [auth]);
@@ -264,7 +288,7 @@ const Userinfo = () => {
               <div className="relative group">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <Image
-                    src={imgurl || "/placeholder.svg"}
+                    src={imgurl}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     width={128}
