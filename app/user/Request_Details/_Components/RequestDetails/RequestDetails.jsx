@@ -61,6 +61,8 @@ const params = useParams();
   const [description, setDescription] = useState("");
   const [dateExpiredModal, SetdateExpiredModal] = useState(false);
   const [imageUrl, setImgUrl] = useState(intialimage);
+  const [imageError, setImageError] = useState(false);    
+  const [selectedImageName, setSelectedImageName] = useState('');    
 
   function getLabelText(stars) {
     return `${stars} Star${stars !== 1 ? "s" : ""}, ${labels[stars]}`;
@@ -243,6 +245,7 @@ const params = useParams();
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
+    setSelectedImageName(e.target.files[0].name);
   };
 
   const handleCommentChange = (event) => {
@@ -287,21 +290,48 @@ const params = useParams();
           {data && (
             <div className="flex flex-col lg:flex-row gap-10">
               <div className="flex flex-col items-center w-full lg:w-1/3">
-                <Image
-                  src={imageUrl}
-                  width={200}
-                  height={200}
-                  className="object-cover rounded-md !h-64 !w-[330px] m-auto"
-                  alt="Request Image"
-                />
+                {(imageError) ?
+                  <div class="w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 7l9-4 9 4v10l-9 4-9-4V7z" />
+                    </svg>
+                    <span>No Image Uploaded</span>
+                  </div>
+                  : 
+                  <Image
+                    src={imageUrl}
+                    width={200}
+                    height={200}
+                    onError={()=>{
+                      setImageError(true)
+                    }}
+                    className="object-cover rounded-md !h-64 !w-[330px] m-auto"
+                    alt="Request Image"
+                  />
+                }
                 {data.status !== "Completed" && data.status !== "Deleted" && (
-                  <form className="flex flex-col  w-full mt-4">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="mb-2"
-                    />
+                  <form className="flex flex-col w-full mt-4 gap-4">
+                    <div>
+                      <label
+                        htmlFor="imageUpload"
+                        className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 cursor-pointer transition"
+                      >
+                        📁 Choose Image
+                      </label>
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                      {selectedImageName && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Selected: <span className="font-medium">{selectedImageName}</span>
+                        </p>
+                      )}
+                    </div>
                     <Button
                       onClick={(e) => {
                         updateRequestImage(e);
