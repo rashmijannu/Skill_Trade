@@ -15,6 +15,10 @@ const nextConfig = {
         hostname: "localhost",
         port: "8000",
       },
+      {
+        protocol: "https",     // Added for Unsplash images for setting up the MarqueeImages component
+        hostname: "images.unsplash.com",
+      },
     ],
   },
   reactStrictMode: false,

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle, Star, Users } from "lucide-react";
 import ServiceCard from "./_components/service-card";
 import TestimonialCard from "./_components/testimonial-card";
 import { useState } from "react";
+import MarqueeImages from "./_components/MarqeeImage";
 
 const LottieAnimation = dynamic(
   () => import("./_components/homepageanimation"),
@@ -260,7 +261,7 @@ function Home() {
 
       {/* CTA section */}
       <div className="bg-black text-white py-16">
-        <div className="max-w-4xl mx-auto text-center px-4">
+        <div className="max-w-7xl mx-auto text-center px-0 md:px-4">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             Ready to Get Started?
           </h2>
@@ -268,7 +269,8 @@ function Home() {
             Join thousands of satisfied customers and professionals on Skill
             Trade today.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <MarqueeImages />
+          <div className="flex flex-col sm:flex-row gap-4 px-4 md:px-0 justify-center">
             <Button
               size="lg"
               className="bg-white text-gray-900 hover:bg-gray-100 font-bold"
