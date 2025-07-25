@@ -1,13 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { FaGithub, FaEnvelope, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaEnvelope, FaLinkedin, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import dynamic from "next/dynamic";
-import {Button} from "../../components/ui/button"
-import toast, {Toaster} from "react-hot-toast"
 import Image from "next/image"
 
-const Footer = dynamic(() => import("../_components/Footer"), { ssr: false });
 
+const Footer = dynamic(() => import("../_components/Footer"), { ssr: false });
 
 const ContactForm = () => {
   const [Name, SetName] = useState("");
@@ -30,80 +28,202 @@ const ContactForm = () => {
         }
       );
       if (response.status === 200) {
-        toast.success("We received your query");
+        // toast.success("We received your query");
+        alert("We received your query");
         SetName("");
         SetEmail("");
         SetMessage("");
       } else {
-        toast.error("Please try after some time");
+        // toast.error("Please try after some time");
+        alert("Please try after some time");
       }
     } catch (error) {
-      toast.error("Something went wrong");
+      // toast.error("Something went wrong");
+      alert("Something went wrong");
     } finally {
       Setloading(false);
     }
   }
 
   return (
-    <div className="w-full max-w-md">
-      {" "}
-      <h1 className="text-4xl font-bold text-gray-800 mt-8 text-center">
-        Get in Touch
-      </h1>
-      <p className="text-gray-600 text-lg mb-6 text-center">
-        We are here for you. How can we help?
-      </p>
-      <form onSubmit={handleSubmit} className=" rounded-lg p-6 w-full max-w-md">
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-gray-700 font-medium">
-            Name
-          </label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            id="name"
-            required
-            placeholder="Enter your name"
-            value={Name}
-            onChange={(e) => SetName(e.target.value)}
+    <div className="w-full ">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Send us a Message</h2>
+          <p className="text-gray-600">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+        </div>
+        
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors duration-200 bg-gray-50 focus:bg-white"
+              id="name"
+              required
+              placeholder="Enter your full name"
+              value={Name}
+              onChange={(e) => SetName(e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors duration-200 bg-gray-50 focus:bg-white"
+              id="email"
+              required
+              placeholder="Enter your email address"
+              value={Email}
+              onChange={(e) => SetEmail(e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
+              Message *
+            </label>
+            <textarea
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"
+              id="message"
+              rows="5"
+              required
+              placeholder="Tell us how we can help you..."
+              value={Message}
+              onChange={(e) => SetMessage(e.target.value)}
+            ></textarea>
+          </div>
+          
+          <button
+            type="submit"
+            className="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition-colors duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Sending...
+              </div>
+            ) : (
+              "Send Message"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ContactInfo = () => {
+  return (
+    <div className="w-full ">
+      <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl p-8 text-white">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2">Contact Us</h2>
+        </div>
+        
+        
+        {/* Contact Us */}
+        <div className="flex justify-center mb-6">
+          <div className="w-88 h-62 bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl flex items-center justify-center">
+            <div className="text-center">
+              <Image
+            src="/contactpg.svg"
+            alt="contact support"
+            className="w-82 h-62 rectangle-full object-cover shadow-lg mb-2"
+            width={500}
+            height={500}
           />
+            </div>
+          </div>
         </div>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 font-medium">
-            Email
-          </label>
-          <input
-            type="email"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            id="email"
-            required
-            placeholder="Enter your email"
-            value={Email}
-            onChange={(e) => SetEmail(e.target.value)}
+        
+        <div className="space-y-6">
+          <div className="flex items-center space-x-4 p-3 bg-gray-800 rounded-xl">
+            <FaEnvelope className="text-xl text-gray-300" />
+            <div>
+              <p className="font-semibold">Email</p>
+              <a href="mailto:asharma7588@gmail.com" className="text-gray-300 hover:text-white transition-colors">
+                asharma7588@gmail.com
+              </a>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-4 p-3 bg-gray-800 rounded-xl">
+            <FaEnvelope className="text-xl text-gray-300" />
+            <div>
+              <p className="font-semibold">Support</p>
+              <a href="mailto:Mohitsinghtadhiyal8@gmail.com" className="text-gray-300 hover:text-white transition-colors">
+                Mohitsinghtadhiyal8@gmail.com
+              </a>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-4 p-3 bg-gray-800 rounded-xl">
+            <FaLinkedin className="text-xl text-gray-300" />
+            <div>
+              <p className="font-semibold">LinkedIn</p>
+              <a 
+                href="https://www.linkedin.com/in/ayush-sharma-a155a8267" 
+                target="_blank" 
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                Ayush Sharma
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DeveloperSection = () => {
+  return (
+    <div className="bg-gray-50 rounded-2xl p-8 text-center">
+      <h3 className="text-2xl font-bold text-gray-900 mb-6">Meet the Developer</h3>
+      
+      <div className="flex flex-col items-center">
+        <Image
+            src="/Ayush2.jpg"
+            alt="Ayush Sharma"
+            className="w-32 h-32 rounded-full object-cover shadow-lg mb-4"
+            width={200}
+            height={200}
           />
+
+        
+        <h4 className="text-xl font-bold text-gray-900 mb-1">Ayush Sharma</h4>
+        <p className="text-gray-600 mb-6">Developer and Project Manager</p>
+        
+        <div className="flex space-x-4">
+          <a
+            href="https://github.com/AyushSharma72"
+            target="_blank"
+            className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-200 transform hover:scale-110"
+          >
+            <FaGithub className="text-xl" />
+          </a>
+          <a
+            href="mailto:asharma7588@gmail.com"
+            className="w-12 h-12 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors duration-200 transform hover:scale-110"
+          >
+            <FaEnvelope className="text-xl" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/ayush-sharma-a155a8267"
+            target="_blank"
+            className="w-12 h-12 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-600 transition-colors duration-200 transform hover:scale-110"
+          >
+            <FaLinkedin className="text-xl" />
+          </a>
         </div>
-        <div className="mb-4">
-          <label htmlFor="message" className="block text-gray-700 font-medium">
-            Message
-          </label>
-          <textarea
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none "
-            id="message"
-            rows="4"
-            required
-            placeholder="Go ahead! We are listening..."
-            value={Message}
-            onChange={(e) => SetMessage(e.target.value)}
-          ></textarea>
-        </div>
-        <Button
-          type="submit"
-          className="w-full  font-bold py-2 rounded-lg"
-          disabled={loading}
-        >
-          {loading ? "Sending..." : "Submit"}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 };
@@ -111,84 +231,27 @@ const ContactForm = () => {
 const Contact = () => {
   return (
     <>
-      <div className="flex flex-col items-center w-full px-4 mt-8 mb-4">
-        <Toaster />
-        <div className="flex flex-wrap justify-center gap-8 sm:w-3/4 p-3 bg-white shadow-lg mt-3">
-          <ContactForm />
-          <div className="flex flex-col p-3 rounded-lg">
-            <Image
-              src="/contacus.jpg"
-              className="w-80 rounded-lg shadow-lg"
-              alt="Contact Us"
-              width={400}
-              height={200}
-            />
-            <p className="text-xl font-semibold mt-4 mb-2 text-center">
-              Contact us
-            </p>
-            <div className="flex flex-col gap-2">
-              <a
-                href="mailto:asharma7588@gmail.com"
-                className=" text-lg flex items-center mt-2"
-              >
-                <FaEnvelope className="text-xl mr-2" /> asharma7588@gmail.com
-              </a>
-
-              <a
-                href="mailto:Mohitsinghtadhiyal8@gmail.com"
-                className=" text-lg flex items-center mt-2"
-              >
-                <FaEnvelope className="text-xl mr-2" />{" "}
-                Mohitsinghtadhiyal8@gmail.com
-              </a>
-
-              <div className=" text-lg flex items-center mt-2">
-                <a
-                  href="https://www.linkedin.com/in/ayush-sharma-a155a8267"
-                  target="blank"
-                  className="flex"
-                >
-                  <FaLinkedin className="text-2xl mr-2" /> Ayush Sharma
-                </a>
-              </div>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16 px-4">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Get in <span className="text-black">Touch</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            We are here for you. How can we help?
+          </p>
         </div>
-
-        {/* developed by  */}
-
-        <p className="text-2xl font-bold text-gray-800 mt-10">Developed By</p>
-        <div className="flex flex-col items-center mt-4">
-          <Image
-            src="/Ayush2.jpg"
-            alt="Ayush Sharma"
-            className="w-32 h-32 rounded-full object-cover shadow-lg mb-4"
-            width={200}
-            height={200}
-          />
-          <p className="text-lg font-semibold">Ayush Sharma</p>
-          <p className="text-gray-600">Developer and Project Manager</p>
-          <div className="flex mt-4 space-x-4">
-            <a
-              href="https://github.com/AyushSharma72"
-              target="_blank"
-              className="bg-gray-800 text-white p-3 rounded-full"
-            >
-              <FaGithub className="text-2xl" />
-            </a>
-            <a
-              href="mailto:asharma7588@gmail.com"
-              className="bg-red-500 text-white p-3 rounded-full"
-            >
-              <FaEnvelope className="text-2xl" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/ayush-sharma-a155a8267"
-              target="_blank"
-              className="bg-blue-700 text-white p-3 rounded-full"
-            >
-              <FaLinkedin className="text-2xl" />
-            </a>
+        
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 mb-16">
+            <ContactForm />
+            <ContactInfo />
+          </div>
+          
+          {/* Developer Section */}
+          <div className="max-w-2xl mx-auto">
+            <DeveloperSection />
           </div>
         </div>
       </div>
