@@ -258,28 +258,6 @@ useEffect(() => {
                 </p>
               </div>
             </div>
-
-            {!emailVerified && (
-              <Alert className="border-amber-200 bg-amber-50">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-amber-800">
-                  Your email is unverified. Please{" "}
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-amber-700 underline font-medium"
-                    onClick={() => {
-                      generateOTP();
-                      if (GeneratedOtp) {
-                        SendOtp(auth?.user?.Email);
-                      }
-                    }}
-                  >
-                    verify your email
-                  </Button>{" "}
-                  to secure your account.
-                </AlertDescription>
-              </Alert>
-            )}
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -458,7 +436,7 @@ useEffect(() => {
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <DialogTitle className="text-xl font-semibold">
+            <DialogTitle className="text-xl font-semibold text-center">
               Verify Your Email
             </DialogTitle>
             <DialogDescription className="text-center">

@@ -363,7 +363,7 @@ async function SendOtp(req, resp) {
 
 async function VerifyOtp(req, resp) {
   try {
-    const { email, otp, foremail = false } = req.body;
+    const { email, otp, foremail = false, generatedOtp } = req.body;
 
     if (!email || !otp) {
       return resp.status(400).send({
@@ -373,34 +373,42 @@ async function VerifyOtp(req, resp) {
     }
 
     const user = await UserModal.findOne({ Email: email });
+    
+    // For existing users, verify against stored OTP
+    if (user) {
+      if (user.otp !== otp) {
+        return resp.status(400).send({
+          success: false,
+          message: "Incorrect otp. Please try again.",
+        });
+      }
 
-    if (!user) {
-      return resp.status(404).send({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (user.otp !== otp) {
+      if (new Date() > user.otpExpiry) {
+        return resp.status(400).send({
+          success: false,
+          message: "otp has expired. Please request a new one.",
+        });
+      }
+      
+      if (foremail) {
+        user.email_verified = true;
+        await user.save();
+      }
+    } 
+    // For new users, verify against the OTP sent from frontend
+    else if (generatedOtp && otp === generatedOtp) {
+      // For new users, we just verify the OTP matches what was generated
+      // No need to update database as the user doesn't exist yet
+    } else {
       return resp.status(400).send({
         success: false,
         message: "Incorrect otp. Please try again.",
       });
     }
 
-    if (new Date() > user.otpExpiry) {
-      return resp.status(400).send({
-        success: false,
-        message: "otp has expired. Please request a new one.",
-      });
-    }
-    if (foremail) {
-      user.email_verified = true;
-      await user.save();
-    }
     return resp.status(200).send({
       success: true,
-      message: "Verification successfull",
+      message: "Verification successful",
     });
   } catch (error) {
     console.error("Error verifying OTP:", error);
@@ -502,18 +510,19 @@ async function SendEmailVerificationOtp(req, resp) {
       });
     }
 
+    // Check if user exists, but don't return error if not found
     const user = await UserModal.findOne({ Email: email });
-    if (!user) {
-      return resp.status(404).send({
-        success: false,
-        message: "User not found",
-      });
+    
+    // Store OTP in database if user exists
+    if (user) {
+      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      user.otp = GeneratedOtp;
+      user.otpExpiry = otpExpiry;
+      await user.save();
     }
-
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    user.otp = GeneratedOtp;
-    user.otpExpiry = otpExpiry;
-    await user.save();
+    
+    // For new users, we'll just send the OTP without storing it
+    // The frontend should keep track of the OTP for verification
 
     if (!process.env.email_id || !process.env.pass_key) {
       return resp.status(500).send({
@@ -549,8 +558,8 @@ async function SendEmailVerificationOtp(req, resp) {
     const mailOptions = {
       from: process.env.email_id,
       to: email,
-      subject: "Reset Password - Skill Trade",
-      html: emailTemplate, // No need for attachments, the image is now linked
+      subject: "Email Verification - Skill Trade",
+      html: emailTemplate,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -690,69 +699,6 @@ async function ListWorkers(req, resp) {
   }
 }
 
-// async function SendHireRequest(req, resp) {
-//   try {
-//     const { wid, uid } = req.params;
-//     const { description, time, date, address, Coordinates } = req.body;
-
-//     if (!description || !time || !date || !address) {
-//       return resp.status(400).send({
-//         success: false,
-//         message: "All fields are required",
-//       });
-//     }
-
-//     const worker = await WorkerModal.findById(wid);
-//     if (!worker) {
-//       return resp.status(404).send({
-//         success: false,
-//         message: "Worker not found",
-//       });
-//     }
-
-//     const existingRequest = worker.HireRequests.find(
-//       (request) => request.user.toString() === uid
-//     );
-
-//     if (existingRequest) {
-//       return resp.status(400).send({
-//         success: false,
-//         message: "You have already sent a hire request to this worker",
-//       });
-//     }
-//     if (Coordinates) {
-//       var [longitude, latitude] = Coordinates.coordinates;
-//     }
-//     const currentdate = new Date();
-
-//     worker.HireRequests.push({
-//       user: uid,
-//       description,
-//       visitingDate: date,
-//       time,
-//       address,
-//       coordinates: {
-//         type: "Point",
-//         coordinates: [longitude, latitude],
-//       },
-//       Creationdate: currentdate,
-//     });
-
-//     await worker.save();
-
-//     return resp.status(200).send({
-//       success: true,
-//       message: "Hire request sent successfully",
-//     });
-//   } catch (error) {
-//     console.error("Error in SendHireRequest:", error);
-//     return resp.status(500).send({
-//       success: false,
-//       message: "Internal server error",
-//     });
-//   }
-// }
-
 async function SubmitUserQuery(req, resp) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -797,5 +743,4 @@ module.exports = {
   SendEmailVerificationOtp,
   ListWorkers,
   SubmitUserQuery,
-  // SendHireRequest,
 };
