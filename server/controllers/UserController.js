@@ -690,70 +690,16 @@ async function ListWorkers(req, resp) {
   }
 }
 
-// async function SendHireRequest(req, resp) {
-//   try {
-//     const { wid, uid } = req.params;
-//     const { description, time, date, address, Coordinates } = req.body;
-
-//     if (!description || !time || !date || !address) {
-//       return resp.status(400).send({
-//         success: false,
-//         message: "All fields are required",
-//       });
-//     }
-
-//     const worker = await WorkerModal.findById(wid);
-//     if (!worker) {
-//       return resp.status(404).send({
-//         success: false,
-//         message: "Worker not found",
-//       });
-//     }
-
-//     const existingRequest = worker.HireRequests.find(
-//       (request) => request.user.toString() === uid
-//     );
-
-//     if (existingRequest) {
-//       return resp.status(400).send({
-//         success: false,
-//         message: "You have already sent a hire request to this worker",
-//       });
-//     }
-//     if (Coordinates) {
-//       var [longitude, latitude] = Coordinates.coordinates;
-//     }
-//     const currentdate = new Date();
-
-//     worker.HireRequests.push({
-//       user: uid,
-//       description,
-//       visitingDate: date,
-//       time,
-//       address,
-//       coordinates: {
-//         type: "Point",
-//         coordinates: [longitude, latitude],
-//       },
-//       Creationdate: currentdate,
-//     });
-
-//     await worker.save();
-
-//     return resp.status(200).send({
-//       success: true,
-//       message: "Hire request sent successfully",
-//     });
-//   } catch (error) {
-//     console.error("Error in SendHireRequest:", error);
-//     return resp.status(500).send({
-//       success: false,
-//       message: "Internal server error",
-//     });
-//   }
-// }
-
 async function SubmitUserQuery(req, resp) {
+  const { Name, Email, Message } = req.body;
+
+  if (!Name || !Email || !Message) {
+    return resp.status(400).send({
+      success: false,
+      message: "All fields are required",
+    });
+  }
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -762,23 +708,156 @@ async function SubmitUserQuery(req, resp) {
     },
   });
 
+  // Email template for owner
+  const emailTemplate = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1px solid #e0e0e0;">
+      <!-- Header Section -->
+      <div style="background-color: #1a1a1a; text-align: center; padding: 16px;">
+        <img src="https://res.cloudinary.com/dqe7okgzb/image/upload/v1743163315/logo_yhxmjl.png" alt="Skill Trade Logo" style="width: 160px; margin-bottom: 8px;">
+        <h1 style="color: #fff; margin: 0; font-size: 18px; font-weight: 600;">New Customer Inquiry</h1>
+        <p style="color: #b0b0b0; margin: 4px 0 0 0; font-size: 12px;">Skill Trade Platform</p>
+      </div>
+      <!-- Main Content -->
+      <div style="background-color: #fff; padding: 14px;">
+        <!-- Customer Information Section -->
+        <div style="margin-bottom: 12px;">
+          <h2 style="color: #333; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #333; padding-bottom: 3px; display: inline-block;">Customer Information</h2>
+          <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
+            <div style="margin-bottom: 6px;">
+              <span style="color: #333; font-weight: 600; font-size: 12px;">Name:</span>
+              <span style="color: #555; font-size: 12px; margin-left: 0.5rem;">${Name}</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+              <span style="color: #333; font-weight: 600; font-size: 12px;">Email:</span>
+              <a href="mailto:${Email}" style="color: #007BFF; font-size: 12px; margin-left: 0.5rem; text-decoration: underline;">${Email}</a>
+            </div>
+          </div>
+        </div>
+        <!-- Message Section -->
+        <div style="margin-bottom: 12px;">
+          <h3 style="color: #333; margin: 0 0 6px 0; font-size: 13px; font-weight: 600;">Message:</h3>
+          <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
+            <p style="color: #555; margin: 0; line-height: 1.4; font-size: 12px;">${Message}</p>
+          </div>
+        </div>
+        <!-- Reply Button -->
+        <div style="text-align: center; margin: 12px 0;">
+          <a href="mailto:${Email}" style="background-color: #1a1a1a; color: #fff; padding: 8px 14px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-block;">
+            📧 Reply to Customer
+          </a>
+        </div>
+        <!-- Timestamp -->
+        <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
+          <p style="color: #666; margin: 0; font-size: 11px;">
+            <span style="color: #333; font-weight: 600;">Received:</span> ${new Date().toLocaleString('en-IN', {
+              timeZone: 'Asia/Kolkata',
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </p>
+        </div>
+        <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
+          <p style="color: #666; font-size: 11px; margin: 0 0 4px 0; font-weight: 500;">
+            Skill Trade - Professional Service Marketplace
+          </p>
+          <p style="color: #666; font-size: 10px; margin: 0 0 5px 0;">
+            Connecting customers with skilled professionals
+          </p>
+          <p style="color: #999; font-size: 9px; margin: 0;">
+            © ${new Date().getFullYear()} Skill Trade. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Auto-reply email template for user
+  const autoReplyTemplate = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1px solid #e0e0e0;">
+      <!-- Header Section -->
+      <div style="background-color: #1a1a1a; text-align: center; padding: 16px;">
+        <img src="https://res.cloudinary.com/dqe7okgzb/image/upload/v1743163315/logo_yhxmjl.png" alt="Skill Trade Logo" style="width: 160px; margin-bottom: 8px;">
+        <h1 style="color: #fff; margin: 0; font-size: 18px; font-weight: 600;">Thank You for Your Inquiry</h1>
+        <p style="color: #b0b0b0; margin: 4px 0 0 0; font-size: 12px;">Skill Trade Platform</p>
+      </div>
+      <!-- Main Content -->
+      <div style="background-color: #fff; padding: 14px;">
+        <!-- Confirmation Message -->
+        <div style="margin-bottom: 12px;">
+          <h2 style="color: #333; margin: 0 0 8px 0; font-size: 14px; font-weight: 600; border-bottom: 1px solid #333; padding-bottom: 3px; display: inline-block;">Query Received Successfully</h2>
+          <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
+            <p style="color: #555; margin: 0; line-height: 1.4; font-size: 12px;">Hello <b>${Name}</b>,</p>
+            <p style="color: #555; margin: 6px 0 0 0; line-height: 1.4; font-size: 12px;">We have received your query and appreciate you reaching out to us. Our team will contact you as soon as possible to assist you with your requirements.</p>
+          </div>
+        </div>
+        <!-- Timestamp -->
+        <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
+          <p style="color: #666; margin: 0; font-size: 11px;">
+            <span style="color: #333; font-weight: 600;">Submitted:</span> ${new Date().toLocaleString('en-IN', {
+              timeZone: 'Asia/Kolkata',
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </p>
+        </div>
+        <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
+          <p style="color: #666; font-size: 11px; margin: 0 0 4px 0; font-weight: 500;">
+            This is an automated notification from Skill Trade platform
+          </p>
+          <p style="color: #666; font-size: 10px; margin: 0 0 5px 0;">
+             Professional service marketplace connecting customers with skilled workers
+          </p>
+          <p style="color: #999; font-size: 9px; margin: 0;">
+            © ${new Date().getFullYear()} Skill Trade. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
   const mailOptions = {
     from: req.body.Email,
     to: "taskmaster991@gmail.com",
     subject: "Skill Trade user query",
-    text: `
-      Name: ${req.body.Name}
-      Email: ${req.body.Email}
-      Message: ${req.body.Message}`,
+    html: emailTemplate
+  };
+
+  const autoReplyOptions = {
+    from: process.env.email_id,
+    to: Email,
+    subject: "Thank you for contacting Skill Trade - We received your query",
+    html: autoReplyTemplate,
+    headers: {
+      'Reply-To': 'no-reply@skilltrade.com'
+    }
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log("Error sending email: " + error);
-      resp.status(500).send("Error sending email");
+      resp.status(500).send({ success: false, message: "Error sending email" });
     } else {
       console.log("Email sent: " + info.response);
-      resp.status(200).send("Form data sent successfully");
+     
+      // Send auto-reply to user
+      transporter.sendMail(autoReplyOptions, (autoError, autoInfo) => {
+        if (autoError) {
+          console.log("Error sending auto-reply: " + autoError);
+          // Still return success since main email was sent
+          return resp.status(200).send({ success: true, message: "Query sent successfully" });
+        } else {
+          console.log("Auto-reply sent: " + autoInfo.response);
+          return resp.status(200).send({ success: true, message: "Query sent successfully and confirmation email sent" });
+        }
+      });
     }
   });
 }
