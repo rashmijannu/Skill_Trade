@@ -98,7 +98,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     
     try {
       setSendingOtp(true);
-      generateOTP();
+      const otp= generateOTP();
       
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
@@ -107,7 +107,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ GeneratedOtp: generatedOtp, email }),
+          body: JSON.stringify({ GeneratedOtp: otp, email }),
         }
       );
 
@@ -145,6 +145,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
           body: JSON.stringify({
             email,
             otp,
+            generatedOtp,
             foremail: true,
           }),
         }

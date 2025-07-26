@@ -53,7 +53,9 @@ const UserRegisterForm = ({ loading, setLoading }) => {
   };
 
   function generateOTP() {
-    setGeneratedOtp(Math.floor(100000 + Math.random() * 900000).toString());
+    const otp=Math.floor(100000 + Math.random() * 900000).toString()
+    setGeneratedOtp(otp);
+    return otp;
   }
 
   async function sendOtp() {
@@ -64,7 +66,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
     
     try {
       setSendingOtp(true);
-      generateOTP();
+      const otp= generateOTP();
       
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
@@ -73,7 +75,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ GeneratedOtp: generatedOtp, email }),
+          body: JSON.stringify({ GeneratedOtp: otp, email }),
         }
       );
 
@@ -93,43 +95,46 @@ const UserRegisterForm = ({ loading, setLoading }) => {
   }
 
   const verifyOtp = async () => {
-    if (!otp || otp.length !== 6) {
-      toast.error("Valid OTP is required");
-      return;
-    }
-    
-    try {
-      setVerifyingOtp(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            otp,
-            foremail: true,
-          }),
-        }
-      );
+  if (!otp || otp.length !== 6) {
+    toast.error("Valid OTP is required");
+    return;
+  }
 
-      const data = await response.json();
+  try {
+    setVerifyingOtp(true);
 
-      if (response.ok) {
-        toast.success("Email verification successful");
-        setEmailVerified(true);
-        setOpenOtpModal(false);
-      } else {
-        toast.error(data.message);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          otp,             // user entered OTP
+          generatedOtp,    // stored/generated OTP from frontend
+          foremail: true,
+        }),
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
-    } finally {
-      setVerifyingOtp(false);
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success("Email verification successful");
+      setEmailVerified(true);
+      setOpenOtpModal(false);
+    } else {
+      toast.error(data.message);
     }
-  };
+  } catch (error) {
+    toast.error("An unexpected error occurred. Please try again.");
+  } finally {
+    setVerifyingOtp(false);
+  }
+};
+
 
   async function RegisterUser(event) {
     event.preventDefault();
