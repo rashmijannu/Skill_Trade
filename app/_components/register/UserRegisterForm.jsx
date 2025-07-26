@@ -18,9 +18,6 @@ import {
 } from "@/components/ui/card";
 import "react-phone-input-2/lib/style.css";
 
-import { GoogleLoginButton } from "@/components/OAuthLogin";
-
-
 const UserRegisterForm = ({ loading, setLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [mobileNo, setMobileNo] = useState("");
@@ -234,12 +231,6 @@ const UserRegisterForm = ({ loading, setLoading }) => {
             >
               {loading ? "Creating Account..." : "Create Account"}
             </Button>
-
-            <hr className="border-1" />
-            
-            <p className="text-center text-gray-600 font-bold">OR</p>
-            
-            <GoogleLoginButton />
           </form>
         </CardContent>
       </Card>
