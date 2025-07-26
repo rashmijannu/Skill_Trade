@@ -30,6 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Lock, Shield } from "lucide-react";
 
 import { style } from "../../_Arrays/Arrays";
+import { GoogleLoginButton } from "@/components/OAuthLogin"
 
 const LoginForm = () => {
   const [auth, SetAuth] = useAuth();
@@ -261,6 +262,12 @@ const LoginForm = () => {
                 >
                   Sign In
                 </Button>
+
+                <hr className="border-1" />
+
+                <p className="text-center text-gray-600 font-bold">OR</p>
+
+                <GoogleLoginButton />
               </form>
 
               <div className="text-center pt-4">
