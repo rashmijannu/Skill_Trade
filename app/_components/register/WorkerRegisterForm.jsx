@@ -1,6 +1,7 @@
 "use client";
-import { useState, useRef } from "react";
-import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
@@ -20,9 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import "react-phone-input-2/lib/style.css";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serviceType, setServiceType] = useState("");
   const [mobileNo, setMobileNo] = useState("");
@@ -31,7 +41,20 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
   const debounceTimeout = useRef(null);
   const API_KEY = process.env.NEXT_PUBLIC_HERE_API_KEY;
+  
+  // OTP related states
+  const [openOtpModal, setOpenOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    const isVerified = localStorage.getItem("emailVerified") === "true";
+    if (isVerified) setEmailVerified(true);
+  }, []);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -65,11 +88,96 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     setSuggestions([]);
   };
 
+  // Generate OTP function
+  function generateOTP() {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(otp);
+    return otp;
+  }
+
+  // Send OTP function
+  async function sendOtp() {
+    if (!email) {
+      toast.error("Email is required");
+      return;
+    }
+    
+    try {
+      setSendingOtp(true);
+      const otp= generateOTP();
+      
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ GeneratedOtp: otp, email }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("OTP sent successfully");
+        setOpenOtpModal(true);
+      } else {
+        toast.error(data.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSendingOtp(false);
+    }
+  }
+
+  // Verify OTP function
+  const verifyOtp = async () => {
+    if (!otp || otp.length !== 6) {
+      toast.error("Valid OTP is required");
+      return;
+    }
+    
+    try {
+      setVerifyingOtp(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            otp,
+            generatedOtp,
+            foremail: true,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Email verification successful");
+        setEmailVerified(true);
+        localStorage.setItem("emailVerified", "true");
+        setOpenOtpModal(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
   async function RegisterWorker(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const Name = formData.get("Name");
-    const Email = formData.get("Email");
     const Password = formData.get("Password");
     const pincode = formData.get("pincode");
 
@@ -89,6 +197,10 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
       toast.error("Please select a valid address from the suggestions");
       return;
     }
+    if (!emailVerified) {
+      toast.error("Please verify your email before registering");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -101,7 +213,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
           },
           body: JSON.stringify({
             Name,
-            Email,
+            Email: email,
             MobileNo: mobileNo,
             Address: address,
             Latitude: coordinates.lat,
@@ -121,6 +233,10 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
         event.target.reset();
         setAddress("");
         setCoordinates({ lat: "", lon: "" });
+        setEmail("");
+        setEmailVerified(false);
+        localStorage.removeItem("emailVerified");
+        router.push("/login");
       } else {
         setLoading(false);
         toast.error(result.message);
@@ -204,10 +320,74 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   id="email"
                   name="Email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="pl-10 h-12 border-slate-200 focus:border-slate-400"
                   placeholder="Enter your email address"
                 />
+              </div>
+              {!emailVerified && (
+                <div className="flex justify-between items-center mt-1">
+                  <p className="text-orange-500 text-xs">Email verification required</p>
+                  <Button
+                    type="button"
+                    onClick={sendOtp}
+                    disabled={sendingOtp || !email}
+                    className="text-xs h-8 bg-black text-white hover:bg-gray-900 px-3 py-1 rounded"
+                  >
+                    {sendingOtp ? "Sending..." : "Verify Email"}
+                  </Button>
+                </div>
+              )}
+              {emailVerified && (
+                <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Email verified
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-slate-700"
+              >
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="Password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="pr-10 h-12 border-slate-200 focus:border-slate-400"
+                  placeholder="Create a strong password"
+                />
+                <button
+                  type="button"
+                  onClick={handleClickShowPassword}
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -270,36 +450,6 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
             </div>
 
             <div className="space-y-1">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-slate-700"
-              >
-                Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="Password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  className="pr-10 h-12 border-slate-200 focus:border-slate-400"
-                  placeholder="Create a strong password"
-                />
-                <button
-                  type="button"
-                  onClick={handleClickShowPassword}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-1">
               <Label className="text-sm font-medium text-slate-700">
                 Service Type
               </Label>
@@ -336,7 +486,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
             <Button
               type="submit"
               className="w-full h-12 text-white font-medium"
-              disabled={loading}
+              disabled={loading || !emailVerified}
             >
               {loading
                 ? "Creating Account..."
@@ -345,6 +495,63 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
           </form>
         </CardContent>
       </Card>
+
+      {/* OTP Verification Modal */}
+      <Dialog open={openOtpModal} onOpenChange={setOpenOtpModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <DialogTitle className="text-xl font-semibold text-center">
+              Verify Your Email
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              We've sent a 6-digit verification code to{" "}
+              <span className="font-medium text-foreground">{email}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center space-y-6 py-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Enter verification code
+              </Label>
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={(value) => setOtp(value)}
+              >
+                <InputOTPGroup className="w-full justify-center gap-2">
+                  <InputOTPSlot index={0} className="w-12"/>
+                  <InputOTPSlot index={1} className="w-12"/>
+                  <InputOTPSlot index={2} className="w-12"/>
+                  <InputOTPSlot index={3} className="w-12"/>
+                  <InputOTPSlot index={4} className="w-12"/>
+                  <InputOTPSlot index={5} className="w-12"/>
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            <Button
+              className="w-full h-11"
+              onClick={verifyOtp}
+              disabled={verifyingOtp || otp.length !== 6}
+            >
+              {verifyingOtp ? "Verifying..." : "Verify Email"}
+            </Button>
+
+            <Button
+              variant="link"
+              className="text-sm"
+              onClick={sendOtp}
+              disabled={sendingOtp}
+            >
+              {sendingOtp ? "Sending..." : "Didn't receive the code? Resend"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
