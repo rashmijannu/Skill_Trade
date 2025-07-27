@@ -360,7 +360,55 @@ async function SendOtp(req, resp) {
     });
   }
 }
+// async function VerifyOtp(req, resp) {
+//   try {
+//     const { email, otp, foremail = false } = req.body;
 
+//     if (!email || !otp) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "Email or otp not received",
+//       });
+//     }
+
+//     const user = await UserModal.findOne({ Email: email });
+
+//     if (!user) {
+//       return resp.status(404).send({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     if (user.otp !== otp) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "Incorrect otp. Please try again.",
+//       });
+//     }
+
+//     if (new Date() > user.otpExpiry) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "otp has expired. Please request a new one.",
+//       });
+//     }
+//     if (foremail) {
+//       user.email_verified = true;
+//       await user.save();
+//     }
+//     return resp.status(200).send({
+//       success: true,
+//       message: "Verification successfull",
+//     });
+//   } catch (error) {
+//     console.error("Error verifying OTP:", error);
+//     return resp.status(500).send({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// }
 async function VerifyOtp(req, res) {
   const { email, otp, generatedOtp, foremail } = req.body;
   if (!email || !otp || !generatedOtp) {

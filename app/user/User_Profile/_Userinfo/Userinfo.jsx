@@ -50,9 +50,6 @@ const Userinfo = () => {
     address: "",
     pincode: "",
   });
-  const [GeneratedOtp, SetGeneratedOtp] = useState("");
-  const [otp, setOtp] = useState("");
-  const [Loading, SetLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [emailVerified, SetEmailVerified] = useState(false);
@@ -139,76 +136,6 @@ const Userinfo = () => {
       }
     }
   }
-
-  function generateOTP(length = 6) {
-    SetGeneratedOtp(Math.floor(100000 + Math.random() * 900000).toString());
-  }
-
-  async function SendOtp(email) {
-    try {
-      SetOpenModal(false);
-      setOpenBackdrop(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ GeneratedOtp, email }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        SetOpenModal(true);
-      } else {
-        toast.error(data.message || "Failed to send OTP");
-      }
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setOpenBackdrop(false);
-    }
-  }
-
-  const verifyOtp = async (email) => {
-    if (!otp) {
-      toast.error("OTP is required");
-      return;
-    }
-    try {
-      SetLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            otp,
-            foremail: true,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("verification successfull");
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
-    } finally {
-      SetLoading(false);
-      SetOpenModal(false);
-    }
-  };
 
 useEffect(() => {
   const fetchImage = async () => {
@@ -429,85 +356,6 @@ useEffect(() => {
         </Card>
       </div>
 
-      {/* Email Verification Modal */}
-      <Dialog open={openmodal} onOpenChange={SetOpenModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <DialogTitle className="text-xl font-semibold text-center">
-              Verify Your Email
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              We've sent a 6-digit verification code to{" "}
-              <span className="font-medium text-foreground">
-                {auth?.user?.Email}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col items-center space-y-6 py-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">
-                Enter verification code
-              </Label>
-              <InputOTP
-                maxLength={6}
-                value={otp}
-                onChange={(value) => setOtp(value)}
-              >
-                <InputOTPGroup className="w-full justify-center gap-2">
-                  <InputOTPSlot index={0} className="w-12"/>
-                  <InputOTPSlot index={1} className="w-12"/>
-                  <InputOTPSlot index={2} className="w-12"/>
-                  <InputOTPSlot index={3} className="w-12"/>
-                  <InputOTPSlot index={4} className="w-12"/>
-                  <InputOTPSlot index={5} className="w-12"/>
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-
-            <Button
-              className="w-full h-11 "
-              onClick={() => verifyOtp(auth?.user?.Email)}
-              disabled={Loading || otp.length !== 6}
-            >
-              {Loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                "Verify Email"
-              )}
-            </Button>
-
-            <Button
-              variant="link"
-              className="text-sm"
-              onClick={() => {
-                generateOTP();
-                if (GeneratedOtp) {
-                  SendOtp(auth?.user?.Email);
-                }
-              }}
-            >
-              Didn't receive the code? Resend
-            </Button>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => SetOpenModal(false)}
-              className="w-full"
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Loading Backdrop */}
       {openBackdrop && (
