@@ -458,7 +458,7 @@ useEffect(() => {
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <DialogTitle className="text-xl font-semibold">
+            <DialogTitle className="text-xl font-semibold text-center">
               Verify Your Email
             </DialogTitle>
             <DialogDescription className="text-center">
@@ -479,13 +479,13 @@ useEffect(() => {
                 value={otp}
                 onChange={(value) => setOtp(value)}
               >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
+                <InputOTPGroup className="w-full justify-center gap-2">
+                  <InputOTPSlot index={0} className="w-12"/>
+                  <InputOTPSlot index={1} className="w-12"/>
+                  <InputOTPSlot index={2} className="w-12"/>
+                  <InputOTPSlot index={3} className="w-12"/>
+                  <InputOTPSlot index={4} className="w-12"/>
+                  <InputOTPSlot index={5} className="w-12"/>
                 </InputOTPGroup>
               </InputOTP>
             </div>
