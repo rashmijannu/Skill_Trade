@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, User, Mail, MapPin, Hash, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 
-// Static imports
 import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ import {
 import "react-phone-input-2/lib/style.css";
 
 const UserRegisterForm = ({ loading, setLoading }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [mobileNo, setMobileNo] = useState("");
   const [email, setEmail] = useState("");
@@ -51,6 +52,10 @@ const UserRegisterForm = ({ loading, setLoading }) => {
       [e.target.name]: e.target.value
     });
   };
+  useEffect(() => {
+  const isVerified = localStorage.getItem("emailVerified") === "true";
+  if (isVerified) setEmailVerified(true);
+  }, []);
 
   function generateOTP() {
     const otp=Math.floor(100000 + Math.random() * 900000).toString()
@@ -124,6 +129,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
     if (response.ok) {
       toast.success("Email verification successful");
       setEmailVerified(true);
+      localStorage.setItem("emailVerified", "true");
       setOpenOtpModal(false);
     } else {
       toast.error(data.message);
@@ -146,7 +152,6 @@ const UserRegisterForm = ({ loading, setLoading }) => {
     const Address = formData.get("Address");
     const Pincode = formData.get("Pincode");
 
-    // Check if email is verified
     if (!emailVerified) {
       toast.error("Please verify your email before creating an account");
       return;
@@ -182,6 +187,8 @@ const UserRegisterForm = ({ loading, setLoading }) => {
         setMobileNo("");
         setEmail("");
         setEmailVerified(false);
+        localStorage.removeItem("emailVerified");
+        router.push("/login");
       } else {
         setLoading(false);
         toast.error(result.message);

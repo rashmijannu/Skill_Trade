@@ -1,5 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
@@ -31,6 +32,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import "react-phone-input-2/lib/style.css";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serviceType, setServiceType] = useState("");
   const [mobileNo, setMobileNo] = useState("");
@@ -49,6 +51,10 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    const isVerified = localStorage.getItem("emailVerified") === "true";
+    if (isVerified) setEmailVerified(true);
+  }, []);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -156,6 +162,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
       if (response.ok) {
         toast.success("Email verification successful");
         setEmailVerified(true);
+        localStorage.setItem("emailVerified", "true");
         setOpenOtpModal(false);
       } else {
         toast.error(data.message);
@@ -228,6 +235,8 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
         setCoordinates({ lat: "", lon: "" });
         setEmail("");
         setEmailVerified(false);
+        localStorage.removeItem("emailVerified");
+        router.push("/login");
       } else {
         setLoading(false);
         toast.error(result.message);
