@@ -1,3 +1,4 @@
+// Final version of WorkerRegisterForm.jsx with all fields and hydration-safe password rules
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -33,15 +34,30 @@ import "react-phone-input-2/lib/style.css";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
   const router = useRouter();
+
+  // State for password visibility and validation
   const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState(""); // Re-added password state
+  const [passwordValidation, setPasswordValidation] = useState({ // Re-added passwordValidation state
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
+  const [passwordFocused, setPasswordFocused] = useState(false); // Re-added passwordFocused state
+
+  // State for form fields
   const [serviceType, setServiceType] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
   const [coordinates, setCoordinates] = useState({ lat: "", lon: "" });
-  const debounceTimeout = useRef(null);
+  const [suggestions, setSuggestions] = useState([]);
   const API_KEY = process.env.NEXT_PUBLIC_HERE_API_KEY;
-  
+
+  // Debounce ref for address suggestions
+  const debounceTimeout = useRef(null);
+
   // OTP related states
   const [openOtpModal, setOpenOtpModal] = useState(false);
   const [otp, setOtp] = useState("");
@@ -51,20 +67,37 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [email, setEmail] = useState("");
 
+  // Effect to validate password as it changes
+  useEffect(() => { // Re-added useEffect for password validation
+    const val = password;
+    const validation = {
+      length: val.length >= 8,
+      lowercase: /[a-z]/.test(val),
+      uppercase: /[A-Z]/.test(val),
+      number: /\d/.test(val),
+      special: /[^A-Za-z0-9]/.test(val),
+    };
+    setPasswordValidation(validation);
+  }, [password]);
+
+  // Effect to check email verification status from localStorage on component mount
   useEffect(() => {
     const isVerified = localStorage.getItem("emailVerified") === "true";
     if (isVerified) setEmailVerified(true);
   }, []);
+
+  // Toggles password visibility
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  // Handles service type selection
   const handleServiceTypeChange = (value) => {
     setServiceType(value);
   };
 
+  // Handles address input and debounces API call for suggestions
   const handleAddressChange = (query) => {
-    console.log("working");
     setAddress(query);
 
     if (debounceTimeout.current) {
@@ -72,40 +105,49 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     }
 
     debounceTimeout.current = setTimeout(async () => {
-      if (query.length < 2) return;
+      if (query.length < 2) {
+        setSuggestions([]); // Clear suggestions if query is too short
+        return;
+      }
 
-      const response = await fetch(
-        `https://autosuggest.search.hereapi.com/v1/autosuggest?at=28.6139,77.2090&q=${query}&apiKey=${API_KEY}`
-      );
-      const data = await response.json();
-      setSuggestions(data.items || []);
+      try {
+        const response = await fetch(
+          `https://autosuggest.search.hereapi.com/v1/autosuggest?at=28.6139,77.2090&q=${query}&apiKey=${API_KEY}`
+        );
+        const data = await response.json();
+        setSuggestions(data.items || []);
+      } catch (error) {
+        console.error("Error fetching address suggestions:", error);
+        setSuggestions([]);
+      }
     }, 1000); // 1s debounce delay
   };
 
+  // Selects an address from suggestions and sets coordinates
   const selectAddress = (place) => {
     setAddress(place.title);
     setCoordinates({ lat: place.position.lat, lon: place.position.lng });
-    setSuggestions([]);
+    setSuggestions([]); // Clear suggestions after selection
   };
 
-  // Generate OTP function
+  // Generates a 6-digit OTP
   function generateOTP() {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(otp);
     return otp;
   }
 
-  // Send OTP function
+  // Sends OTP to the provided email
   async function sendOtp() {
     if (!email) {
       toast.error("Email is required");
       return;
     }
-    
+
     try {
       setSendingOtp(true);
-      const otp= generateOTP();
-      
+      const otp = generateOTP();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
         {
@@ -132,13 +174,13 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     }
   }
 
-  // Verify OTP function
+  // Verifies the entered OTP
   const verifyOtp = async () => {
     if (!otp || otp.length !== 6) {
       toast.error("Valid OTP is required");
       return;
     }
-    
+
     try {
       setVerifyingOtp(true);
       const response = await fetch(
@@ -162,7 +204,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
       if (response.ok) {
         toast.success("Email verification successful");
         setEmailVerified(true);
-        localStorage.setItem("emailVerified", "true");
+        localStorage.setItem("emailVerified", "true"); // Persist verification status
         setOpenOtpModal(false);
       } else {
         toast.error(data.message);
@@ -174,6 +216,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     }
   };
 
+  // Handles worker registration form submission
   async function RegisterWorker(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -181,12 +224,14 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     const Password = formData.get("Password");
     const pincode = formData.get("pincode");
 
+    // Client-side validations
     if (!serviceType) {
       toast.error("Please select a service type");
       return;
     }
-    if (Password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+    // Password validation is handled by the useEffect and UI feedback, but a final check here is good.
+    if (!passwordValidation.length || !passwordValidation.lowercase || !passwordValidation.uppercase || !passwordValidation.number || !passwordValidation.special) {
+      toast.error("Please ensure your password meets all criteria.");
       return;
     }
     if (!/^\d{6}$/.test(pincode)) {
@@ -213,7 +258,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
           },
           body: JSON.stringify({
             Name,
-            Email: email,
+            Email: email, // Use the email state
             MobileNo: mobileNo,
             Address: address,
             Latitude: coordinates.lat,
@@ -230,20 +275,20 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
       if (result.success) {
         setLoading(false);
         toast.success(result.message);
-        event.target.reset();
+        event.target.reset(); // Reset form fields
         setAddress("");
         setCoordinates({ lat: "", lon: "" });
         setEmail("");
         setEmailVerified(false);
-        localStorage.removeItem("emailVerified");
-        router.push("/login");
+        localStorage.removeItem("emailVerified"); // Clear verification status from local storage
+        router.push("/login"); // Redirect to login page
       } else {
         setLoading(false);
         toast.error(result.message);
       }
     } catch (error) {
       setLoading(false);
-      toast.error("Please try again");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -260,6 +305,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
         </CardHeader>
         <CardContent className="p-0">
           <form onSubmit={RegisterWorker} className="space-y-6">
+            {/* Full Name Input */}
             <div className="space-y-1">
               <Label
                 htmlFor="name"
@@ -280,6 +326,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               </div>
             </div>
 
+            {/* Mobile Number Input */}
             <div className="space-y-1">
               <Label className="text-sm font-medium text-slate-700">
                 Mobile Number
@@ -307,6 +354,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               />
             </div>
 
+            {/* Email Address Input and Verification */}
             <div className="space-y-1">
               <Label
                 htmlFor="email"
@@ -361,6 +409,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               )}
             </div>
 
+            {/* Password Input and Validation Rules */}
             <div className="space-y-1">
               <Label
                 htmlFor="password"
@@ -374,6 +423,10 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   name="Password"
                   type={showPassword ? "text" : "password"}
                   required
+                  value={password} // Added value binding
+                  onChange={(e) => setPassword(e.target.value)} // Added onChange handler
+                  onFocus={() => setPasswordFocused(true)} // Added onFocus handler
+                  onBlur={() => setPasswordFocused(false)} // Added onBlur handler
                   className="pr-10 h-12 border-slate-200 focus:border-slate-400"
                   placeholder="Create a strong password"
                 />
@@ -389,8 +442,17 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   )}
                 </button>
               </div>
+              {/* Password validation rules display */}
+              <ul className={`mt-2 space-y-1 text-sm transition-opacity duration-200 ${passwordFocused || Object.values(passwordValidation).every(Boolean) ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden"}`}>
+                <li className={passwordValidation.length ? "text-green-600" : "text-slate-400"}>✔ Minimum 8 characters</li>
+                <li className={passwordValidation.lowercase ? "text-green-600" : "text-slate-400"}>✔ One lowercase letter</li>
+                <li className={passwordValidation.uppercase ? "text-green-600" : "text-slate-400"}>✔ One uppercase letter</li>
+                <li className={passwordValidation.number ? "text-green-600" : "text-slate-400"}>✔ One number</li>
+                <li className={passwordValidation.special ? "text-green-600" : "text-slate-400"}>✔ One special character</li>
+              </ul>
             </div>
 
+            {/* Address Input with Suggestions */}
             <div className="space-y-1">
               <Label className="text-sm font-medium text-slate-700">
                 Your Closest Working Location
@@ -428,6 +490,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               </div>
             </div>
 
+            {/* Area Pincode Input */}
             <div className="space-y-1">
               <Label
                 htmlFor="pincode"
@@ -442,13 +505,14 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   name="pincode"
                   type="number"
                   required
-                  inputProps={{ maxLength: 6 }}
+                  maxLength={6} // Added maxLength directly
                   className="pl-10 h-12 border-slate-200 focus:border-slate-400"
                   placeholder="Enter your area pincode"
                 />
               </div>
             </div>
 
+            {/* Service Type Select */}
             <div className="space-y-1">
               <Label className="text-sm font-medium text-slate-700">
                 Service Type
@@ -483,6 +547,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               </div>
             </div>
 
+            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full h-12 text-white font-medium"
