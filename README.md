@@ -24,19 +24,22 @@ Check out the live version here: [SkillTrade Live](https://skill-trade-next-15.v
 Here’s a glimpse of what Skilltrade looks like:
 
 ### 🖥️ Landing Page
-![Landing Page](./assets/landingPage.jpg)
+![Landing Page](./assets/landpg.png)
 
 ### 🛠️ New Service Section  
-![New Service](/assets/createNewService.jpg)
+![New Service](/assets/newservicepg.png)
 
 ### 📝 Register  
-![Register](/assets/register.jpg)
+![Register](/assets/registerpg.png)
 
 ### 💬 Testimonials  
-![Testimonial](/assets/testimonial.jpg)
+![Testimonial](/assets/testpg.png)
 
 ### 📞 Contact Us  
-![Contact Us](/assets/contactUs.jpg)
+![Contact Us](/assets/contactpg.png)
+
+### 📞 SkillBot  
+![Skill Bot](/assets/skillbot.png)
 
 
 ## 🧰 Tech Stack
