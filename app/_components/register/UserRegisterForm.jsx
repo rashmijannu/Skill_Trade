@@ -1,3 +1,4 @@
+// Final version of UserRegisterForm.jsx with all fields and hydration-safe password rules
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -29,6 +30,17 @@ import "react-phone-input-2/lib/style.css";
 const UserRegisterForm = ({ loading, setLoading }) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  // Added password state and validation states
+  const [password, setPassword] = useState("");
+  const [passwordValidation, setPasswordValidation] = useState({
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
   const [mobileNo, setMobileNo] = useState("");
   const [email, setEmail] = useState("");
   const [openOtpModal, setOpenOtpModal] = useState(false);
@@ -38,6 +50,19 @@ const UserRegisterForm = ({ loading, setLoading }) => {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [formData, setFormData] = useState({});
+
+  // Effect to validate password as it changes
+  useEffect(() => {
+    const val = password;
+    const validation = {
+      length: val.length >= 8,
+      lowercase: /[a-z]/.test(val),
+      uppercase: /[A-Z]/.test(val),
+      number: /\d/.test(val),
+      special: /[^A-Za-z0-9]/.test(val),
+    };
+    setPasswordValidation(validation);
+  }, [password]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -52,13 +77,14 @@ const UserRegisterForm = ({ loading, setLoading }) => {
       [e.target.name]: e.target.value
     });
   };
+
   useEffect(() => {
-  const isVerified = localStorage.getItem("emailVerified") === "true";
-  if (isVerified) setEmailVerified(true);
+    const isVerified = localStorage.getItem("emailVerified") === "true";
+    if (isVerified) setEmailVerified(true);
   }, []);
 
   function generateOTP() {
-    const otp=Math.floor(100000 + Math.random() * 900000).toString()
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
     setGeneratedOtp(otp);
     return otp;
   }
@@ -68,11 +94,11 @@ const UserRegisterForm = ({ loading, setLoading }) => {
       toast.error("Email is required");
       return;
     }
-    
+
     try {
       setSendingOtp(true);
-      const otp= generateOTP();
-      
+      const otp = generateOTP();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
         {
@@ -100,57 +126,62 @@ const UserRegisterForm = ({ loading, setLoading }) => {
   }
 
   const verifyOtp = async () => {
-  if (!otp || otp.length !== 6) {
-    toast.error("Valid OTP is required");
-    return;
-  }
-
-  try {
-    setVerifyingOtp(true);
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,             // user entered OTP
-          generatedOtp,    // stored/generated OTP from frontend
-          foremail: true,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast.success("Email verification successful");
-      setEmailVerified(true);
-      localStorage.setItem("emailVerified", "true");
-      setOpenOtpModal(false);
-    } else {
-      toast.error(data.message);
+    if (!otp || otp.length !== 6) {
+      toast.error("Valid OTP is required");
+      return;
     }
-  } catch (error) {
-    toast.error("An unexpected error occurred. Please try again.");
-  } finally {
-    setVerifyingOtp(false);
-  }
-};
+
+    try {
+      setVerifyingOtp(true);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            otp, // user entered OTP
+            generatedOtp, // stored/generated OTP from frontend
+            foremail: true,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Email verification successful");
+        setEmailVerified(true);
+        localStorage.setItem("emailVerified", "true");
+        setOpenOtpModal(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
 
 
   async function RegisterUser(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-
     const Name = formData.get("Name");
     const Email = formData.get("Email");
     const Password = formData.get("Password");
     const Address = formData.get("Address");
     const Pincode = formData.get("Pincode");
+
+    // Client-side password validation check before submission
+    if (!passwordValidation.length || !passwordValidation.lowercase || !passwordValidation.uppercase || !passwordValidation.number || !passwordValidation.special) {
+      toast.error("Please ensure your password meets all criteria.");
+      return;
+    }
 
     if (!emailVerified) {
       toast.error("Please verify your email before creating an account");
@@ -305,6 +336,7 @@ const UserRegisterForm = ({ loading, setLoading }) => {
               </div>
             </div>
 
+            {/* Password Input and Validation Rules */}
             <div className="space-y-1">
               <Label
                 htmlFor="password"
@@ -318,6 +350,10 @@ const UserRegisterForm = ({ loading, setLoading }) => {
                   name="Password"
                   type={showPassword ? "text" : "password"}
                   required
+                  value={password} // Bind value to state
+                  onChange={(e) => setPassword(e.target.value)} // Update password state
+                  onFocus={() => setPasswordFocused(true)} // Set focus state
+                  onBlur={() => setPasswordFocused(false)} // Clear focus state
                   className="pr-10 h-12 border-slate-200 focus:border-slate-400"
                   placeholder="Create a strong password"
                 />
@@ -333,6 +369,14 @@ const UserRegisterForm = ({ loading, setLoading }) => {
                   )}
                 </button>
               </div>
+              {/* Password validation rules display */}
+              <ul className={`mt-2 space-y-1 text-sm transition-opacity duration-200 ${passwordFocused || Object.values(passwordValidation).every(Boolean) ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden"}`}>
+                <li className={passwordValidation.length ? "text-green-600" : "text-slate-400"}>✔ Minimum 8 characters</li>
+                <li className={passwordValidation.lowercase ? "text-green-600" : "text-slate-400"}>✔ One lowercase letter</li>
+                <li className={passwordValidation.uppercase ? "text-green-600" : "text-slate-400"}>✔ One uppercase letter</li>
+                <li className={passwordValidation.number ? "text-green-600" : "text-slate-400"}>✔ One number</li>
+                <li className={passwordValidation.special ? "text-green-600" : "text-slate-400"}>✔ One special character</li>
+              </ul>
             </div>
 
             <div className="space-y-1">
