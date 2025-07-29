@@ -38,7 +38,7 @@ Here’s a glimpse of what Skilltrade looks like:
 ### 📞 Contact Us  
 ![Contact Us](/assets/contactpg.png)
 
-### 📞 SkillBot  
+### 🤖 SkillBot  
 ![Skill Bot](/assets/skillbot.png)
 
 
