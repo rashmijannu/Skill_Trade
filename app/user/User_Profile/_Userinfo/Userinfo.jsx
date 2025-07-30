@@ -50,14 +50,11 @@ const Userinfo = () => {
     address: "",
     pincode: "",
   });
-  const [GeneratedOtp, SetGeneratedOtp] = useState("");
-  const [otp, setOtp] = useState("");
-  const [Loading, SetLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [emailVerified, SetEmailVerified] = useState(false);
   const [imgurl, SetImgUrl] = useState(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth?.user?._id}`
+    "/demouserimage.jpg"
   );
 
   const handleInputChange = (e) => {
@@ -140,75 +137,29 @@ const Userinfo = () => {
     }
   }
 
-  function generateOTP(length = 6) {
-    SetGeneratedOtp(Math.floor(100000 + Math.random() * 900000).toString());
-  }
+useEffect(() => {
+  const fetchImage = async () => {
+    if (!auth?.user?._id) return;
 
-  async function SendOtp(email) {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/GetUserImage/${auth.user._id}`;
+
     try {
-      SetOpenModal(false);
-      setOpenBackdrop(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/SendEmailVerificationOtp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ GeneratedOtp, email }),
-        }
-      );
+      const res = await fetch(url);
+      const data = await res.json();
 
-      const data = await response.json();
-
-      if (response.ok) {
-        SetOpenModal(true);
+      if (data.success) {
+        SetImgUrl(url);
       } else {
-        toast.error(data.message || "Failed to send OTP");
+        SetImgUrl("/demouserimage.jpg");
       }
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setOpenBackdrop(false);
-    }
-  }
-
-  const verifyOtp = async (email) => {
-    if (!otp) {
-      toast.error("OTP is required");
-      return;
-    }
-    try {
-      SetLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/VerifyOtp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            otp,
-            foremail: true,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("verification successfull");
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error("An unexpected error occurred. Please try again.");
-    } finally {
-      SetLoading(false);
-      SetOpenModal(false);
+      console.error("Error fetching image:", error);
+      SetImgUrl("/demouserimage.jpg");
     }
   };
+
+  fetchImage();
+}, [auth?.user?._id]);
 
   useEffect(() => {
     if (auth?.user?._id) getuserdata();
@@ -234,28 +185,6 @@ const Userinfo = () => {
                 </p>
               </div>
             </div>
-
-            {!emailVerified && (
-              <Alert className="border-amber-200 bg-amber-50">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-amber-800">
-                  Your email is unverified. Please{" "}
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto text-amber-700 underline font-medium"
-                    onClick={() => {
-                      generateOTP();
-                      if (GeneratedOtp) {
-                        SendOtp(auth?.user?.Email);
-                      }
-                    }}
-                  >
-                    verify your email
-                  </Button>{" "}
-                  to secure your account.
-                </AlertDescription>
-              </Alert>
-            )}
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -264,7 +193,7 @@ const Userinfo = () => {
               <div className="relative group">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <Image
-                    src={imgurl || "/placeholder.svg"}
+                    src={imgurl}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     width={128}
@@ -427,85 +356,6 @@ const Userinfo = () => {
         </Card>
       </div>
 
-      {/* Email Verification Modal */}
-      <Dialog open={openmodal} onOpenChange={SetOpenModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <DialogTitle className="text-xl font-semibold">
-              Verify Your Email
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              We've sent a 6-digit verification code to{" "}
-              <span className="font-medium text-foreground">
-                {auth?.user?.Email}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col items-center space-y-6 py-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">
-                Enter verification code
-              </Label>
-              <InputOTP
-                maxLength={6}
-                value={otp}
-                onChange={(value) => setOtp(value)}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-
-            <Button
-              className="w-full h-11 "
-              onClick={() => verifyOtp(auth?.user?.Email)}
-              disabled={Loading || otp.length !== 6}
-            >
-              {Loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                "Verify Email"
-              )}
-            </Button>
-
-            <Button
-              variant="link"
-              className="text-sm"
-              onClick={() => {
-                generateOTP();
-                if (GeneratedOtp) {
-                  SendOtp(auth?.user?.Email);
-                }
-              }}
-            >
-              Didn't receive the code? Resend
-            </Button>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => SetOpenModal(false)}
-              className="w-full"
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Loading Backdrop */}
       {openBackdrop && (

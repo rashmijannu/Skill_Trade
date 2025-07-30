@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Top Section */}
-      <div className="bg-gray-800 py-12 px-4">
+      <div className="bg-gray-900 py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Newsletter */}
@@ -27,7 +27,7 @@ const Footer = () => {
                   placeholder="Your email"
                   className="bg-white text-gray-900 border-0 h-12 flex-1"
                 />
-                <Button className="bg-blue-600 hover:bg-blue-700 h-12 px-6 flex items-center gap-2 whitespace-nowrap">
+                <Button className="bg-gray-800 hover:bg-gray-700 text-white h-12 px-6 flex items-center gap-2 whitespace-nowrap">
                   Subscribe <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>

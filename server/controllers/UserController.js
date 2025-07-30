@@ -360,56 +360,68 @@ async function SendOtp(req, resp) {
     });
   }
 }
+// async function VerifyOtp(req, resp) {
+//   try {
+//     const { email, otp, foremail = false } = req.body;
 
-async function VerifyOtp(req, resp) {
-  try {
-    const { email, otp, foremail = false } = req.body;
+//     if (!email || !otp) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "Email or otp not received",
+//       });
+//     }
 
-    if (!email || !otp) {
-      return resp.status(400).send({
-        success: false,
-        message: "Email or otp not received",
-      });
-    }
+//     const user = await UserModal.findOne({ Email: email });
 
-    const user = await UserModal.findOne({ Email: email });
+//     if (!user) {
+//       return resp.status(404).send({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
 
-    if (!user) {
-      return resp.status(404).send({
-        success: false,
-        message: "User not found",
-      });
-    }
+//     if (user.otp !== otp) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "Incorrect otp. Please try again.",
+//       });
+//     }
 
-    if (user.otp !== otp) {
-      return resp.status(400).send({
-        success: false,
-        message: "Incorrect otp. Please try again.",
-      });
-    }
+//     if (new Date() > user.otpExpiry) {
+//       return resp.status(400).send({
+//         success: false,
+//         message: "otp has expired. Please request a new one.",
+//       });
+//     }
+//     if (foremail) {
+//       user.email_verified = true;
+//       await user.save();
+//     }
+//     return resp.status(200).send({
+//       success: true,
+//       message: "Verification successfull",
+//     });
+//   } catch (error) {
+//     console.error("Error verifying OTP:", error);
+//     return resp.status(500).send({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// }
+async function VerifyOtp(req, res) {
+  const { email, otp, generatedOtp, foremail } = req.body;
+  if (!email || !otp || !generatedOtp) {
+    return res.status(400).send({ success: false, message: "Missing required fields" });
+  }
 
-    if (new Date() > user.otpExpiry) {
-      return resp.status(400).send({
-        success: false,
-        message: "otp has expired. Please request a new one.",
-      });
-    }
-    if (foremail) {
-      user.email_verified = true;
-      await user.save();
-    }
-    return resp.status(200).send({
-      success: true,
-      message: "Verification successfull",
-    });
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return resp.status(500).send({
-      success: false,
-      message: "Internal server error",
-    });
+  if (otp === generatedOtp) {
+    return res.status(200).send({ success: true, message: "OTP verified" });
+  } else {
+    return res.status(400).send({ success: false, message: "Invalid OTP" });
   }
 }
+
 
 async function ResetPassword(req, resp) {
   try {
@@ -490,10 +502,8 @@ async function SubmitForReview(req, resp) {
     });
   }
 }
-
 async function SendEmailVerificationOtp(req, resp) {
   const { GeneratedOtp, email } = req.body;
-
   try {
     if (!GeneratedOtp || !email) {
       return resp.status(400).send({
@@ -501,19 +511,6 @@ async function SendEmailVerificationOtp(req, resp) {
         message: "OTP and Email are required",
       });
     }
-
-    const user = await UserModal.findOne({ Email: email });
-    if (!user) {
-      return resp.status(404).send({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    user.otp = GeneratedOtp;
-    user.otpExpiry = otpExpiry;
-    await user.save();
 
     if (!process.env.email_id || !process.env.pass_key) {
       return resp.status(500).send({
@@ -533,13 +530,12 @@ async function SendEmailVerificationOtp(req, resp) {
     const emailTemplate = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
         <div style="text-align: center;">
-        <img src="https://res.cloudinary.com/dqe7okgzb/image/upload/v1743163315/logo_yhxmjl.png" alt="Skill Trade Logo" style="width: 250px; margin-bottom: 10px; background-color: black;">
-
-          <h1 style="color: #333;">Your Otp To Verify Email</h1>
+          <img src="https://res.cloudinary.com/dqe7okgzb/image/upload/v1743163315/logo_yhxmjl.png" alt="Skill Trade Logo" style="width: 250px; margin-bottom: 10px; background-color: black;">
+          <h1 style="color: #333;">Your OTP to Verify Email</h1>
           <p style="font-size: 18px; color: #555;">Hello,</p>
-          <p style="font-size: 16px; color: #555;">We received a request to verify your email. Use the OTP below to proceed:</p>
+          <p style="font-size: 16px; color: #555;">Use the OTP below to verify your email:</p>
           <p style="font-size: 24px; font-weight: bold; color: #007BFF;">${GeneratedOtp}</p>
-          <p style="font-size: 14px; color: #999; margin-top: 20px;">If you didn't request a email verification, you can safely ignore this email.</p>
+          <p style="font-size: 14px; color: #999; margin-top: 20px;">If you didn’t request this, you can ignore this email.</p>
           <hr style="margin: 20px 0;">
           <p style="font-size: 12px; color: #999;">© ${new Date().getFullYear()} Skill Trade. All rights reserved.</p>
         </div>
@@ -549,8 +545,8 @@ async function SendEmailVerificationOtp(req, resp) {
     const mailOptions = {
       from: process.env.email_id,
       to: email,
-      subject: "Reset Password - Skill Trade",
-      html: emailTemplate, // No need for attachments, the image is now linked
+      subject: "Email Verification - Skill Trade",
+      html: emailTemplate,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -560,13 +556,13 @@ async function SendEmailVerificationOtp(req, resp) {
           success: false,
           message: "Error sending email. Please try again later.",
         });
-      } else {
-        console.log("Email sent:", info.response);
-        return resp.status(200).send({
-          success: true,
-          message: "OTP sent successfully to the provided email",
-        });
       }
+
+      console.log("Email sent:", info.response);
+      return resp.status(200).send({
+        success: true,
+        message: "OTP sent successfully to the provided email",
+      });
     });
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -876,5 +872,4 @@ module.exports = {
   SendEmailVerificationOtp,
   ListWorkers,
   SubmitUserQuery,
-  // SendHireRequest,
 };
