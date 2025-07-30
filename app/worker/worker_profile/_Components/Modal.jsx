@@ -8,6 +8,7 @@ const ModalComponent = ({
   ModalType,
   GetWorkerData,
   data,
+  services
 }) => {
   return (
     <div>
@@ -21,6 +22,7 @@ const ModalComponent = ({
           handleClose={handleClose}
           data={data}
           GetWorkerData={GetWorkerData}
+          services={services}
         />
       </Modal>
     </div>

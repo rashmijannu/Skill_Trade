@@ -27,7 +27,8 @@ const Page = ({ role }) => {
   // Form states
   const [formData, setFormData] = useState({
     serviceName: '',
-    isActive: true
+    isActive: true,
+    subServices: [] // always an array
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -58,7 +59,7 @@ const Page = ({ role }) => {
 
   // Reset form
   const resetForm = () => {
-    setFormData({ serviceName: '', isActive: true });
+    setFormData({ serviceName: '', isActive: true, subServices: [] });
     setSelectedFile(null);
     setPreview(null);
   };
@@ -125,6 +126,10 @@ const Page = ({ role }) => {
     formDataToSend.append('icon', selectedFile);
     formDataToSend.append('isActive', formData.isActive);
     formDataToSend.append('role', role);
+    // Add subServices as JSON string array if provided
+    if (Array.isArray(formData.subServices) && formData.subServices.length > 0) {
+      formDataToSend.append('subServices', JSON.stringify(formData.subServices));
+    }
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/create_service`,
@@ -156,7 +161,8 @@ const Page = ({ role }) => {
     setSelectedService(service);
     setFormData({
       serviceName: service.serviceName,
-      isActive: service.isActive
+      isActive: service.isActive,
+      subServices: Array.isArray(service.subServices) ? service.subServices : []
     });
     setSelectedFile(null);
     setPreview(
@@ -199,6 +205,10 @@ const Page = ({ role }) => {
       formDataToSend.append('role', role);
       if (selectedFile) {
         formDataToSend.append('icon', selectedFile);
+      }
+      // Add subServices as JSON string array if provided
+      if (Array.isArray(formData.subServices) && formData.subServices.length > 0) {
+        formDataToSend.append('subServices', JSON.stringify(formData.subServices));
       }
 
       const response = await fetch(
@@ -249,6 +259,7 @@ const Page = ({ role }) => {
         setServices(prev => prev.filter(service => service._id !== selectedService._id));
         setShowDeleteModal(false);
         setSelectedService(null);
+        fetchServices();
         toast.success('Service deleted successfully!');
       } else {
         toast.error(data.message || 'Failed to delete service');
@@ -257,7 +268,6 @@ const Page = ({ role }) => {
       toast.error('Failed to delete service. Please try again.');
     } finally {
       setFormData((prev) => ({ ...prev, loading: false }));
-      setLoading(false);
     }
   };
 
@@ -281,11 +291,15 @@ const Page = ({ role }) => {
       
       const service = services.find(s => s._id === serviceId);
       const currentStatus = service.isActive === true || service.isActive === "true";
-      const newStatus = !currentStatus;
-      toast.success(`Service ${newStatus ? 'activated' : 'deactivated'} successfully!`);
-    } catch (error) {
-      toast.error('Failed to update service status. Please try again.');
-    } finally {
+        // Add subServices as JSON string array if provided
+        if (Array.isArray(formData.subServices) && formData.subServices.length > 0) {
+            formDataToSend.append('subServices', JSON.stringify(formData.subServices));
+        }
+      setLoading(false);
+    }
+    catch (error) {
+      console.error('Error toggling service status:', error);
+      toast.error('Failed to toggle service status. Please try again.');
       setLoading(false);
     }
   };
@@ -319,7 +333,6 @@ const Page = ({ role }) => {
         <ServiceGrid 
           filteredServices={filteredServices}
           loading={loading}
-          searchTerm={searchTerm}
           onEdit={handleEditService}
           onDelete={handleDeleteService}
           onToggleStatus={handleToggleStatus}

@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import Modal from './Modal';
+import { useState } from 'react';
 
 const CreateServiceModal = ({ 
   isOpen, 
@@ -12,6 +13,30 @@ const CreateServiceModal = ({
   preview, 
   onFileChange 
 }) => {
+  // Local state for subService input
+  const [subServiceInput, setSubServiceInput] = useState("");
+
+  // Add sub-service to list
+  const handleAddSubService = (e) => {
+    e.preventDefault();
+    const val = subServiceInput.trim();
+    if (!val) return;
+    if ((formData.subServices || []).includes(val)) return;
+    setFormData({
+      ...formData,
+      subServices: [...(formData.subServices || []), val]
+    });
+    setSubServiceInput("");
+  };
+
+  // Remove sub-service from list
+  const handleRemoveSubService = (idx) => {
+    setFormData({
+      ...formData,
+      subServices: (formData.subServices || []).filter((_, i) => i !== idx)
+    });
+  };
+
   return (
     <Modal 
       isOpen={isOpen} 
@@ -95,6 +120,39 @@ const CreateServiceModal = ({
               <span className="text-sm font-medium text-gray-700">Inactive</span>
             </label>
           </div>
+        </div>
+
+        {/* Sub-services list input */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Sub-Services
+          </label>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={subServiceInput}
+              onChange={e => setSubServiceInput(e.target.value)}
+              placeholder="Add a sub-service (e.g. Fan Repair)"
+              onKeyDown={e => { if (e.key === 'Enter') handleAddSubService(e); }}
+            />
+            <Button type="button" onClick={handleAddSubService} className="px-3" disabled={!subServiceInput.trim()}>
+              Add
+            </Button>
+          </div>
+          {/* List of sub-services */}
+          {(formData.subServices && formData.subServices.length > 0) && (
+            <ul className="mt-2 space-y-1">
+              {formData.subServices.map((sub, idx) => (
+                <li key={idx} className="flex items-center justify-between bg-gray-100 rounded px-3 py-1 text-sm">
+                  <span>{sub}</span>
+                  <button type="button" onClick={() => handleRemoveSubService(idx)} className="ml-2 text-gray-400 hover:text-red-500">
+                    <X className="w-4 h-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="text-xs text-gray-500">Optional. Add multiple sub-services for this service.</p>
         </div>
 
         <div className="flex gap-3 pt-4 sm:pt-6 border-t border-gray-200">

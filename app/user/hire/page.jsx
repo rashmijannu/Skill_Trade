@@ -42,12 +42,42 @@ const Hire = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [getServices, setGetServices] = useState([]);
   const [ServiceType, setServiceType] = useState("");
   // const [WorkerCoordinates, setWorkerCoordinates] = useState(null);
 
   const [backdrop, setBackDrop] = useState(false);
 
   const [showFilters, setShowFilters] = useState(false);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,
+          label: service.serviceName,
+        }));
+        setGetServices(options);
+      } else {
+        // If API fails, show sample data
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   // Function to get user location
   const getUserLocation = () => {
@@ -193,7 +223,7 @@ const Hire = () => {
                     <SelectValue placeholder="Select a Service" />
                   </SelectTrigger>
                   <SelectContent>
-                    {[
+                    {/* {[
                       "Electrician",
                       "Carpenter",
                       "Plumber",
@@ -211,6 +241,12 @@ const Hire = () => {
                     ].map((service) => (
                       <SelectItem key={service} value={service.toLowerCase()}>
                         {service}
+                      </SelectItem>
+                    ))} */}
+
+                    {getServices.map((service) => (
+                      <SelectItem key={service.value} value={service.label}>
+                        {service.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

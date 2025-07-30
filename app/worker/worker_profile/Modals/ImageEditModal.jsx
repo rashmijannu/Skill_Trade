@@ -14,24 +14,23 @@ import { styled } from "@mui/joy";
 import Select from "react-select";
 import { Button as CustomButton } from "@/components/ui/button";
 import { UpdateProfile } from "../_FetchFunction/UpdateUserProfile";
-import { style, services } from "../../../_Arrays/Arrays";
+import { style } from "../../../_Arrays/Arrays";
 import toast, { Toaster } from "react-hot-toast";
 
-const ImageEditModal = ({ handleClose, GetWorkerData, data }) => {
+const ImageEditModal = ({ handleClose, GetWorkerData, data, services }) => {
   const [image, setImage] = useState(null);
   const [name, SetName] = useState(data.Name);
   const [service, setService] = useState(data.ServiceType);
   const [MobileNo, SetMobileNo] = useState(data.MobileNo);
   const [loading, setLoading] = useState(false);
-  const [subServiceOptions, setSubServiceOptions] = useState([data.SubSerives]);
-
+  const [subServiceOptions, setSubServiceOptions] = useState([data.SubServices]);
   const [selectedSubServices, setSelectedSubServices] = useState(
-    data.SubSerives.map((sub) => ({
+    data.SubServices.map((sub) => ({
       value: sub,
       label: sub.replace(/_/g, " "),
     }))
   );
- 
+ console.log("Services to : ", service);
   async function UpdateUser() {
     setLoading(true);
     try {
@@ -57,15 +56,17 @@ const ImageEditModal = ({ handleClose, GetWorkerData, data }) => {
         formData.append("Name", name);
       }
       if (service) {
-        formData.append("ServiceType", service.value);
+        formData.append("ServiceType", service.label);
       }
       if (MobileNo) {
         formData.append("MobileNo", MobileNo);
       }
+      console.log("Selected Sub Services: ", selectedSubServices);
+      
       if (selectedSubServices.length > 0) {
         formData.append(
           "SubServices",
-          JSON.stringify(selectedSubServices.map((sub) => sub.value))
+          JSON.stringify(selectedSubServices.map((sub) => sub.label))
         );
       }
 
@@ -130,6 +131,20 @@ const ImageEditModal = ({ handleClose, GetWorkerData, data }) => {
       );
     }
   }, [service]);
+
+  useEffect(() => {
+    if (Array.isArray(services) && services.length > 0 && data.ServiceType) {
+      // Try to match by value (id) or label (name)
+      const initialService = services.find(
+        (option) =>
+          option.value === data.ServiceType ||
+          option.label === data.ServiceType
+      );
+      if (initialService) {
+        setService(initialService);
+      }
+    }
+  }, [services, data.ServiceType]);
 
   return (
     <Box

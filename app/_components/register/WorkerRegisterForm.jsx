@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench } from "lucide-react";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
@@ -24,7 +24,9 @@ import "react-phone-input-2/lib/style.css";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [getServices, setGetServices] = useState([]);
   const [serviceType, setServiceType] = useState("");
+  const [serviceId, setServiceId] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -36,7 +38,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     setShowPassword(!showPassword);
   };
 
-  const handleServiceTypeChange = (value) => {
+  const handleServiceTypeChange = (value, label) => {
     setServiceType(value);
   };
 
@@ -64,6 +66,34 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     setCoordinates({ lat: place.position.lat, lon: place.position.lng });
     setSuggestions([]);
   };
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      
+      const result = await response.json();
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,     
+          label: service.serviceName,
+        }));
+        setGetServices(options);
+      } else {
+        // If API fails, show sample data
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   async function RegisterWorker(event) {
     event.preventDefault();
@@ -108,6 +138,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
             Longitude: coordinates.lon,
             Password,
             ServiceType: serviceType,
+            ServiceId: serviceId,
             pincode,
           }),
         }
@@ -310,24 +341,11 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                     <SelectValue placeholder="Select your service type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="electrician">Electrician</SelectItem>
-                    <SelectItem value="carpenter">Carpenter</SelectItem>
-                    <SelectItem value="plumber">Plumber</SelectItem>
-                    <SelectItem value="painter">Painter</SelectItem>
-                    <SelectItem value="gardener">Gardener</SelectItem>
-                    <SelectItem value="mechanic">Mechanic</SelectItem>
-                    <SelectItem value="locksmith">Locksmith</SelectItem>
-                    <SelectItem value="handyman">Handyman</SelectItem>
-                    <SelectItem value="welder">Welder</SelectItem>
-                    <SelectItem value="pest_control">Pest Control</SelectItem>
-                    <SelectItem value="roofer">Roofer</SelectItem>
-                    <SelectItem value="tiler">Tiler</SelectItem>
-                    <SelectItem value="appliance_repair">
-                      Appliance Repair
-                    </SelectItem>
-                    <SelectItem value="flooring_specialist">
-                      Flooring Specialist
-                    </SelectItem>
+                    {getServices.map((service) => (
+                      <SelectItem key={service.value} value={service.value} label={service.label}>
+                        {service.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
