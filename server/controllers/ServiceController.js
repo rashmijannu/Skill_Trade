@@ -3,7 +3,7 @@ const fs = require("fs");
 
 async function CreateService(req, resp) {
   try {
-    const { serviceName, isActive } = req.fields;
+    const { serviceName, isActive, subServices } = req.fields;
     if (!serviceName || isActive === undefined) {
       return resp.status(400).send({
         success: false,
@@ -38,13 +38,28 @@ async function CreateService(req, resp) {
       });
     }
 
+    // Parse subServices if provided (as JSON string or array)
+    let parsedSubServices = [];
+    if (subServices) {
+      if (Array.isArray(subServices)) {
+        parsedSubServices = subServices;
+      } else if (typeof subServices === 'string') {
+        try {
+          parsedSubServices = JSON.parse(subServices);
+          if (!Array.isArray(parsedSubServices)) parsedSubServices = [parsedSubServices];
+        } catch {
+          parsedSubServices = [subServices];
+        }
+      }
+    }
     const newService = new ServiceModel({
       serviceName,
       icon: {
         data: iconData,
         contentType: iconFile.type,
       },
-      isActive
+      isActive,
+      subServices: parsedSubServices
     });
 
     const result = await newService.save();
@@ -82,10 +97,27 @@ async function GetAllServices(req, resp) {
   }
 }
 
+// get only isActive=true services
+async function GetActiveServices(req, resp) {
+  try {
+    const services = await ServiceModel.find({ isActive: true });
+    resp.status(200).send({
+      success: true,
+      data:services.map(service => ({
+        _id: service._id,
+        serviceName: service.serviceName,
+        subServices: service.subServices,
+      })),
+    });
+  } catch (error) {
+    resp.status(500).send({ success: false, error: "Internal server error" });
+  }
+}
+
 async function UpdateService(req, resp) {
   try {
     const serviceId = req.params.id;
-    const { serviceName, isActive } = req.fields;
+    const { serviceName, isActive, subServices } = req.fields;
     const iconFile = req.files.icon;
 
     const service = await ServiceModel.findById(serviceId);
@@ -107,6 +139,22 @@ async function UpdateService(req, resp) {
 
     if (typeof isActive !== 'undefined') {
       service.isActive = isActive;
+    }
+
+    // Update subServices if provided
+    if (typeof subServices !== 'undefined') {
+      let parsedSubServices = [];
+      if (Array.isArray(subServices)) {
+        parsedSubServices = subServices;
+      } else if (typeof subServices === 'string') {
+        try {
+          parsedSubServices = JSON.parse(subServices);
+          if (!Array.isArray(parsedSubServices)) parsedSubServices = [parsedSubServices];
+        } catch {
+          parsedSubServices = [subServices];
+        }
+      }
+      service.subServices = parsedSubServices;
     }
 
     // Only update icon if a new file is provided
@@ -149,6 +197,7 @@ async function DeleteService(req, resp) {
 module.exports = {
   CreateService,
   GetAllServices,
+  GetActiveServices,
   UpdateService,
   DeleteService,
 };

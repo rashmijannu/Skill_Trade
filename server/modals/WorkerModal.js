@@ -16,7 +16,12 @@ const WorkerSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    SubSerives: {
+    ServiceId: {
+      type: Schema.Types.ObjectId,
+      ref: "Services",
+      required: false,
+    },
+    SubServices: {
       type: [String],
       default: [],
     },
@@ -35,7 +40,7 @@ const WorkerSchema = mongoose.Schema(
     },
     Address: {
       type: String,
-      required: true,
+      // required: true,
     },
     coordinates: {
       type: { type: String, enum: ["Point"] },
