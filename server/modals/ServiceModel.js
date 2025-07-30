@@ -8,6 +8,10 @@ const ServiceSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        subServices: {
+            type: [String],
+            default: [],
+        },
         icon: {
             data: Buffer,
             contentType: String,
@@ -22,4 +26,4 @@ const ServiceSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Service", ServiceSchema);
+module.exports = mongoose.model("Services", ServiceSchema);

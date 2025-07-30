@@ -12,6 +12,11 @@ const RequestSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    serviceId: {
+      type: Schema.Types.ObjectId,
+      ref: "Services",
+      required: false,
+    },
     description: {
       type: String,
       required: true,

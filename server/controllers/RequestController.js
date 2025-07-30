@@ -9,6 +9,7 @@ async function CreateRequest(req, resp) {
     const {
       user,
       service,
+      serviceId,
       description,
       time,
       date,
@@ -58,6 +59,9 @@ async function CreateRequest(req, resp) {
       pincode,
       city,
     };
+    if (serviceId && typeof serviceId === "string" && serviceId.trim() !== "") {
+      requestData.serviceId = serviceId;
+    }
     if (workerid && mongoose.Types.ObjectId.isValid(workerid)) {
       requestData.personalRequestTo = workerid;
     }
