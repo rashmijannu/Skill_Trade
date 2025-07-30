@@ -103,7 +103,7 @@ const Navbar = () => {
 
   const pathname = usePathname();
   return (
-    <div className="bg-black flex justify-center text-white sticky top-0 !z-[99] !font-serif">
+    <div className="bg-black flex justify-center text-white sticky top-0 z-[10] !font-serif">
       {/* navbar big screen  */}
       <div className="w-full xl:w-[95%] justify-between sm:flex hidden">
       <Link href="/">
@@ -114,11 +114,9 @@ const Navbar = () => {
           width={200}
           height={70}
         ></Image>
- </Link>
+      </Link>
 
         <div className="p-2 px-6 flex items-center justify-end gap-8 font-bold text-xl">
-
-     
 
           {auth?.user?.role == 0 ? (
             <>
@@ -560,6 +558,15 @@ const Navbar = () => {
                         }}
                       >
                         <Link href="/admin/verify_worker">Verify Workers</Link>
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          handleDrawerClose();
+                        }}
+                      >
+                        <Link href="/admin/service">View Services</Link>
                       </MenuItem>
 
                       <MenuItem
