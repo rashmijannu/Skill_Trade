@@ -60,6 +60,15 @@ const AdminMenu = () => {
             Unassigned Request
           </CustomButton>
         </Link>
+        <Link href="/admin/service">
+          <CustomButton
+            className="w-full flex gap-2 items-center"
+            onClick={onClose}
+          >
+            <TbMessageReport className="text-lg" />
+            Service 
+          </CustomButton>
+        </Link>
 
         <CustomButton
           className="w-full gap-2 flex"
