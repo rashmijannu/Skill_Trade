@@ -12,6 +12,7 @@ async function RegisterWorker(req, resp) {
       Name,
       MobileNo,
       ServiceType,
+      ServiceId,
       Password,
       Address,
       pincode,
@@ -24,6 +25,7 @@ async function RegisterWorker(req, resp) {
       !Name ||
       !MobileNo ||
       !ServiceType ||
+      !ServiceId ||
       !Password ||
       !Address ||
       !pincode ||
@@ -58,6 +60,7 @@ async function RegisterWorker(req, resp) {
       Name,
       MobileNo,
       ServiceType,
+      ServiceId,
       Password: hashedPassword,
       Address,
       pincode,
@@ -364,7 +367,6 @@ async function UpdateProfile(req, resp) {
         });
       }
     }
-
     const updatedData = {
       Name: fields.Name || worker.Name,
       MobileNo: fields.MobileNo || worker.MobileNo,
@@ -372,7 +374,7 @@ async function UpdateProfile(req, resp) {
       Address: fields.address || worker.Address,
       pincode: fields.pincode || worker.pincode,
       city: fields.city || worker.city,
-      SubSerives: updatedSubServices,
+      SubServices: updatedSubServices,
     };
 
     const updatedWorker = await WorkerModal.findByIdAndUpdate(

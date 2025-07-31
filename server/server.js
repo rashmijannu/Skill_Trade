@@ -6,6 +6,7 @@ const UserRoutes = require("./routes/UserRoutes");
 const WorkerRoutes = require("./routes/WorkerRoutes");
 const RequestRoutes = require("./routes/RequestRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
+const ServiceRoutes = require("./routes/ServiceRouter");
 const isAdmin = require("./middleware/isAdmin");
 const app = express();
 
@@ -24,6 +25,7 @@ ConnectDb();
 app.use("/api/v1/users", UserRoutes);
 app.use("/api/v1/workers", WorkerRoutes);
 app.use("/api/v1/request", RequestRoutes);
+app.use("/api/v1/services", ServiceRoutes);
 
 // use with middleware
 app.use("/api/v1/admin", isAdmin, AdminRoutes);

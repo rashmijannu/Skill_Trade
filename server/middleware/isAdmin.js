@@ -1,7 +1,9 @@
 function isAdmin(req, resp, next) {
   try {
     const { role } = req.body;
-    if (role === 2) {
+    const { role: roleFromFields } = req.fields || {}; // declare first!
+
+    if (Number(role || roleFromFields) === 2) {
       next();
     } else {
       return resp.status(401).send({

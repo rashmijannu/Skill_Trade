@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ import { useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 
 import {
-  services,
+  // services,
   steps,
   timeOptions,
   cityOptions,
@@ -44,6 +44,7 @@ import UserPrivateRoutes from "../../_components/privateroutes/UserPrivateRoutes
 const CreateRequest = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [service, setService] = useState(null);
+  const [getServices, setGetServices] = useState([]);
   const [customService, setCustomService] = useState("");
   const [description, setDescription] = useState("");
   const [time, settime] = useState("");
@@ -62,10 +63,10 @@ const CreateRequest = () => {
   const workerId = searchParams.get("id");
   const workerName = searchParams.get("name");
   const expertise = searchParams.get("expertise");
-  const defaultService = services.find((s) => s.value === expertise) || null;
+  const defaultService = getServices.find((s) => s.value === expertise) || null;
   const minDate = new Date();
   const [auth] = useAuth();
-
+console.log("Testing", defaultService, expertise, getServices);
   const locations = [
     {
       value: `${auth?.user?.Address}`,
@@ -83,6 +84,34 @@ const CreateRequest = () => {
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      
+      const result = await response.json();
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,           // Use the unique ID as value
+          label: service.serviceName,
+        }));
+        setGetServices(options);
+      } else {
+        // If API fails, show sample data
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchServices();
+  }, []);
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -160,14 +189,21 @@ const CreateRequest = () => {
 
     const formData = new FormData();
     formData.append("user", auth.user._id);
-    formData.append(
-      "service",
-      isCustomService
-        ? customService
-        : defaultService
-        ? defaultService.value
-        : service?.value
-    );
+    // formData.append(
+    //   "service",
+    //   isCustomService
+    //     ? customService
+    //     : defaultService
+    //     ? defaultService.value
+    //     : service?.value
+    // );
+    if (isCustomService) {
+      formData.append("service", customService);
+    } else {
+      const selected = defaultService || service;
+      formData.append("service", selected.label);
+      formData.append("serviceId", selected.value);
+    }
     formData.append("description", description);
     formData.append("image", image?.file || null);
     formData.append("time", time);
@@ -303,7 +339,7 @@ const CreateRequest = () => {
                       <Label htmlFor="service">Service Type</Label>
                       <Select
                         id="service"
-                        options={services}
+                        options={getServices}
                         isDisabled={defaultService || isCustomService}
                         value={defaultService || service}
                         onChange={setService}

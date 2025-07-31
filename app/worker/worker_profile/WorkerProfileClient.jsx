@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/_context/UserAuthContent";
 import { useParams } from "next/navigation";
 import moment from "moment";
@@ -36,6 +36,7 @@ import toast, { Toaster } from "react-hot-toast";
 const WorkerProfileClient = ({ IntialWorkerData }) => {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const [services, setServices] = useState([]);
   const [auth, SetAuth] = useAuth();
   const handleOpen = () => setOpen(true);
   const handleOpen2 = () => setOpen2(true);
@@ -80,6 +81,33 @@ const WorkerProfileClient = ({ IntialWorkerData }) => {
       toast.error("error try again");
     }
   }
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,
+          label: service.serviceName,
+          subServices: service.subServices || [], // Correct key and fallback
+        }));
+
+        setServices(options);
+      } else {
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
   if (!auth?.user) {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
@@ -201,7 +229,7 @@ const WorkerProfileClient = ({ IntialWorkerData }) => {
                     <Chip label={`${WorkerData.ServiceType}`} size="small" />
                   </div>
                   <div className="flex gap-1 items-start flex-wrap">
-                    {WorkerData.SubSerives.map((subservice, index) => (
+                    {WorkerData.SubServices.map((subservice, index) => (
                       <Chip
                         key={index}
                         label={`${subservice}`}
@@ -245,6 +273,7 @@ const WorkerProfileClient = ({ IntialWorkerData }) => {
           ModalType={ImageEditModal}
           data={WorkerData}
           GetWorkerData={GetWorkerData}
+          services={services}
         />
         {/* modal 2 */}
         <ModalComponent
