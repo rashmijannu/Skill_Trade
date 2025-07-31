@@ -11,10 +11,11 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white">
       {/* Top Section */}
       <div className="bg-gray-900 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Flex Container for Top Section */}
+          <div className="flex flex-col lg:flex-row justify-between gap-20">
             {/* Newsletter */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="flex-1 space-y-4">
               <h3 className="text-xl font-bold">
                 Stay Updated with Skill Trade
               </h3>
@@ -25,7 +26,7 @@ const Footer = () => {
                 <Input
                   type="email"
                   placeholder="Your email"
-                  className="bg-white text-gray-900 border-0 h-12 flex-1"
+                  className="bg-white text-gray-900 border-0 h-10 flex-1"
                 />
                 <Button className="bg-gray-800 hover:bg-gray-700 text-white h-12 px-6 flex items-center gap-2 whitespace-nowrap">
                   Subscribe <ArrowRight className="h-4 w-4" />
@@ -37,76 +38,62 @@ const Footer = () => {
             </div>
 
             {/* Quick Links */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="flex-0.5 space-y-4">
               <h3 className="text-lg font-semibold">Quick Links</h3>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-300">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-300">
                 <Link href="/" className="hover:text-white transition-colors">
                   Home
                 </Link>
-                <Link
-                  href="/services"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/services" className="hover:text-white transition-colors">
                   Services
                 </Link>
-                <Link
-                  href="/professionals"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/professionals" className="hover:text-white transition-colors">
                   Find Professionals
                 </Link>
-                <Link
-                  href="/about"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/about" className="hover:text-white transition-colors">
                   About Us
                 </Link>
-                <Link
-                  href="/contact"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/contact" className="hover:text-white transition-colors">
                   Contact
                 </Link>
-                <Link
-                  href="/blog"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/blog" className="hover:text-white transition-colors">
                   Blog
                 </Link>
               </div>
             </div>
 
+
             {/* Social Media */}
-            <div className="lg:col-span-1 space-y-4">
+            <div className="flex-1 space-y-4">
               <h3 className="text-lg font-semibold">Follow Us</h3>
               <p className="text-sm text-gray-400">
                 Stay connected for updates.
               </p>
               <div className="flex space-x-3">
                 <a
-                  href="#"
-                  className="p-3 rounded-full bg-gray-700 hover:bg-blue-600 transition-all duration-300"
+                  href="#" // entire a valid link
+                  className="p-3 rounded-full  bg-gray-700 hover:bg-blue-600 hover:-translate-y-1 transition-all duration-300"
                   aria-label="Facebook"
                 >
                   <FaFacebook size={20} />
                 </a>
                 <a
-                  href="#"
-                  className="p-3 rounded-full bg-gray-700 hover:bg-blue-400 transition-all duration-300"
+                  href="#" // entire a valid link
+                  className="p-3 rounded-full  bg-gray-700 hover:bg-blue-400 hover:-translate-y-1 transition-all duration-300"
                   aria-label="Twitter"
                 >
                   <FaTwitter size={20} />
                 </a>
                 <a
-                  href="#"
-                  className="p-3 rounded-full bg-gray-700 hover:bg-pink-500 transition-all duration-300"
+                  href="#" // entire a valid link
+                  className="p-3 rounded-full  bg-gray-700 hover:bg-pink-300 hover:-translate-y-1 transition-all duration-300"
                   aria-label="Instagram"
                 >
                   <FaInstagram size={20} />
                 </a>
                 <a
-                  href="#"
-                  className="p-3 rounded-full bg-gray-700 hover:bg-blue-700 transition-all duration-300"
+                  href="#" // entire a valid link
+                  className="p-3 rounded-full  bg-gray-700 hover:bg-blue-700 hover:-translate-y-1 transition-all duration-300"
                   aria-label="LinkedIn"
                 >
                   <FaLinkedin size={20} />
@@ -119,29 +106,29 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="bg-gray-950 py-6 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto ">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0">
+            <div className="flex justify-center flex-col sm:flex-row items-center gap-2 sm:gap-0">
               <span>
                 © {new Date().getFullYear()} Skill Trade. All rights reserved.
               </span>
               <span className="hidden sm:inline mx-2">•</span>
               <span className="flex items-center">
-                Made with <Heart className="h-3 w-3 mx-1 text-red-500" /> in
+                Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> in
                 India
               </span>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
-              <Link href="/" className="hover:text-white transition-colors">
+              <Link href="/about" className="hover:text-white transition-colors">
                 Privacy
               </Link>
-              <Link href="/" className="hover:text-white transition-colors">
+              <Link href="/about" className="hover:text-white transition-colors">
                 Terms
               </Link>
-              <Link href="/" className="hover:text-white transition-colors">
+              <Link href="/about" className="hover:text-white transition-colors">
                 Cookies
               </Link>
-              <Link href="/" className="hover:text-white transition-colors">
+              <Link href="/about" className="hover:text-white transition-colors">
                 Sitemap
               </Link>
             </div>
