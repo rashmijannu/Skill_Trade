@@ -92,7 +92,11 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   };
 
   const handleServiceTypeChange = (value) => {
-    setServiceType(value);
+    const selectedService = getServices.find(service => service.value === value);
+    if (selectedService) {
+      setServiceType(selectedService.label);
+      setServiceId(selectedService.value);
+    }
   };
 
   // Handles address input and debounces API call for suggestions
@@ -252,7 +256,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     const pincode = formData.get("pincode");
 
     // Client-side validations
-    if (!serviceType) {
+    if (!serviceType || !serviceId) {
       toast.error("Please select a service type");
       return;
     }
@@ -553,7 +557,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {getServices.map((service) => (
-                      <SelectItem key={service.value} value={service.value} label={service.label}>
+                      <SelectItem key={service.value} value={service.value}>
                         {service.label}
                       </SelectItem>
                     ))}
