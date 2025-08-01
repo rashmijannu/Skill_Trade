@@ -16,14 +16,6 @@ import { ClockCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import toast, { Toaster } from "react-hot-toast";
 import { Button } from "../../../components/ui/button";
 import { StyledTableCell, StyledTableRow } from "../../_Arrays/Arrays";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/components/ui/dialog";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
 
 const HiringRequest = () => {
   const [data, setData] = useState([]);
@@ -31,10 +23,6 @@ const HiringRequest = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [auth, setAuth] = useAuth();
-  // const [estimatedPrice, setEstimatedPrice] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [open, setOpen] = useState(false);
-  // const [requestId, setRequestId] = useState(null);
 
   useEffect(() => {
     const fetchHiringRequests = async () => {
@@ -91,44 +79,6 @@ const HiringRequest = () => {
   const handlePageChange = (event, value) => {
     setPageNumber(value);
   };
-
-  // const handleModalOpen = (uid) => {
-  //   setRequestId(uid);
-  //   if (uid) { 
-  //     setOpen(true);
-  //   }
-  // };
-
-  // async function AcceptRequest(wid, rid, EstimatedPrice, description) {
-  //   try {
-  //     if (!EstimatedPrice) {
-  //       toast.error("estimated price is required");
-  //       return;
-  //     }
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/AcceptRequest/${wid}/${rid}`,
-  //       {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({
-  //           EstimatedPrice,
-  //           description,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       toast.error(data.message || "Failed to accept request");
-  //       return;
-  //     }
-
-  //     toast.success("Request accepted successfully!");
-  //   } catch (error) {
-  //     toast.error("Error, please try again.");
-  //   }
-  // }
 
   return (
     <div>
@@ -202,10 +152,11 @@ const HiringRequest = () => {
                         <Tag icon={<CheckCircleOutlined />} color="purple">
                           {item.status}
                         </Tag>
-                      ) :  item.status === "Assigned" ? (
+                      ) : item.status === "Assigned" ? (
                         <Tag icon={<CheckCircleOutlined />} color="green">
                           {item.status}
-                        </Tag>):null}
+                        </Tag>
+                      ) : null}
                     </StyledTableCell>
 
                     {/* creation date  */}
@@ -221,13 +172,6 @@ const HiringRequest = () => {
                       <Link href={`/worker/Request_Details/${item._id}`}>
                         <Button>view</Button>
                       </Link>
-                      {/* <Button
-                        onClick={() => {
-                          handleModalOpen(item._id);
-                        }}
-                      >
-                        Accept request
-                      </Button> */}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
@@ -251,57 +195,6 @@ const HiringRequest = () => {
           </Link>
         </div>
       )}
-
-      {/* modal to accept request  */}
-      {/* <Dialog open={open}>
-        <DialogContent className="w-[280px] sm:w-[400px]">
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">
-              Accept Request
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col items-center justify-center gap-3">
-            <Input
-              type="number"
-              name="Estimated Price"
-              value={estimatedPrice}
-              onChange={(e) => setEstimatedPrice(e.target.value)}
-              placeholder="Enter estimated price in Rs"
-              className="w-full"
-              required
-            />
-            <Textarea
-              name="description"
-              placeholder="Justify your price (optional)"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full h-40 overflow-y-scroll"
-            />
-            <div className="flex flex-col gap-2 w-full">
-              <Button
-                onClick={() =>
-                  AcceptRequest(
-                    auth?.user?._id,
-                    requestId,
-                    estimatedPrice,
-                    description
-                  )
-                }
-              >
-                Accept Request
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog> */}
     </div>
   );
 };
