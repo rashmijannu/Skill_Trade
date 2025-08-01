@@ -8,6 +8,7 @@ const RequestRoutes = require("./routes/RequestRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
 const ServiceRoutes = require("./routes/ServiceRouter");
 const isAdmin = require("./middleware/isAdmin");
+const cron = require("node-cron");
 const app = express();
 
 //parse the data
@@ -28,15 +29,15 @@ app.use("/api/v1/request", RequestRoutes);
 app.use("/api/v1/services", ServiceRoutes);
 
 // use with middleware
-app.use("/api/v1/admin", isAdmin, AdminRoutes);
+app.use("/api/v1/admin", AdminRoutes);
 
-
-app._router.stack.forEach((r) => {
-  if (r.route && r.route.path) {
-    console.log(`${Object.keys(r.route.methods)} ${r.route.path}`);
-  }
+cron.schedule("*/5 * * * *", () => {
+  https.get(RENDER_URL, (res) => {
+    console.log(`[${new Date().toISOString()}] Ping successful:`, res.statusCode);
+  }).on("error", (err) => {
+    console.error(`[${new Date().toISOString()}] Ping failed:`, err.message);
+  });
 });
-
 
 const PORT = process.env.PORT || 8000;
 

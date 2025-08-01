@@ -13,27 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Textarea } from "@mui/joy";
+
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
   MdVerifiedUser,
   MdOutlineLocationOn,
-  MdMyLocation,
   MdFilterList,
   MdClear,
 } from "react-icons/md";
 import { FaHandshake } from "react-icons/fa";
 import { Tag } from "antd";
-import { useAuth } from "@/app/_context/UserAuthContent";
 import toast, { Toaster } from "react-hot-toast";
 import UserPrivateRoutes from "@/app/_components/privateroutes/UserPrivateRoutes";
 
@@ -124,7 +114,7 @@ const Hire = () => {
 
   // Fetch workers only after coordinates are available
   const fetchWorkers = async (coordinates, pincode) => { 
-    console.log("working") 
+ 
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/users/ListWorkers/${currentPage}`,
@@ -137,7 +127,7 @@ const Hire = () => {
             Pincode: pincode,
             ServiceType: ServiceType,
             Coordinates: {
-              coordinates: [coordinates.latitude, coordinates.longitude],
+              coordinates: [coordinates.longitude, coordinates.latitude],
             },
           }),
         }
