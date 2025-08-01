@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import { useAuth } from "@/app/_context/UserAuthContent";
 import { FetchAssignedRequest } from "../_FetchFunction/FetchAssignedRequest";
 import moment from "moment";
@@ -10,7 +9,7 @@ import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { PulseLoader } from "react-spinners";
 import Link from "next/link";
 import Image from "next/image";
-
+import { Backdrop } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import Pagination from "@mui/material/Pagination";
 import Table from "@mui/material/Table";
@@ -37,6 +36,8 @@ const AssignedRequest = () => {
   const [pageNumber, SetPageNumber] = useState(1);
   const [unassignModal, SetunassignModal] = useState(false);
   const [description, setDescription] = useState("");
+  const [backdrop, setBackDrop] = useState(false);
+
   const handlePageChange = (event, value) => {
     SetPageNumber(value);
   };
@@ -44,16 +45,16 @@ const AssignedRequest = () => {
   const handleOpen = () => {
     SetunassignModal(true);
   };
-  const handleClose = () => {
-    SetunassignModal(false);
-  };
+
   const handleChange = (event) => {
     if (event.target.value.length <= 100) {
       setDescription(event.target.value);
     }
   };
+
   async function UnAssign(rid) {
     try {
+      setBackDrop(true);
       const currentdate = new Date();
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/UnassignRequest/${rid}/${auth?.user._id}`,
@@ -76,8 +77,9 @@ const AssignedRequest = () => {
       console.log(error);
       toast.error("error making this request");
     } finally {
-      // SetunassignModal(false);
-      // setDescription("");
+      setBackDrop(false);
+      SetunassignModal(false);
+      setDescription("");
     }
   }
 
@@ -103,6 +105,7 @@ const AssignedRequest = () => {
 
   return (
     <div>
+      {backdrop && <Backdrop />}
       {loading ? (
         <div className="h-[600px] w-full  flex  ">
           <PulseLoader size={20} className="m-auto" />
@@ -183,6 +186,8 @@ const AssignedRequest = () => {
                         <Button onClick={handleOpen}>Unassign Me</Button>
                       </div>
                     </StyledTableCell>
+
+                    {/* modal  */}
                     <Modal
                       open={unassignModal}
                       onClose={() => {
