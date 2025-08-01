@@ -39,7 +39,7 @@ router.delete("/approve_review/:rid", isAdmin, ApproveRequest);
 
 router.post("/reject_review/:rid", isAdmin, RejectReviewRequest);
 
-router.get(
+router.post(
   "/getWorkersWithUnAssignedRequests/:page",
   isAdmin,
   getWorkersWithUnAssignedRequests
