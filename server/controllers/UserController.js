@@ -334,7 +334,7 @@ async function SendOtp(req, resp) {
       from: process.env.email_id,
       to: email,
       subject: "Reset Password - Skill Trade",
-      html: emailTemplate, 
+      html: emailTemplate,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -502,6 +502,7 @@ async function SubmitForReview(req, resp) {
     });
   }
 }
+
 async function SendEmailVerificationOtp(req, resp) {
   const { GeneratedOtp, email } = req.body;
   try {
@@ -511,6 +512,15 @@ async function SendEmailVerificationOtp(req, resp) {
         message: "OTP and Email are required",
       });
     }
+    const user = await UserModal.find({ email: email });
+
+    if (user) {
+      return resp.status(400).send({
+        success: false,
+        message: "user with this email already exist ",
+      });
+    }
+
 
     if (!process.env.email_id || !process.env.pass_key) {
       return resp.status(500).send({
@@ -581,7 +591,7 @@ async function ListWorkers(req, resp) {
     const limit = 5;
 
     page = parseInt(page) || 1;
- 
+
     if (ServiceType) {
       query.ServiceType = ServiceType;
     }
@@ -746,14 +756,14 @@ async function SubmitUserQuery(req, resp) {
         <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
           <p style="color: #666; margin: 0; font-size: 11px;">
             <span style="color: #333; font-weight: 600;">Received:</span> ${new Date().toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
           </p>
         </div>
         <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
@@ -794,14 +804,14 @@ async function SubmitUserQuery(req, resp) {
         <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
           <p style="color: #666; margin: 0; font-size: 11px;">
             <span style="color: #333; font-weight: 600;">Submitted:</span> ${new Date().toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
           </p>
         </div>
         <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
@@ -842,7 +852,7 @@ async function SubmitUserQuery(req, resp) {
       resp.status(500).send({ success: false, message: "Error sending email" });
     } else {
       console.log("Email sent: " + info.response);
-     
+
       // Send auto-reply to user
       transporter.sendMail(autoReplyOptions, (autoError, autoInfo) => {
         if (autoError) {

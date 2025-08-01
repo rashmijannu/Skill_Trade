@@ -31,12 +31,6 @@ app.use("/api/v1/services", ServiceRoutes);
 app.use("/api/v1/admin", isAdmin, AdminRoutes);
 
 
-app._router.stack.forEach((r) => {
-  if (r.route && r.route.path) {
-    console.log(`${Object.keys(r.route.methods)} ${r.route.path}`);
-  }
-});
-
 
 const PORT = process.env.PORT || 8000;
 
