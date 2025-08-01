@@ -277,7 +277,7 @@ async function RejectReviewRequest(req, resp) {
 }
 
 const getWorkersWithUnAssignedRequests = async (req, resp) => {
-  try {
+  try {console.log("hit")
     const page = parseInt(req.params.page, 5) || 1;
     const limit = 5;
     const skip = (page - 1) * limit;
@@ -285,17 +285,17 @@ const getWorkersWithUnAssignedRequests = async (req, resp) => {
     // Query to get workers with unassigned requests
     const workers = await WorkerModal.find({
       UnAssignedRequest: {
-        $elemMatch: { unAssignedBy: 1, markAsValidate: false },
+        $elemMatch: { unAssignedBy: 1, markAsValid: false },
       },
       "Banned.ban": false,
     })
       .select("Name UnAssignedRequest Banned")
       .skip(skip)
-      .limit(limit);
+      .limit(limit).lean();
 
     const totalWorkers = await WorkerModal.countDocuments({
       UnAssignedRequest: {
-        $elemMatch: { unAssignedBy: 1, markAsValidate: false },
+        $elemMatch: { unAssignedBy: 1, markAsValid: false },
       },
       "Banned.ban": false,
     });
@@ -382,13 +382,13 @@ const removeExpiredBans = async () => {
     const currentDate = new Date();
 
     // Find workers whose ban is active and tillDate has passed
-    const workersToUnban = await Worker.find({
+    const workersToUnban = await WorkerModal.find({
       "Banned.ban": true,
       "Banned.tillDate": { $lte: currentDate },
     });
 
     if (workersToUnban.length > 0) {
-      await Worker.updateMany(
+      await WorkerModal.updateMany(
         { "Banned.ban": true, "Banned.tillDate": { $lte: currentDate } },
         { $set: { "Banned.ban": false, "Banned.tillDate": null } }
       );
@@ -403,7 +403,7 @@ const removeExpiredBans = async () => {
 };
 
 // run the unban function everyday 10 am
-cron.schedule("0 10 * * *", () => {
+cron.schedule("* 10 * * *", () => {
   console.log("Running scheduled job to unban workers...");
   removeExpiredBans();
 });

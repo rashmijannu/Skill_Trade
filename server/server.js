@@ -28,7 +28,7 @@ app.use("/api/v1/request", RequestRoutes);
 app.use("/api/v1/services", ServiceRoutes);
 
 // use with middleware
-app.use("/api/v1/admin", isAdmin, AdminRoutes);
+app.use("/api/v1/admin", AdminRoutes);
 
 
 
