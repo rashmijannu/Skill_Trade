@@ -381,7 +381,7 @@ const removeExpiredBans = async () => {
  try {
     const currentDate = new Date();
 
-    const result = await Worker.updateMany(
+    const result = await WorkerModal.updateMany(
       {
         "Banned.ban": true,
         "Banned.tillDate": { $lte: currentDate },
