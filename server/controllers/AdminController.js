@@ -378,34 +378,31 @@ async function ValidateUnassignedRequest(req, resp) {
 
 // remove the ban after 3 days automatically
 const removeExpiredBans = async () => {
-  try {
+ try {
     const currentDate = new Date();
 
-    // Find workers whose ban is active and tillDate has passed
-    const workersToUnban = await Worker.find({
-      "Banned.ban": true,
-      "Banned.tillDate": { $lte: currentDate },
-    });
+    const result = await Worker.updateMany(
+      {
+        "Banned.ban": true,
+        "Banned.tillDate": { $lte: currentDate },
+      },
+      {
+        $set: {
+          "Banned.ban": false,
+          "Banned.tillDate": null,
+        },
+      }
+    );
 
-    if (workersToUnban.length > 0) {
-      await Worker.updateMany(
-        { "Banned.ban": true, "Banned.tillDate": { $lte: currentDate } },
-        { $set: { "Banned.ban": false, "Banned.tillDate": null } }
-      );
-
-      console.log(`Unbanned ${workersToUnban.length} workers.`);
-    } else {
-      console.log("No workers to unban today.");
-    }
+    console.log(`[${new Date().toISOString()}] Unbanned ${result.modifiedCount} workers.`);
   } catch (error) {
-    console.error("Error unbanning workers:", error);
+    console.error("Cron job error:", error);
   }
 };
 
 // run the unban function everyday 10 am
-cron.schedule("0 10 * * *", () => {
-  console.log("Running scheduled job to unban workers...");
-  removeExpiredBans();
+cron.schedule("0 10 * * *", removeExpiredBans, {
+  timezone: "Asia/Kolkata",
 });
 
 module.exports = {
