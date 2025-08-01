@@ -1,7 +1,7 @@
 // Final version of WorkerRegisterForm.jsx with all fields and hydration-safe password rules
 "use client";
-import { useState, useRef } from "react";
-import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import "react-phone-input-2/lib/style.css";
+import { useRouter } from "next/navigation";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   // State for password visibility and validation
   const [showPassword, setShowPassword] = useState(false);
   const [serviceType, setServiceType] = useState("");
+  const [getServices, setGetServices] = useState([]);
   const [serviceId, setServiceId] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
@@ -55,7 +57,16 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); // Re-added password state
+  const [passwordValidation, setPasswordValidation] = useState({ // Re-added passwordValidation state
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
 
+  const [passwordFocused, setPasswordFocused] = useState(false);
   // Effect to validate password as it changes
   useEffect(() => { // Re-added useEffect for password validation
     const val = password;
@@ -81,7 +92,11 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   };
 
   const handleServiceTypeChange = (value) => {
-    setServiceType(value);
+    const selectedService = getServices.find(service => service.value === value);
+    if (selectedService) {
+      setServiceType(selectedService.label);
+      setServiceId(selectedService.value);
+    }
   };
 
   // Handles address input and debounces API call for suggestions
@@ -241,7 +256,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     const pincode = formData.get("pincode");
 
     // Client-side validations
-    if (!serviceType) {
+    if (!serviceType || !serviceId) {
       toast.error("Please select a service type");
       return;
     }
@@ -542,7 +557,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {getServices.map((service) => (
-                      <SelectItem key={service.value} value={service.value} label={service.label}>
+                      <SelectItem key={service.value} value={service.value}>
                         {service.label}
                       </SelectItem>
                     ))}
