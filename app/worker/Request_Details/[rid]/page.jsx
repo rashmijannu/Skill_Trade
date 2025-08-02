@@ -23,7 +23,7 @@ async function fetchRequestDetails(rid) {
 }
 
 export default async function RequestDetailsServer({ params }) {
-  const { rid } = params;
+  const { rid } = await params;
   const data = await fetchRequestDetails(rid); // Fetch data before rendering
 
   if (!data) {

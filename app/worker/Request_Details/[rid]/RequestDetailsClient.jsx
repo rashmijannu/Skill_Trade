@@ -159,7 +159,7 @@ const RequestDetailsClient = ({
                           data.coordinates?.coordinates[1]
                             ? `https://www.google.com/maps?q=${data.coordinates?.coordinates[1]},${data.coordinates?.coordinates[0]}`
                             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                item.location
+                                data.location
                               )}`
                         }
                         target="_blank"
