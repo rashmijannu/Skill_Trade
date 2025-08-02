@@ -1,6 +1,26 @@
 "use client";
 import Footer from "@/app/_components/Footer";
+import undraw_terms from "@/public/undraw_terms_sx63.svg";
+import Image from "next/image";
 
+// Custom animations with website color palette
+const customStyles = `
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+`;
+
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.type = 'text/css';
+  styleSheet.innerText = customStyles;
+  document.head.appendChild(styleSheet);
+}
 const termsSections = [
   {
     title: "Acceptance of Terms",
@@ -72,15 +92,35 @@ const Page = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-200 py-16 px-4 sm:px-8">
-        <div className="max-w-5xl mx-auto rounded-xl px-2 py-8 md:p-8 lg:p-12">
-          {/* Header Section */}
+        <div className="max-w-5xl mx-auto rounded-xl px-2 py-8 p-8">
+          {/* Header Section with Interactive SVGs */}
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
               Terms & Conditions
             </h1>
+            <div className="mb-6">
+              <div className="relative group">
+                <Image 
+                  src={undraw_terms} 
+                  alt="Terms and Conditions Illustration"
+                  className="mx-auto max-w-40 md:max-w-64 h-auto transition-all duration-500 hover:scale-105 filter hover:brightness-110 animate-float"
+                />
+              </div>
+            </div>
+
             <p className="text-gray-600 px-4 text-lg">
               Please read our Terms & Conditions carefully before using Skill Trade.
             </p>
+            {/* Shield and Scale SVG for legal emphasis - Homepage color scheme */}
+            <div className="flex justify-center items-center gap-4 mb-4">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10.5V11.5C15.4,11.5 16,12.4 16,13V16C16,17.4 15.4,18 14.8,18H9.2C8.6,18 8,17.4 8,16V13C8,12.4 8.6,11.5 9.2,11.5V10.5C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10.5V11.5H13.5V10.5C13.5,8.7 12.8,8.2 12,8.2Z" />
+              </svg>
+              
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21M12,4A5,5 0 0,0 7,9C7,11.05 8.23,12.81 10,13.58V16H14V13.58C15.77,12.81 17,11.05 17,9A5,5 0 0,0 12,4Z" />
+              </svg>
+            </div>
           </div>
 
           {/* Content Section */}
@@ -93,7 +133,6 @@ const Page = () => {
       </div>
       <Footer />
     </>
-
   );
 };
 
