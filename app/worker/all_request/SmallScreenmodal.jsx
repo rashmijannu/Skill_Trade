@@ -70,26 +70,6 @@ const SmallScreenmodal = ({
               <SelectTrigger className="w-full border-gray-300">
                 <SelectValue placeholder="Select a Service" />
               </SelectTrigger>
-              {/* <SelectContent portal={true} className="z-[1500]">
-                <SelectItem value="electrician">Electrician</SelectItem>
-                <SelectItem value="carpenter">Carpenter</SelectItem>
-                <SelectItem value="plumber">Plumber</SelectItem>
-                <SelectItem value="painter">Painter</SelectItem>
-                <SelectItem value="gardener">Gardener</SelectItem>
-                <SelectItem value="mechanic">Mechanic</SelectItem>
-                <SelectItem value="locksmith">Locksmith</SelectItem>
-                <SelectItem value="handyman">Handyman</SelectItem>
-                <SelectItem value="welder">Welder</SelectItem>
-                <SelectItem value="pest_control">Pest Control</SelectItem>
-                <SelectItem value="roofer">Roofer</SelectItem>
-                <SelectItem value="tiler">Tiler</SelectItem>
-                <SelectItem value="appliance_repair">
-                  Appliance Repair
-                </SelectItem>
-                <SelectItem value="flooring_specialist">
-                  Flooring Specialist
-                </SelectItem>
-              </SelectContent> */}
               <SelectContent portal={true} className="z-[1500]">
                 {services.map((service) => (
                   <SelectItem key={service.value} value={service.label}>
