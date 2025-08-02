@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Button } from "@/components/ui/button";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -28,6 +28,33 @@ const SmallScreenmodal = ({
   distance,
   setDistance,
 }) => {
+  const [services, setServices] = React.useState([]);
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,
+          label: service.serviceName,
+        }));
+
+        setServices(options);
+      } else {
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={style} className="w-[350px]">
@@ -44,24 +71,11 @@ const SmallScreenmodal = ({
                 <SelectValue placeholder="Select a Service" />
               </SelectTrigger>
               <SelectContent portal={true} className="z-[1500]">
-                <SelectItem value="electrician">Electrician</SelectItem>
-                <SelectItem value="carpenter">Carpenter</SelectItem>
-                <SelectItem value="plumber">Plumber</SelectItem>
-                <SelectItem value="painter">Painter</SelectItem>
-                <SelectItem value="gardener">Gardener</SelectItem>
-                <SelectItem value="mechanic">Mechanic</SelectItem>
-                <SelectItem value="locksmith">Locksmith</SelectItem>
-                <SelectItem value="handyman">Handyman</SelectItem>
-                <SelectItem value="welder">Welder</SelectItem>
-                <SelectItem value="pest_control">Pest Control</SelectItem>
-                <SelectItem value="roofer">Roofer</SelectItem>
-                <SelectItem value="tiler">Tiler</SelectItem>
-                <SelectItem value="appliance_repair">
-                  Appliance Repair
-                </SelectItem>
-                <SelectItem value="flooring_specialist">
-                  Flooring Specialist
-                </SelectItem>
+                {services.map((service) => (
+                  <SelectItem key={service.value} value={service.label}>
+                    {service.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button

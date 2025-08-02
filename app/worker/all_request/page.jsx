@@ -47,6 +47,7 @@ function ViewRequest() {
   const [pages, SetPages] = useState(1);
   const [pageNumber, SetPageNumber] = useState(1);
   const [loading, setloading] = useState(false);
+  const [services, setServices] = useState([]);
   const [ServiceType, setServiceType] = useState("");
   const [checkedValues, setCheckedValues] = useState({
     nearBy: false,
@@ -128,6 +129,32 @@ function ViewRequest() {
       setloading(false);
     }
   }
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const options = result.data.map(service => ({
+          value: service._id,
+          label: service.serviceName,
+          subServices: service.subServices || [], // Correct key and fallback
+        }));
+
+        setServices(options);
+      } else {
+        toast('Using sample data - API returned no data');
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast('Using sample data - API not available');
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   const checkCity = async () => {
     try {
@@ -237,24 +264,9 @@ function ViewRequest() {
                 <SelectValue placeholder="Select a Service" />
               </SelectTrigger>
               <SelectContent>
-                {[
-                  "Electrician",
-                  "Carpenter",
-                  "Plumber",
-                  "Painter",
-                  "Gardener",
-                  "Mechanic",
-                  "Locksmith",
-                  "Handyman",
-                  "Welder",
-                  "Pest Control",
-                  "Roofer",
-                  "Tiler",
-                  "Appliance Repair",
-                  "Flooring Specialist",
-                ].map((service) => (
-                  <SelectItem key={service} value={service.toLowerCase()}>
-                    {service}
+                {services.map((service) => (
+                  <SelectItem key={service.value} value={service.label}>
+                    {service.label}
                   </SelectItem>
                 ))}
               </SelectContent>
