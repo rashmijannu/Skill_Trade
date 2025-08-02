@@ -334,7 +334,7 @@ async function SendOtp(req, resp) {
       from: process.env.email_id,
       to: email,
       subject: "Reset Password - Skill Trade",
-      html: emailTemplate, 
+      html: emailTemplate,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -502,6 +502,7 @@ async function SubmitForReview(req, resp) {
     });
   }
 }
+
 async function SendEmailVerificationOtp(req, resp) {
   const { GeneratedOtp, email } = req.body;
   try {
@@ -511,6 +512,29 @@ async function SendEmailVerificationOtp(req, resp) {
         message: "OTP and Email are required",
       });
     }
+    const user = await UserModal.findOne({ Email: email });
+
+    if (user) {
+      return resp.status(400).send({
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
+    const worker = await WorkerModal.findOne({ Email: email })
+
+    if (worker) {
+      return resp.status(400).send({
+        success: false,
+        message: "Worker with this email already exists",
+      });
+    }
+    if (user) {
+      return resp.status(400).send({
+        success: false,
+        message: "user with this email already exist ",
+      });
+    }
+
 
     if (!process.env.email_id || !process.env.pass_key) {
       return resp.status(500).send({
@@ -577,20 +601,28 @@ async function ListWorkers(req, resp) {
   try {
     const { ServiceType, Coordinates, Pincode } = req.body;
     let { page } = req.params;
-    let query = {};
-    const limit = 5;
 
+    const limit = 5;
     page = parseInt(page) || 1;
- 
+    const skip = (page - 1) * limit;
+
+    if (!Coordinates && !Pincode) {
+      return resp.status(400).send({
+        success: false,
+        message: "Please provide either Coordinates or Pincode.",
+      });
+    }
+
+    let query = {};
     if (ServiceType) {
-      query.ServiceType = ServiceType;
+      query.ServiceType = { $regex: `^${ServiceType}$`, $options: "i" }; // for case-insensitive exact match
     }
 
     let Workers = [];
     let totalWorkers = 0;
     const maxDistanceInMeters = 10000;
 
-    // Search by coordinates
+    // Search by Coordinates
     if (
       Coordinates &&
       Coordinates.coordinates &&
@@ -601,6 +633,7 @@ async function ListWorkers(req, resp) {
       if (!isNaN(lat) && !isNaN(lon)) {
         console.log("Searching by coordinates:", lat, lon);
 
+        // Use geoNear for geospatial search
         const geoResults = await WorkerModal.aggregate([
           {
             $geoNear: {
@@ -613,35 +646,71 @@ async function ListWorkers(req, resp) {
               spherical: true,
               query: {
                 "coordinates.coordinates": { $exists: true, $ne: null },
-                "Banned.ban": { $ne: true }, // Exclude banned workers
+                "Banned.ban": { $ne: true },
                 ...query,
               },
             },
           },
           {
-            $sort: { overAllSentimentScore: -1, OverallRaitngs: -1 },
+            $sort: {
+              overAllSentimentScore: -1,
+              OverallRaitngs: -1,
+            },
           },
           {
-            $project: { password: 0 },
+            $project: {
+              password: 0,
+              Reviews: 0,
+              __v: 0,
+            },
           },
-          { $skip: (page - 1) * limit },
+          { $skip: skip },
           { $limit: limit },
         ]);
 
-        totalWorkers = await WorkerModal.countDocuments(query);
+        // Count total geo matches for pagination
+        const geoCount = await WorkerModal.aggregate([
+          {
+            $geoNear: {
+              near: {
+                type: "Point",
+                coordinates: [lon, lat],
+              },
+              distanceField: "distance",
+              maxDistance: maxDistanceInMeters,
+              spherical: true,
+              query: {
+                "coordinates.coordinates": { $exists: true, $ne: null },
+                "Banned.ban": { $ne: true },
+                ...query,
+              },
+            },
+          },
+          { $count: "count" },
+        ]);
+
+        totalWorkers = geoCount[0]?.count || 0;
         Workers = geoResults;
       }
     }
 
-    // If no workers found by coordinates, search by Pincode
+    // Fallback: Search by Pincode
     if (!Workers.length && Pincode) {
       console.log("Searching by Pincode:", Pincode);
-
       query.pincode = Pincode;
 
-      totalWorkers = await WorkerModal.countDocuments(query);
+      totalWorkers = await WorkerModal.countDocuments({
+        ...query,
+        "Banned.ban": { $ne: true },
+      });
+
       Workers = await WorkerModal.aggregate([
-        { $match: query },
+        {
+          $match: {
+            ...query,
+            "Banned.ban": { $ne: true },
+          },
+        },
         {
           $project: {
             Name: 1,
@@ -651,7 +720,7 @@ async function ListWorkers(req, resp) {
             CompletedRequest: 1,
             SubSerives: 1,
             overAllSentimentScore: 1,
-            ReviewsCount: { $size: "$Reviews" }, // Only include the count of Reviews
+            ReviewsCount: { $size: "$Reviews" },
           },
         },
         {
@@ -660,11 +729,12 @@ async function ListWorkers(req, resp) {
             OverallRaitngs: -1,
           },
         },
-        { $skip: (page - 1) * limit },
+        { $skip: skip },
         { $limit: limit },
       ]);
     }
 
+    // Final fallback: still no results
     if (!Workers.length) {
       return resp.status(400).send({
         success: false,
@@ -675,7 +745,9 @@ async function ListWorkers(req, resp) {
     return resp.status(200).send({
       success: true,
       Workers,
+      currentPage: page,
       totalPages: Math.ceil(totalWorkers / limit),
+      totalWorkers,
     });
   } catch (error) {
     console.error("Error in ListWorkers:", error);
@@ -685,6 +757,7 @@ async function ListWorkers(req, resp) {
     });
   }
 }
+
 
 async function SubmitUserQuery(req, resp) {
   const { Name, Email, Message } = req.body;
@@ -746,14 +819,14 @@ async function SubmitUserQuery(req, resp) {
         <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
           <p style="color: #666; margin: 0; font-size: 11px;">
             <span style="color: #333; font-weight: 600;">Received:</span> ${new Date().toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
           </p>
         </div>
         <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
@@ -794,14 +867,14 @@ async function SubmitUserQuery(req, resp) {
         <div style="border-left: 4px solid black; padding-left: 8px; background-color: #f8f9fa; padding: 8px; border-radius: 8px; margin: 6px 0;">
           <p style="color: #666; margin: 0; font-size: 11px;">
             <span style="color: #333; font-weight: 600;">Submitted:</span> ${new Date().toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+    timeZone: 'Asia/Kolkata',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
           </p>
         </div>
         <div style="background-color: #f8f9fa; text-align: center; padding: 10px 8px; margin-top: 12px; border-radius: 8px;">
@@ -842,7 +915,7 @@ async function SubmitUserQuery(req, resp) {
       resp.status(500).send({ success: false, message: "Error sending email" });
     } else {
       console.log("Email sent: " + info.response);
-     
+
       // Send auto-reply to user
       transporter.sendMail(autoReplyOptions, (autoError, autoInfo) => {
         if (autoError) {

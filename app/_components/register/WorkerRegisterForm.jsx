@@ -1,7 +1,15 @@
-// Final version of WorkerRegisterForm.jsx with all fields and hydration-safe password rules
 "use client";
-import { useState, useRef } from "react";
-import { Eye, EyeOff, User, Mail, MapPin, Hash, Wrench } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Eye,
+  EyeOff,
+  User,
+  Mail,
+  MapPin,
+  Hash,
+  Wrench,
+  Shield,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import { Button } from "@/components/ui/button";
@@ -28,8 +36,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import "react-phone-input-2/lib/style.css";
+import { useRouter } from "next/navigation";
 
 const WorkerRegisterForm = ({ setLoading, loading }) => {
   const router = useRouter();
@@ -37,6 +50,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   // State for password visibility and validation
   const [showPassword, setShowPassword] = useState(false);
   const [serviceType, setServiceType] = useState("");
+  const [getServices, setGetServices] = useState([]);
   const [serviceId, setServiceId] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [address, setAddress] = useState("");
@@ -55,9 +69,20 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); // Re-added password state
+  const [passwordValidation, setPasswordValidation] = useState({
+    // Re-added passwordValidation state
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
 
+  const [passwordFocused, setPasswordFocused] = useState(false);
   // Effect to validate password as it changes
-  useEffect(() => { // Re-added useEffect for password validation
+  useEffect(() => {
+    // Re-added useEffect for password validation
     const val = password;
     const validation = {
       length: val.length >= 8,
@@ -69,11 +94,6 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     setPasswordValidation(validation);
   }, [password]);
 
-  // Effect to check email verification status from localStorage on component mount
-  useEffect(() => {
-    const isVerified = localStorage.getItem("emailVerified") === "true";
-    if (isVerified) setEmailVerified(true);
-  }, []);
 
   // Toggles password visibility
   const handleClickShowPassword = () => {
@@ -81,7 +101,14 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   };
 
   const handleServiceTypeChange = (value) => {
-    setServiceType(value);
+    const selectedService = getServices.find(
+      (service) => service.value === value
+    );
+    if (selectedService) {
+      setServiceType(selectedService.label);
+      setServiceId(selectedService.value);
+     
+    }
   };
 
   // Handles address input and debounces API call for suggestions
@@ -108,7 +135,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
         console.error("Error fetching address suggestions:", error);
         setSuggestions([]);
       }
-    }, 1000); // 1s debounce delay
+    }, 1500); // 1s debounce delay
   };
 
   // Selects an address from suggestions and sets coordinates
@@ -121,27 +148,28 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`);
-      
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/services/get_active_services`
+      );
+
       const result = await response.json();
       if (result.success && result.data) {
-        const options = result.data.map(service => ({
-          value: service._id,     
+        const options = result.data.map((service) => ({
+          value: service._id,
           label: service.serviceName,
         }));
         setGetServices(options);
       } else {
-        // If API fails, show sample data
-        toast('Using sample data - API returned no data');
+        toast("Using sample data - API returned no data");
       }
     } catch (error) {
-      console.error('Error fetching services:', error);
-      toast('Using sample data - API not available');
+      console.error("Error fetching services:", error);
+      toast("Using sample data - API not available");
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchServices();
   }, []);
@@ -241,12 +269,18 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
     const pincode = formData.get("pincode");
 
     // Client-side validations
-    if (!serviceType) {
+    if (!serviceType || !serviceId) {
       toast.error("Please select a service type");
       return;
     }
     // Password validation is handled by the useEffect and UI feedback, but a final check here is good.
-    if (!passwordValidation.length || !passwordValidation.lowercase || !passwordValidation.uppercase || !passwordValidation.number || !passwordValidation.special) {
+    if (
+      !passwordValidation.length ||
+      !passwordValidation.lowercase ||
+      !passwordValidation.uppercase ||
+      !passwordValidation.number ||
+      !passwordValidation.special
+    ) {
       toast.error("Please ensure your password meets all criteria.");
       return;
     }
@@ -394,7 +428,9 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
               </div>
               {!emailVerified && (
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-orange-500 text-xs">Email verification required</p>
+                  <p className="text-orange-500 text-xs">
+                    Email verification required
+                  </p>
                   <Button
                     type="button"
                     onClick={sendOtp}
@@ -460,12 +496,59 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                 </button>
               </div>
               {/* Password validation rules display */}
-              <ul className={`mt-2 space-y-1 text-sm transition-opacity duration-200 ${passwordFocused || Object.values(passwordValidation).every(Boolean) ? "opacity-100 max-h-40" : "opacity-0 max-h-0 overflow-hidden"}`}>
-                <li className={passwordValidation.length ? "text-green-600" : "text-slate-400"}>✔ Minimum 8 characters</li>
-                <li className={passwordValidation.lowercase ? "text-green-600" : "text-slate-400"}>✔ One lowercase letter</li>
-                <li className={passwordValidation.uppercase ? "text-green-600" : "text-slate-400"}>✔ One uppercase letter</li>
-                <li className={passwordValidation.number ? "text-green-600" : "text-slate-400"}>✔ One number</li>
-                <li className={passwordValidation.special ? "text-green-600" : "text-slate-400"}>✔ One special character</li>
+              <ul
+                className={`mt-2 space-y-1 text-sm transition-opacity duration-200 ${
+                  passwordFocused ||
+                  Object.values(passwordValidation).every(Boolean)
+                    ? "opacity-100 max-h-40"
+                    : "opacity-0 max-h-0 overflow-hidden"
+                }`}
+              >
+                <li
+                  className={
+                    passwordValidation.length
+                      ? "text-green-600"
+                      : "text-slate-400"
+                  }
+                >
+                  ✔ Minimum 8 characters
+                </li>
+                <li
+                  className={
+                    passwordValidation.lowercase
+                      ? "text-green-600"
+                      : "text-slate-400"
+                  }
+                >
+                  ✔ One lowercase letter
+                </li>
+                <li
+                  className={
+                    passwordValidation.uppercase
+                      ? "text-green-600"
+                      : "text-slate-400"
+                  }
+                >
+                  ✔ One uppercase letter
+                </li>
+                <li
+                  className={
+                    passwordValidation.number
+                      ? "text-green-600"
+                      : "text-slate-400"
+                  }
+                >
+                  ✔ One number
+                </li>
+                <li
+                  className={
+                    passwordValidation.special
+                      ? "text-green-600"
+                      : "text-slate-400"
+                  }
+                >
+                  ✔ One special character
+                </li>
               </ul>
             </div>
 
@@ -542,7 +625,7 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {getServices.map((service) => (
-                      <SelectItem key={service.value} value={service.value} label={service.label}>
+                      <SelectItem key={service.value} value={service.value}>
                         {service.label}
                       </SelectItem>
                     ))}
@@ -567,7 +650,11 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
 
       {/* OTP Verification Modal */}
       <Dialog open={openOtpModal} onOpenChange={setOpenOtpModal}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className="sm:max-w-md"
+          modal={true}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
@@ -592,12 +679,12 @@ const WorkerRegisterForm = ({ setLoading, loading }) => {
                 onChange={(value) => setOtp(value)}
               >
                 <InputOTPGroup className="w-full justify-center gap-2">
-                  <InputOTPSlot index={0} className="w-12"/>
-                  <InputOTPSlot index={1} className="w-12"/>
-                  <InputOTPSlot index={2} className="w-12"/>
-                  <InputOTPSlot index={3} className="w-12"/>
-                  <InputOTPSlot index={4} className="w-12"/>
-                  <InputOTPSlot index={5} className="w-12"/>
+                  <InputOTPSlot index={0} className="w-12" />
+                  <InputOTPSlot index={1} className="w-12" />
+                  <InputOTPSlot index={2} className="w-12" />
+                  <InputOTPSlot index={3} className="w-12" />
+                  <InputOTPSlot index={4} className="w-12" />
+                  <InputOTPSlot index={5} className="w-12" />
                 </InputOTPGroup>
               </InputOTP>
             </div>

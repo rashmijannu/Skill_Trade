@@ -5,12 +5,14 @@ import { Input, Textarea } from "@mui/joy";
 import { Button } from "../../../../components/ui/button";
 import { AcceptRequestFetchFunction } from "../_FetchFunction/AcceptRequest";
 import { toast } from "react-hot-toast";
-import {style} from "../../../_Arrays/Arrays"
-
+import { style } from "../../../_Arrays/Arrays";
+import { Backdrop } from "@mui/material";
 
 const AcceptRequest = ({ handleClose, rid }) => {
   const [EstimatedPrice, SetEstimatedPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [backdrop, setBackDrop] = useState(false);
+
   const currentDate = new Date();
 
   async function AcceptRequestFunction() {
@@ -19,6 +21,7 @@ const AcceptRequest = ({ handleClose, rid }) => {
         toast.error("price is missing");
         return;
       }
+      setBackDrop(true);
       const authString = localStorage.getItem("auth");
       const auth = JSON.parse(authString);
       const data = await AcceptRequestFetchFunction(
@@ -40,9 +43,14 @@ const AcceptRequest = ({ handleClose, rid }) => {
       toast.error(
         "An error occurred while submitting the report. Please try again."
       );
+    } finally {
+      setBackDrop(false);
     }
   }
 
+  if (backdrop) {
+    return <Backdrop />;
+  }
   return (
     <Box sx={style} className="w-[320px] sm:w-[400px]">
       <p className="w-full text-center mb-2 text-2xl font-bold">

@@ -78,10 +78,6 @@ const UserRegisterForm = ({ loading, setLoading }) => {
     });
   };
 
-  useEffect(() => {
-    const isVerified = localStorage.getItem("emailVerified") === "true";
-    if (isVerified) setEmailVerified(true);
-  }, []);
 
   function generateOTP() {
     const otp = Math.floor(100000 + Math.random() * 900000).toString()

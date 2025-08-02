@@ -9,7 +9,7 @@ import { Button } from "../../../../components/ui/button";
 import { Typography, Alert } from "@mui/material";
 import { Tag, Image } from "antd";
 import { PulseLoader } from "react-spinners";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 // Icons
 import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
@@ -45,28 +45,28 @@ const RequestDetailsClient = ({
   const handleClose = () => setOpen(false);
   const handleOpen2 = () => setOpen2(true);
   const handleClose2 = () => setOpen2(false);
-  
- const checkBan = async () => {
-   try {
-     if (!auth.user) {
-       return;
-     }
-     const response = await fetch(
-       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/CheckBan/${auth?.user?._id}`
-     );
-     const data = await response.json();
 
-     if (!response.ok) {
-       throw new Error(data.message || "Something went wrong");
-     } else {
-       SetBan(data?.worker?.Banned?.ban);
-     }
-     return data;
-   } catch (error) {
-     console.error("Error checking ban status:", error);
-     return { success: false, message: error.message };
-   }
- };
+  const checkBan = async () => {
+    try {
+      if (!auth.user) {
+        return;
+      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/workers/CheckBan/${auth?.user?._id}`
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      } else {
+        SetBan(data?.worker?.Banned?.ban);
+      }
+      return data;
+    } catch (error) {
+      console.error("Error checking ban status:", error);
+      return { success: false, message: error.message };
+    }
+  };
 
   useEffect(() => {
     const userCoordinates = JSON.parse(localStorage.getItem("userCoordinates"));
@@ -88,7 +88,6 @@ const RequestDetailsClient = ({
     });
   }
 
- 
   return (
     <>
       <div className="flex flex-col items-center justify-center mb-10 sm:mt-0 mt-20">
@@ -314,7 +313,7 @@ const RequestDetailsClient = ({
               ModalType={ReportModal}
               id={rid}
             />
-            {/* Accept Request Modal */}  
+            {/* Accept Request Modal */}
             <ModalComponent
               open={open2}
               handleClose={handleClose2}
