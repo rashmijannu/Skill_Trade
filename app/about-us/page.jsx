@@ -1,5 +1,6 @@
 "use client";
 import MarqueeImages from "@/components/MarqeeImage2";
+import CountUp from "@/components/ui/countUp";
 import {
   ArrowRight,
   CheckCircle,
@@ -266,22 +267,26 @@ const Page = () => {
                 <div className="grid grid-cols-2 gap-8">
                   {[
                     {
-                      number: "5000+",
+                      number: "5000",
+                      suffix: "+",
                       label: "Professionals",
                       icon: <Users className="w-6 h-6" />,
                     },
                     {
-                      number: "10K+",
+                      number: "10",
+                      suffix: "K+",
                       label: "Jobs Done",
                       icon: <CheckCircle className="w-6 h-6" />,
                     },
                     {
-                      number: "4.8★",
+                      number: "4.8",
+                      suffix: "★",
                       label: "Rating",
                       icon: <Star className="w-6 h-6" />,
                     },
                     {
-                      number: "50+",
+                      number: "50",
+                      suffix: "+",
                       label: "Categories",
                       icon: <Award className="w-6 h-6" />,
                     },
@@ -298,7 +303,7 @@ const Page = () => {
 
                       {/* Stat number */}
                       <div className="text-3xl lg:text-4xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
-                        {stat.number}
+                        <CountUp end={stat.number} duration={25.5} suffix={stat.suffix} />
                       </div>
 
                       {/* Stat label */}
